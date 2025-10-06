@@ -179,3 +179,12 @@
   </script>
 </body>
 </html>
+
+<script>
+  function goToResult(){
+    localStorage.setItem("yourzoyType", "E-N-T-P"); // 설문 결과값
+    window.location.href = "result.html";
+  }
+</script>
+
+<button onclick="goToResult()">결과 리포트 보기</button>
