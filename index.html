@@ -1,66 +1,82 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YOURZOY 사주 테스트</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YOURZOY - 사주 기반 성향 테스트</title>
+<style>
+:root {--navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFFFFF;}
+body{margin:0;background:var(--navy);color:var(--text);font-family:"Noto Sans KR",sans-serif;}
+.wrap{max-width:520px;margin:7vh auto;padding:28px;border-radius:24px;background:var(--navy2);box-shadow:0 20px 60px rgba(0,0,0,.4);}
+h1{text-align:center;color:var(--gold);margin:0 0 10px}
+p{text-align:center;color:rgba(255,255,255,.75)}
+label{display:block;margin:14px 2px 8px;font-weight:700;color:var(--gold)}
+input,select,button{width:100%;box-sizing:border-box;font-family:inherit}
+.input,select{background:#0f1733;border:1px solid rgba(255,215,0,.25);color:var(--text);padding:12px 14px;border-radius:12px;font-size:15px}
+button{margin-top:20px;background:var(--gold);color:#111;padding:13px 16px;border:none;border-radius:14px;font-weight:800;cursor:pointer;transition:.2s}
+.result{margin-top:20px;padding:16px;background:#111833;border:1px solid rgba(255,215,0,.25);border-radius:16px;display:none}
+footer{text-align:center;color:rgba(255,255,255,.5);font-size:12px;margin-top:20px}
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>✨ YOURZOY 사주 테스트 ✨</h1>
-    <p>생년월일과 시간을 입력하면 당신의 네주·일주·사주를 계산합니다.</p>
+<main class="wrap">
+  <h1>YOURZOY</h1>
+  <p>사주로 당신의 기본 기질을 확인하고,<br>다음 단계에서 성향 테스트로 이어집니다.</p>
 
-    <label>생년월일</label>
-    <input type="date" id="birthDate">
+  <label>생년월일</label>
+  <input id="birthdate" class="input" type="date">
 
-    <label>출생 시간</label>
-    <select id="birthTime">
-      <option value="23">자시 (23:00~00:59)</option>
-      <option value="1">축시 (01:00~02:59)</option>
-      <option value="3">인시 (03:00~04:59)</option>
-      <option value="5">묘시 (05:00~06:59)</option>
-      <option value="7">진시 (07:00~08:59)</option>
-      <option value="9">사시 (09:00~10:59)</option>
-      <option value="11">오시 (11:00~12:59)</option>
-      <option value="13">미시 (13:00~14:59)</option>
-      <option value="15">신시 (15:00~16:59)</option>
-      <option value="17">유시 (17:00~18:59)</option>
-      <option value="19">술시 (19:00~20:59)</option>
-      <option value="21">해시 (21:00~22:59)</option>
-    </select>
+  <label>출생 시간</label>
+  <select id="birthtime">
+    <option value="0">자시 (23:00~00:59)</option>
+    <option value="1">축시 (01:00~02:59)</option>
+    <option value="2">인시 (03:00~04:59)</option>
+    <option value="3">묘시 (05:00~06:59)</option>
+    <option value="4">진시 (07:00~08:59)</option>
+    <option value="5">사시 (09:00~10:59)</option>
+    <option value="6">오시 (11:00~12:59)</option>
+    <option value="7">미시 (13:00~14:59)</option>
+    <option value="8">신시 (15:00~16:59)</option>
+    <option value="9">유시 (17:00~18:59)</option>
+    <option value="10">술시 (19:00~20:59)</option>
+    <option value="11">해시 (21:00~22:59)</option>
+  </select>
 
-    <button id="submitBtn">결과 보기</button>
-  </div>
+  <button id="go">결과 보기</button>
 
-  <script>
-    const yourzoyMap = [
-      { ilju: "병자", element: "화", family: "파이어조이", look: "스트릿", name: "파이어 스트릿 조이" },
-      { ilju: "무인", element: "토", family: "쏘일조이", look: "양아치", name: "쏘일 양아치 조이" },
-      { ilju: "계유", element: "수", family: "워터조이", look: "아이돌", name: "워터 아이돌 조이" },
-      { ilju: "경오", element: "금", family: "아이언조이", look: "라이더", name: "아이언 라이더 조이" },
-      { ilju: "을해", element: "목", family: "트리조이", look: "럭셔리", name: "트리 럭셔리 조이" }
-      // ⚠️ 나중에 전체 60개 일주로 확장
-    ];
+  <section id="result" class="result">
+    <div id="text"></div>
+  </section>
 
-    document.getElementById("submitBtn").addEventListener("click", () => {
-      const date = document.getElementById("birthDate").value;
-      const time = document.getElementById("birthTime").value;
-      if (!date) {
-        alert("생년월일을 입력해주세요!");
-        return;
-      }
+  <footer>© 2025 YOURZOY</footer>
+</main>
 
-      // 👉 간단히 무작위 일주 생성 (테스트용)
-      const randomIlju = yourzoyMap[Math.floor(Math.random() * yourzoyMap.length)];
+<script>
+const stems=["갑","을","병","정","무","기","경","신","임","계"];
+const branch=["자","축","인","묘","진","사","오","미","신","유","술","해"];
 
-      localStorage.setItem("birthDate", date);
-      localStorage.setItem("birthTime", time);
-      localStorage.setItem("iljuData", JSON.stringify(randomIlju));
+function JD(y,m,d){const a=Math.floor((14-m)/12);const y2=y+4800-a;const m2=m+12*a-3;return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;}
+function getDayGanji(y,m,d){const base=JD(1984,2,2);const idx=(JD(y,m,d)-base+2)%60;return[stems[idx%10],branch[idx%12]];}
+function getYearGanji(y,m,d){const adj=(m<2||(m===2&&d<4))?y-1:y;return[stems[(adj-4)%10],branch[(adj-4)%12]];}
+function getMonthGanji(adjYear,m){const yStem=(adjYear-4)%10;const offset=[2,4,6,8,0][Math.floor(yStem/2)];const s=(offset+m-1)%10;return[stems[s],branch[(m+1)%12]];}
+function getHourGanji(dayStemIdx,hourIdx){return[stems[(dayStemIdx*2+hourIdx)%10],branch[hourIdx]];}
 
-      // 자동으로 설문페이지로 이동
-      window.location.href = "survey.html";
-    });
-  </script>
+document.getElementById("go").addEventListener("click",()=>{
+  const date=document.getElementById("birthdate").value;
+  if(!date) return alert("생년월일을 입력하세요.");
+  const [y,m,d]=date.split("-").map(Number);
+  const hourIdx=parseInt(document.getElementById("birthtime").value);
+  const [yG,yZ]=getYearGanji(y,m,d);
+  const [mG,mZ]=getMonthGanji(y,m);
+  const [dG,dZ]=getDayGanji(y,m,d);
+  const [hG,hZ]=getHourGanji(stems.indexOf(dG),hourIdx);
+  const txt=`년주: ${yG}${yZ}, 월주: ${mG}${mZ}, 일주: ${dG}${dZ}, 시주: ${hG}${hZ}`;
+  document.getElementById("text").innerText=txt;
+  document.getElementById("result").style.display="block";
+  // 자동 이동
+  const params=new URLSearchParams({y:yG+yZ,m:mG+mZ,d:dG+dZ,h:hG+hZ});
+  setTimeout(()=>{window.location.href=`survey.html?${params}`;},2500);
+});
+</script>
 </body>
 </html>
