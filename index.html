@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>FATETOON 만세력</title>
+<title>YOURZOY 사주 테스트</title>
 <style>
   :root{
     --navy:#0B132B;
@@ -31,10 +31,10 @@
   .big{font-size:28px;line-height:1;font-weight:800;letter-spacing:.02em;color:var(--text);text-shadow:0 1px 0 #000}
   .small{font-size:12px;margin-top:2px;color:var(--gold);opacity:.95;font-weight:700}
   .divider{height:1px;background:linear-gradient(90deg,rgba(255,215,0,0),rgba(255,215,0,.35),rgba(255,215,0,0));margin:14px 0}
-  .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .kv{background:#0f1733;border:1px solid rgba(255,215,0,.16);border-radius:12px;padding:10px 12px;font-size:14px}
   .kv b{color:var(--gold)}
   footer{margin-top:14px;text-align:center;color:rgba(255,255,255,.55);font-size:12px}
+  footer a{color:var(--gold);text-decoration:none;font-weight:700}
   @media (max-width:420px){
     .wrap{margin:2.8vh 16px 5.6vh;padding:20px;border-radius:18px}
     .card{height:64px}
@@ -44,8 +44,8 @@
 </head>
 <body>
   <main class="wrap">
-    <div class="title"><span class="emoji">🔮</span><h1>FATETOON 만세력</h1></div>
-    <p class="subtitle">생년월일/시간을 입력하면 <b>년주·월주·일주·시주</b>를 알려줘요.</p>
+    <div class="title"><span class="emoji">🪄</span><h1>YOURZOY 사주 테스트</h1></div>
+    <p class="subtitle">생년월일/시간을 입력하면 <b>년·월·일·시주</b>를 알려줘요.<br>MBTI보다 정확한 ‘당신의 기질 코드’ 찾기</p>
 
     <label for="birthdate">생년월일</label>
     <input id="birthdate" class="input" type="date" />
@@ -79,7 +79,8 @@
       <div class="divider"></div>
       <div class="kv" id="fourpillarsText"></div>
     </section>
-    <footer>© 2025 FATETOON. 모든 콘텐츠는 참고용입니다.</footer>
+
+    <footer>© 2025 <a href="https://yourzoy.com">YOURZOY</a>. 모든 콘텐츠는 참고용입니다.</footer>
   </main>
 
 <script>
@@ -148,4 +149,3 @@ function calcAndShow(){
 </script>
 </body>
 </html>
-
