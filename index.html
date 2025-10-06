@@ -1,124 +1,66 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YOURZOY 사주 테스트</title>
-<style>
-body {
-  background-color: #0d1424;
-  color: #fff;
-  font-family: "Pretendard", sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  margin: 0;
-}
-.container {
-  background: #182135;
-  padding: 40px;
-  border-radius: 20px;
-  text-align: center;
-  width: 350px;
-  box-shadow: 0 0 25px rgba(255,215,0,0.08);
-}
-h1 {
-  color: #FFD700;
-  font-size: 1.4rem;
-  margin-bottom: 10px;
-}
-label {
-  display: block;
-  margin-top: 20px;
-  text-align: left;
-  color: #ccc;
-  font-size: 0.9rem;
-}
-input, select {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  margin-top: 6px;
-  font-size: 1rem;
-}
-button {
-  width: 100%;
-  background-color: #FFD700;
-  border: none;
-  color: #111;
-  font-weight: 700;
-  padding: 12px;
-  margin-top: 25px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-button:hover { background-color: #ffcc00; }
-footer { margin-top: 40px; color: #777; font-size: 0.8rem; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YOURZOY 사주 테스트</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-<div class="container">
-  <h1>✨ YOURZOY 사주 테스트 ✨</h1>
-  <p style="font-size:0.9rem;color:#bbb;">생년월일과 시간을 입력하면<br>당신의 타고난 코드가 분석됩니다.<br>테스트 완료 후 성향 설문으로 바로 연결됩니다.</p>
+  <div class="container">
+    <h1>✨ YOURZOY 사주 테스트 ✨</h1>
+    <p>생년월일과 시간을 입력하면 당신의 네주·일주·사주를 계산합니다.</p>
 
-  <label>생년월일</label>
-  <input type="date" id="birthdate">
+    <label>생년월일</label>
+    <input type="date" id="birthDate">
 
-  <label>출생 시간</label>
-  <select id="birthtime">
-    <option value="0">자시 (23:00~00:59)</option>
-    <option value="1">축시 (01:00~02:59)</option>
-    <option value="2">인시 (03:00~04:59)</option>
-    <option value="3">묘시 (05:00~06:59)</option>
-    <option value="4">진시 (07:00~08:59)</option>
-    <option value="5">사시 (09:00~10:59)</option>
-    <option value="6">오시 (11:00~12:59)</option>
-    <option value="7">미시 (13:00~14:59)</option>
-    <option value="8">신시 (15:00~16:59)</option>
-    <option value="9">유시 (17:00~18:59)</option>
-    <option value="10">술시 (19:00~20:59)</option>
-    <option value="11">해시 (21:00~22:59)</option>
-  </select>
+    <label>출생 시간</label>
+    <select id="birthTime">
+      <option value="23">자시 (23:00~00:59)</option>
+      <option value="1">축시 (01:00~02:59)</option>
+      <option value="3">인시 (03:00~04:59)</option>
+      <option value="5">묘시 (05:00~06:59)</option>
+      <option value="7">진시 (07:00~08:59)</option>
+      <option value="9">사시 (09:00~10:59)</option>
+      <option value="11">오시 (11:00~12:59)</option>
+      <option value="13">미시 (13:00~14:59)</option>
+      <option value="15">신시 (15:00~16:59)</option>
+      <option value="17">유시 (17:00~18:59)</option>
+      <option value="19">술시 (19:00~20:59)</option>
+      <option value="21">해시 (21:00~22:59)</option>
+    </select>
 
-  <button id="go">결과 보기</button>
-</div>
+    <button id="submitBtn">결과 보기</button>
+  </div>
 
-<footer>© 2025 YOURZOY. 모든 콘텐츠는 참고용입니다.</footer>
+  <script>
+    const yourzoyMap = [
+      { ilju: "병자", element: "화", family: "파이어조이", look: "스트릿", name: "파이어 스트릿 조이" },
+      { ilju: "무인", element: "토", family: "쏘일조이", look: "양아치", name: "쏘일 양아치 조이" },
+      { ilju: "계유", element: "수", family: "워터조이", look: "아이돌", name: "워터 아이돌 조이" },
+      { ilju: "경오", element: "금", family: "아이언조이", look: "라이더", name: "아이언 라이더 조이" },
+      { ilju: "을해", element: "목", family: "트리조이", look: "럭셔리", name: "트리 럭셔리 조이" }
+      // ⚠️ 나중에 전체 60개 일주로 확장
+    ];
 
-<script>
-const stems=["갑","을","병","정","무","기","경","신","임","계"];
-const branchK=["자","축","인","묘","진","사","오","미","신","유","술","해"];
+    document.getElementById("submitBtn").addEventListener("click", () => {
+      const date = document.getElementById("birthDate").value;
+      const time = document.getElementById("birthTime").value;
+      if (!date) {
+        alert("생년월일을 입력해주세요!");
+        return;
+      }
 
-function JD(y,m,d){const a=Math.floor((14-m)/12);const y2=y+4800-a;const m2=m+12*a-3;return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;}
-function getDayGanji(y,m,d){const base=JD(1984,2,2);const idx=(JD(y,m,d)-base+2)%60;return[stems[idx%10],branchK[idx%12]];}
-function getYearGanji(y,m,d){const adj=(m<2||(m===2&&d<4))?y-1:y;return[stems[(adj-4)%10],branchK[(adj-4)%12]];}
-function getMonthGanji(adjYear,m,d){const boundaries={2:4,3:6,4:5,5:6,6:6,7:7,8:8,9:8,10:8,11:7,12:7,1:6};const monthOrder={2:0,3:1,4:2,5:3,6:4,7:5,8:6,9:7,10:8,11:9,12:10,1:11};let mbIdx;if(m===1&&d<boundaries[1])mbIdx=11;else{const usePrev=d<boundaries[m];const key=usePrev?(m>1?m-1:12):m;mbIdx=monthOrder[key];}const yStemIdx=(adjYear-4)%10;let tigerStemIdx;if(yStemIdx===0||yStemIdx===5)tigerStemIdx=2;else if(yStemIdx===1||yStemIdx===6)tigerStemIdx=4;else if(yStemIdx===2||yStemIdx===7)tigerStemIdx=6;else if(yStemIdx===3||yStemIdx===8)tigerStemIdx=8;else tigerStemIdx=0;const stem=stems[(tigerStemIdx+mbIdx)%10];const branch=["인","묘","진","사","오","미","신","유","술","해","자","축"][mbIdx];return[stem,branch];}
-function getHourGanji(dayStemIdx,hourBranchIdx){const hStemIdx=(dayStemIdx*2+hourBranchIdx)%10;return[stems[hStemIdx],branchK[hourBranchIdx]];}
+      // 👉 간단히 무작위 일주 생성 (테스트용)
+      const randomIlju = yourzoyMap[Math.floor(Math.random() * yourzoyMap.length)];
 
-document.getElementById("go").addEventListener("click", ()=>{
-  const dateStr=document.getElementById("birthdate").value;
-  const hIdx=parseInt(document.getElementById("birthtime").value,10);
-  if(!dateStr)return alert("생년월일을 입력하세요!");
-  const [y,m,d]=dateStr.split("-").map(Number);
-  const [yStem,yBranch]=getYearGanji(y,m,d);
-  const [mStem,mBranch]=getMonthGanji(y,m,d);
-  const [dStem,dBranch]=getDayGanji(y,m,d);
-  const [hStem,hBranch]=getHourGanji(stems.indexOf(dStem),hIdx);
+      localStorage.setItem("birthDate", date);
+      localStorage.setItem("birthTime", time);
+      localStorage.setItem("iljuData", JSON.stringify(randomIlju));
 
-  const result={
-    year:`${yStem}${yBranch}`,
-    month:`${mStem}${mBranch}`,
-    day:`${dStem}${dBranch}`,
-    hour:`${hStem}${hBranch}`
-  };
-  localStorage.setItem("sajuResult", JSON.stringify(result));
-  location.href="survey.html"; // ✅ 바로 설문 페이지로 이동
-});
-</script>
+      // 자동으로 설문페이지로 이동
+      window.location.href = "survey.html";
+    });
+  </script>
 </body>
 </html>
