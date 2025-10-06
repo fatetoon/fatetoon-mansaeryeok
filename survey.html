@@ -4,27 +4,99 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>YOURZOY 성향 테스트</title>
-<link rel="stylesheet" href="style.css" />
 <style>
-  .question {margin-bottom: 24px;}
-  .question h3 {font-size: 16px;margin-bottom:8px;}
-  .options label {display:block;margin:6px 0;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,215,0,0.2);background:#0f1733;cursor:pointer;}
-  .options input {margin-right:8px;}
-  #nextBtn {margin-top:24px;}
-  #resultZone {display:none;margin-top:28px;}
+  :root{
+    --navy:#0B132B;
+    --navy-2:#1C2541;
+    --gold:#FFD700;
+    --text:#FFFFFF;
+  }
+  html,body{
+    margin:0;
+    padding:0;
+    background:var(--navy);
+    color:var(--text);
+    font-family:"Noto Sans KR", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  .wrap{
+    max-width:520px;
+    margin:5vh auto 7vh;
+    padding:24px;
+    border-radius:22px;
+    background:linear-gradient(180deg,rgba(255,215,0,.08),rgba(255,215,0,0) 160px),var(--navy-2);
+    box-shadow:0 24px 60px rgba(0,0,0,.32);
+    border:1px solid rgba(255,215,0,.16);
+    transition:all .3s ease;
+  }
+  .title{display:flex;align-items:center;gap:10px;justify-content:center;margin:6px 0 10px}
+  .title .emoji{font-size:28px;filter:drop-shadow(0 2px 6px rgba(255,215,0,.25))}
+  h1{margin:0;font-size:22px;letter-spacing:.2px;color:var(--text)}
+  .subtitle{margin:4px 0 20px;text-align:center;color:rgba(255,255,255,.7);font-size:14px}
+  .question{margin:24px 0}
+  .question h3{font-size:17px;margin-bottom:14px;color:var(--gold)}
+  .options label{
+    display:block;
+    margin:8px 0;
+    padding:12px 16px;
+    border-radius:14px;
+    border:1px solid rgba(255,215,0,.25);
+    background:#0f1733;
+    cursor:pointer;
+    transition:.2s;
+  }
+  .options label:hover{
+    border-color:var(--gold);
+    box-shadow:0 0 6px rgba(255,215,0,.3);
+  }
+  input[type="radio"]{margin-right:8px;}
+  #nextBtn{
+    width:100%;
+    margin-top:24px;
+    background:var(--gold);
+    color:#111;
+    padding:13px 16px;
+    border:none;
+    border-radius:14px;
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+    transition:.2s;
+  }
+  #nextBtn:hover{filter:brightness(1.08)}
+  #resultZone{
+    display:none;
+    margin-top:28px;
+    background:#111833;
+    border:1px solid rgba(255,215,0,.25);
+    border-radius:16px;
+    padding:20px;
+    text-align:center;
+  }
+  #mbtiText b{color:var(--gold);font-size:18px}
+  a.btn{
+    display:inline-block;
+    margin-top:16px;
+    background:var(--gold);
+    color:#111;
+    padding:10px 16px;
+    border-radius:12px;
+    font-weight:700;
+    text-decoration:none;
+  }
+  footer{margin-top:20px;text-align:center;color:rgba(255,255,255,.5);font-size:12px}
 </style>
 </head>
 <body>
   <main class="wrap">
     <div class="title"><span class="emoji">🧭</span><h1>YOURZOY 성향 테스트</h1></div>
-    <p class="subtitle">30개의 질문으로 당신의 MBTI 섹터를 분석해요.<br><b>솔직하게</b> 답할수록 정확도가 올라갑니다.</p>
+    <p class="subtitle">30개의 질문으로 당신의 <b>MBTI 섹터</b>를 분석해요.<br>솔직하게 답할수록 정확도가 높아요.</p>
 
     <section id="quiz"></section>
 
     <button id="nextBtn">다음</button>
 
-    <section id="resultZone" class="zone">
-      <h3>결과</h3>
+    <section id="resultZone">
+      <h3>결과 요약</h3>
       <p id="mbtiText"></p>
       <a href="result.html" class="btn">결과 리포트 보러가기</a>
     </section>
