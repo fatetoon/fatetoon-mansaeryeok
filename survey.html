@@ -5,95 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>YourZoy Test</title>
 <style>
-body {
-  margin:0; padding:0; background:#0B132B; color:#fff;
-  font-family:'Noto Sans KR',sans-serif; text-align:center;
-}
-.wrap {
-  max-width:520px; margin:8vh auto; background:#0F1733; padding:30px;
-  border-radius:20px; border:1px solid rgba(255,215,0,.25);
-  box-shadow:0 0 40px rgba(0,0,0,.3);
-}
-.question {
-  display:none; animation:fadeIn .4s ease;
-}
-@keyframes fadeIn {from{opacity:0;} to{opacity:1;}}
-button {
-  margin-top:20px; background:#FFD700; border:none;
-  color:#111; padding:12px 24px; border-radius:12px;
-  font-weight:800; cursor:pointer;
-}
-.progress {
-  margin-bottom:14px; font-size:14px; color:rgba(255,255,255,.7);
-}
+body{margin:0;padding:0;background:#0B132B;color:#fff;font-family:'Noto Sans KR',sans-serif;text-align:center;}
+.wrap{max-width:520px;margin:8vh auto;padding:30px;background:#1C2541;border-radius:20px;border:1px solid rgba(255,215,0,.25);}
+h1{color:#FFD700;}
+button{background:#FFD700;color:#111;padding:12px 22px;border:none;border-radius:12px;margin:6px;cursor:pointer;font-weight:700;}
+.progress{margin-bottom:16px;color:rgba(255,255,255,.7);}
 </style>
 </head>
 <body>
 <main class="wrap">
   <h1>🧠 YourZoy Test</h1>
-  <p class="progress" id="progressText">1 / 30</p>
-
-  <div id="qContainer"></div>
-
-  <button id="nextBtn">다음</button>
+  <p class="progress" id="progress">1 / 30</p>
+  <div id="qBox"></div>
 </main>
 
 <script>
-const questions = [
-  {q:"새로운 아이디어가 떠오르면 바로 실행에 옮긴다.", type:"C"},
-  {q:"사람들 감정에 예민하게 반응한다.", type:"B"},
-  {q:"계획이 정해져 있어야 마음이 편하다.", type:"A"},
-  {q:"즉흥적인 행동을 즐긴다.", type:"D"},
-  // ... 이렇게 30개까지 이어짐
+const questions=[
+  {q:"새로운 아이디어가 떠오르면 바로 실행한다.",zone:"C"},
+  {q:"사람 감정에 예민하게 반응한다.",zone:"B"},
+  {q:"계획이 정해져야 마음이 편하다.",zone:"A"},
+  {q:"즉흥적인 행동을 즐긴다.",zone:"D"},
+  {q:"미래보다는 현재의 감정이 더 중요하다.",zone:"B"},
+  {q:"주변을 이끌고 리더 역할을 자주 한다.",zone:"C"},
+  {q:"혼자만의 시간이 꼭 필요하다.",zone:"A"},
+  {q:"새로운 장소나 사람을 만나는 걸 즐긴다.",zone:"D"},
+  {q:"분석과 전략 짜는 것을 좋아한다.",zone:"C"},
+  {q:"사람의 숨은 의도를 잘 파악한다.",zone:"B"},
+  {q:"규칙과 원칙을 지키는 걸 중요하게 생각한다.",zone:"A"},
+  {q:"즉흥적으로 여행을 떠난 적이 많다.",zone:"D"},
+  {q:"큰 목표를 세우고 단계적으로 실행한다.",zone:"C"},
+  {q:"타인의 감정에 쉽게 공감한다.",zone:"B"},
+  {q:"일의 우선순위를 정해 처리한다.",zone:"A"},
+  {q:"흥미가 생기면 바로 도전한다.",zone:"D"},
+  {q:"복잡한 문제를 체계적으로 해결한다.",zone:"C"},
+  {q:"사람 관계에서 진심이 가장 중요하다.",zone:"B"},
+  {q:"정해진 틀 안에서 안정감을 느낀다.",zone:"A"},
+  {q:"새로운 시도나 모험을 좋아한다.",zone:"D"},
+  {q:"논리보다는 직감을 더 믿는 편이다.",zone:"B"},
+  {q:"시스템이나 구조를 개선하는 걸 좋아한다.",zone:"C"},
+  {q:"세부적인 계획을 세워야 안심된다.",zone:"A"},
+  {q:"즉흥적으로 행동할 때 에너지가 난다.",zone:"D"},
+  {q:"리더십을 발휘하는 상황이 많다.",zone:"C"},
+  {q:"타인에게 공감과 위로를 자주 건넨다.",zone:"B"},
+  {q:"루틴이 깨지면 불안하다.",zone:"A"},
+  {q:"즉시 결과가 나오는 일을 선호한다.",zone:"D"},
+  {q:"긴 안목으로 전략을 세운다.",zone:"C"},
+  {q:"감정 표현을 솔직하게 하는 편이다.",zone:"B"}
 ];
+let current=0;
+const score={A:0,B:0,C:0,D:0};
+const qBox=document.getElementById("qBox"),progress=document.getElementById("progress");
 
-let current = 0;
-const scores = {A:0, B:0, C:0, D:0};
-const qContainer = document.getElementById("qContainer");
-const nextBtn = document.getElementById("nextBtn");
-const progressText = document.getElementById("progressText");
-
-function showQuestion(){
-  const q = questions[current];
-  qContainer.innerHTML = `
-    <div class="question" style="display:block">
-      <p style="font-size:18px; margin-bottom:20px;">${q.q}</p>
-      <button onclick="selectAnswer('A')">전혀 그렇지 않다</button>
-      <button onclick="selectAnswer('B')">그렇지 않다</button>
-      <button onclick="selectAnswer('C')">그렇다</button>
-      <button onclick="selectAnswer('D')">매우 그렇다</button>
-    </div>
+function renderQ(){
+  const q=questions[current];
+  progress.textContent=`${current+1} / ${questions.length}`;
+  qBox.innerHTML=`
+    <p style="font-size:18px;margin-bottom:20px;">${q.q}</p>
+    <button onclick="answer(1)">전혀 아니다</button>
+    <button onclick="answer(2)">아니다</button>
+    <button onclick="answer(3)">그렇다</button>
+    <button onclick="answer(4)">매우 그렇다</button>
   `;
-  progressText.textContent = `${current+1} / ${questions.length}`;
 }
-
-function selectAnswer(choice){
-  // 가중치 부여
-  if(choice==="A") scores[q.type] += 1;
-  else if(choice==="B") scores[q.type] += 2;
-  else if(choice==="C") scores[q.type] += 3;
-  else if(choice==="D") scores[q.type] += 4;
-  nextQuestion();
-}
-
-function nextQuestion(){
+function answer(val){
+  score[questions[current].zone]+=val;
   current++;
-  if(current < questions.length){
-    showQuestion();
-  } else {
-    // 결과 계산
-    const topZone = Object.keys(scores).reduce((a,b)=>scores[a]>scores[b]?a:b);
-    let zoneLabel = "";
-    if(topZone==="A") zoneLabel = "A-Zone (질서·관리형)";
-    if(topZone==="B") zoneLabel = "B-Zone (공감·균형형)";
-    if(topZone==="C") zoneLabel = "C-Zone (전략·정복형)";
-    if(topZone==="D") zoneLabel = "D-Zone (자유·탐험형)";
-    localStorage.setItem("yourzoy_zone", zoneLabel);
+  if(current<questions.length) renderQ();
+  else{
+    const top=Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
+    localStorage.setItem("yourzoy_zone",top);
     location.href="result.html";
   }
 }
-
-showQuestion();
+renderQ();
 </script>
 </body>
 </html>
