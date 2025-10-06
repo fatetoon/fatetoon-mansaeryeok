@@ -3,32 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>YourZoy Result</title>
+<title>YourZoy 결과</title>
 <style>
-body{margin:0;padding:0;background:#0B132B;color:#fff;font-family:'Noto Sans KR',sans-serif;text-align:center;}
-.wrap{max-width:520px;margin:8vh auto;padding:30px;background:#1C2541;border-radius:20px;border:1px solid rgba(255,215,0,.25);}
-h1{color:#FFD700;}
-.resultBox{margin-top:20px;padding:18px;background:#111833;border-radius:16px;}
+body{
+  background:#0B132B;
+  color:#FFD700;
+  font-family:'Noto Sans KR',sans-serif;
+  padding:40px;
+  line-height:1.7;
+}
+.wrap{max-width:720px;margin:auto;border:1px solid rgba(255,215,0,.25);border-radius:16px;padding:32px;background:#1C2541;}
+h1{text-align:center;font-size:26px;margin-bottom:10px;}
+h2{color:#fff;font-size:18px;margin-top:24px}
+.result-card{margin-top:20px;background:#0F1733;padding:20px;border-radius:14px;border:1px solid rgba(255,215,0,.3);}
+button{
+  background:#FFD700;color:#111;font-weight:700;
+  border:none;border-radius:12px;padding:12px 18px;
+  display:block;margin:24px auto 0;cursor:pointer;font-size:15px;
+}
+button:hover{filter:brightness(1.05);}
 </style>
 </head>
 <body>
-<main class="wrap">
-  <h1>🌟 YourZoy Result</h1>
-  <div class="resultBox" id="res"></div>
-</main>
+  <div class="wrap">
+    <h1>🔮 YourZoy 결과</h1>
+    <div id="report" class="result-card"></div>
+    <button onclick="location.href='survey.html'">성향테스트 하러 가기 →</button>
+  </div>
 
 <script>
-const ilju=localStorage.getItem("yourzoy_ilju")||"Unknown";
-const zone=localStorage.getItem("yourzoy_zone")||"A";
-const zoneName={A:"A-Zone (정리·관리형)",B:"B-Zone (공감·균형형)",C:"C-Zone (전략·정복형)",D:"D-Zone (자유·탐험형)"};
-document.getElementById("res").innerHTML=`
-  <h2>${ilju}</h2>
-  <p style="color:#FFD700;font-weight:700;">${zoneName[zone]}</p>
-  <p>당신은 <b>${ilju}</b>의 기운을 가진 <b>${zoneName[zone]}</b> 타입입니다.<br>
-  타고난 에너지와 현재 성향이 결합된 당신만의 <b>YourZoy 코드</b>는<br><br>
-  <span style="font-size:20px;color:#FFD700;">${ilju} + ${zone}</span><br><br>
-  입니다.</p>
-`;
+// 리포트 데이터 (예시: 병자일주)
+const reports = {
+  "붉은 쥐": {
+    A: "🔥 붉은 쥐 A-Zone: 추진력과 정리력을 겸비한 리더형...",
+    B: "❤️ 붉은 쥐 B-Zone: 따뜻한 감성과 공감을 통한 영향력...",
+    C: "⚡ 붉은 쥐 C-Zone: 전략적이고 냉철한 판단력...",
+    D: "🌈 붉은 쥐 D-Zone: 자유로운 창조와 감각의 결합..."
+  },
+  // 여기에 나중에 240개 자동 리포트 붙일 예정
+};
+
+// URL에서 일주, 존 파라미터 읽기
+const params = new URLSearchParams(window.location.search);
+const ilju = params.get('ilju');  // 예: "붉은 쥐"
+const zone = params.get('zone');  // 예: "A"
+
+if (ilju && zone && reports[ilju] && reports[ilju][zone]) {
+  document.getElementById("report").innerHTML = `<b>${ilju}</b><br><br>${reports[ilju][zone]}`;
+} else {
+  document.getElementById("report").innerHTML = "⚠️ 데이터가 아직 연결되지 않았습니다.";
+}
 </script>
 </body>
 </html>
