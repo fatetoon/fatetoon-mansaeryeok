@@ -1,123 +1,105 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>YOURZOY 결과</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YourZoy 결과</title>
 <style>
-:root{--navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFF;}
-body{margin:0;background:var(--navy);color:var(--text);font-family:"Noto Sans KR",sans-serif;}
-.wrap{max-width:640px;margin:6vh auto;padding:32px;border-radius:24px;background:var(--navy2);box-shadow:0 20px 60px rgba(0,0,0,.4);}
-h1{text-align:center;color:var(--gold);}
-h2{text-align:center;margin:6px 0 20px;}
-.card{padding:20px;background:#0f1733;border:1px solid rgba(255,215,0,.25);border-radius:14px;margin-bottom:18px;}
-b{color:var(--gold);}
-footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:24px;}
-button{width:100%;padding:13px;border:none;border-radius:14px;background:var(--gold);color:#111;font-weight:800;margin-top:16px;cursor:pointer;}
+:root {
+  --navy:#0B132B; --gold:#FFD700; --text:#FFFFFF; --deep:#0F1733;
+}
+body {
+  margin:0; padding:0; background:var(--navy); color:var(--text);
+  font-family:'Noto Sans KR',sans-serif;
+}
+.wrap {
+  max-width:560px; margin:6vh auto; padding:28px; border-radius:22px;
+  background:linear-gradient(180deg,rgba(255,215,0,.08),rgba(255,215,0,0) 200px),var(--deep);
+  border:1px solid rgba(255,215,0,.2); box-shadow:0 0 50px rgba(0,0,0,.3);
+  text-align:center;
+}
+h1 {color:var(--gold); font-size:24px; margin-bottom:10px;}
+p.sub {color:rgba(255,255,255,.7); font-size:14px; margin-bottom:30px;}
+.result-card {
+  background:#0B132B; border:1.5px solid rgba(255,215,0,.4); border-radius:18px;
+  padding:24px; margin-bottom:20px; box-shadow:0 0 30px rgba(255,215,0,.05);
+}
+.animal {
+  font-size:64px; line-height:1.2; margin-bottom:8px; text-shadow:0 2px 8px rgba(0,0,0,.4);
+}
+.title {
+  font-size:20px; font-weight:800; margin-bottom:6px; color:var(--gold);
+}
+.zone {
+  font-size:15px; color:rgba(255,255,255,.75); margin-bottom:8px;
+}
+.desc {
+  font-size:14px; line-height:1.6; color:rgba(255,255,255,.8);
+}
+button {
+  width:100%; margin-top:20px; padding:14px;
+  background:var(--gold); color:#111; border:none; border-radius:14px;
+  font-size:16px; font-weight:800; cursor:pointer;
+}
+button:hover {filter:brightness(1.1);}
+footer {margin-top:24px; color:rgba(255,255,255,.55); font-size:12px;}
 </style>
 </head>
 <body>
 <main class="wrap">
-<h1>YOURZOY 결과</h1>
-<div id="out"></div>
-<footer>© 2025 YOURZOY</footer>
+  <h1>🔮 YourZoy 결과</h1>
+  <p class="sub">당신의 사주 기반 기질 캐릭터가 완성되었어요.</p>
+  <div class="result-card" id="resultCard">
+    <div class="animal" id="animalEmoji">🐉</div>
+    <div class="title" id="titleText">붉은 용 조이</div>
+    <div class="zone" id="zoneText">C-Zone (전략·정복형)</div>
+    <div class="desc" id="descText">
+      구조적 사고와 창의적 비전으로 목표를 향해 나아갑니다.<br>
+      냉철하지만, 내면의 열정이 세상을 움직입니다.
+    </div>
+  </div>
+  <button onclick="location.href='index.html'">다시 테스트하기</button>
+  <footer>© 2025 YOURZOY</footer>
 </main>
 
 <script>
-const p=new URLSearchParams(window.location.search);
-const ilju=p.get("ilju"),mbti=p.get("mbti"),zone=p.get("zone");
-
-const iljuTable={
-"갑자":{fam:"트리조이",look:"스트릿",char:"트리 스트릿 조이"},
-"을축":{fam:"트리조이",look:"밀리터리",char:"트리 밀리터리 조이"},
-"병인":{fam:"파이어조이",look:"양아치",char:"파이어 양아치 조이"},
-"정묘":{fam:"파이어조이",look:"귀요미",char:"파이어 귀요미 조이"},
-"무진":{fam:"쏘일조이",look:"갑옷",char:"쏘일 갑옷 조이"},
-"기사":{fam:"쏘일조이",look:"란제리",char:"쏘일 란제리 조이"},
-"경오":{fam:"아이언조이",look:"라이더",char:"아이언 라이더 조이"},
-"신미":{fam:"아이언조이",look:"힐링",char:"아이언 힐링 조이"},
-"임신":{fam:"워터조이",look:"과학자",char:"워터 과학자 조이"},
-"계유":{fam:"워터조이",look:"아이돌",char:"워터 아이돌 조이"},
-"갑술":{fam:"트리조이",look:"친근",char:"트리 친근 조이"},
-"을해":{fam:"트리조이",look:"럭셔리",char:"트리 럭셔리 조이"},
-"병자":{fam:"파이어조이",look:"스트릿",char:"파이어 스트릿 조이"},
-"정축":{fam:"파이어조이",look:"밀리터리",char:"파이어 밀리터리 조이"},
-"무인":{fam:"쏘일조이",look:"양아치",char:"쏘일 양아치 조이"},
-"기묘":{fam:"쏘일조이",look:"귀요미",char:"쏘일 귀요미 조이"},
-"경진":{fam:"아이언조이",look:"갑옷",char:"아이언 갑옷 조이"},
-"신사":{fam:"아이언조이",look:"란제리",char:"아이언 란제리 조이"},
-"임오":{fam:"워터조이",look:"라이더",char:"워터 라이더 조이"},
-"계미":{fam:"워터조이",look:"힐링",char:"워터 힐링 조이"},
-"갑신":{fam:"트리조이",look:"과학자",char:"트리 과학자 조이"},
-"을유":{fam:"트리조이",look:"아이돌",char:"트리 아이돌 조이"},
-"병술":{fam:"파이어조이",look:"친근",char:"파이어 친근 조이"},
-"정해":{fam:"파이어조이",look:"럭셔리",char:"파이어 럭셔리 조이"},
-"무자":{fam:"쏘일조이",look:"스트릿",char:"쏘일 스트릿 조이"},
-"기축":{fam:"쏘일조이",look:"밀리터리",char:"쏘일 밀리터리 조이"},
-"경인":{fam:"아이언조이",look:"양아치",char:"아이언 양아치 조이"},
-"신묘":{fam:"아이언조이",look:"귀요미",char:"아이언 귀요미 조이"},
-"임진":{fam:"워터조이",look:"갑옷",char:"워터 갑옷 조이"},
-"계사":{fam:"워터조이",look:"란제리",char:"워터 란제리 조이"},
-"갑오":{fam:"트리조이",look:"라이더",char:"트리 라이더 조이"},
-"을미":{fam:"트리조이",look:"힐링",char:"트리 힐링 조이"},
-"병신":{fam:"파이어조이",look:"과학자",char:"파이어 과학자 조이"},
-"정유":{fam:"파이어조이",look:"아이돌",char:"파이어 아이돌 조이"},
-"무술":{fam:"쏘일조이",look:"친근",char:"쏘일 친근 조이"},
-"기해":{fam:"쏘일조이",look:"럭셔리",char:"쏘일 럭셔리 조이"},
-"경자":{fam:"아이언조이",look:"스트릿",char:"아이언 스트릿 조이"},
-"신축":{fam:"아이언조이",look:"밀리터리",char:"아이언 밀리터리 조이"},
-"임인":{fam:"워터조이",look:"양아치",char:"워터 양아치 조이"},
-"계묘":{fam:"워터조이",look:"귀요미",char:"워터 귀요미 조이"},
-"갑진":{fam:"트리조이",look:"갑옷",char:"트리 갑옷 조이"},
-"을사":{fam:"트리조이",look:"란제리",char:"트리 란제리 조이"},
-"병오":{fam:"파이어조이",look:"라이더",char:"파이어 라이더 조이"},
-"정미":{fam:"파이어조이",look:"힐링",char:"파이어 힐링 조이"},
-"무신":{fam:"쏘일조이",look:"과학자",char:"쏘일 과학자 조이"},
-"기유":{fam:"쏘일조이",look:"아이돌",char:"쏘일 아이돌 조이"},
-"경술":{fam:"아이언조이",look:"친근",char:"아이언 친근 조이"},
-"신해":{fam:"아이언조이",look:"럭셔리",char:"아이언 럭셔리 조이"},
-"임자":{fam:"워터조이",look:"스트릿",char:"워터 스트릿 조이"},
-"계축":{fam:"워터조이",look:"밀리터리",char:"워터 밀리터리 조이"},
-"갑인":{fam:"트리조이",look:"양아치",char:"트리 양아치 조이"},
-"을묘":{fam:"트리조이",look:"귀요미",char:"트리 귀요미 조이"},
-"병진":{fam:"파이어조이",look:"갑옷",char:"파이어 갑옷 조이"},
-"정사":{fam:"파이어조이",look:"란제리",char:"파이어 란제리 조이"},
-"무오":{fam:"쏘일조이",look:"라이더",char:"쏘일 라이더 조이"},
-"기미":{fam:"쏘일조이",look:"힐링",char:"쏘일 힐링 조이"},
-"경신":{fam:"아이언조이",look:"과학자",char:"아이언 과학자 조이"},
-"신유":{fam:"아이언조이",look:"아이돌",char:"아이언 아이돌 조이"},
-"임술":{fam:"워터조이",look:"친근",char:"워터 친근 조이"},
-"계해":{fam:"워터조이",look:"럭셔리",char:"워터 럭셔리 조이"}
+// 색상 및 동물 매핑
+const elementColor = {
+  '갑':'초록','을':'초록','병':'빨강','정':'빨강','무':'노란','기':'노란','경':'회색','신':'회색','임':'남색','계':'남색'
+};
+const animalMap = {
+  '자':'쥐','축':'소','인':'호랑이','묘':'토끼','진':'용','사':'뱀',
+  '오':'말','미':'양','신':'원숭이','유':'닭','술':'개','해':'돼지'
+};
+const emojiMap = {
+  '자':'🐭','축':'🐮','인':'🐯','묘':'🐰','진':'🐉','사':'🐍','오':'🐎','미':'🐑','신':'🐒','유':'🐔','술':'🐕','해':'🐷'
+};
+const zoneDesc = {
+  "A-Zone (질서·관리형)":"🧩 안정적이며 체계적인 성향. 신뢰받는 실행자 타입.",
+  "B-Zone (공감·균형형)":"💞 사람과의 조화를 중시하며, 감정적으로 따뜻한 조언자.",
+  "C-Zone (전략·정복형)":"🚀 비전을 제시하고 주도하는 리더형. 논리와 추진력 모두 강함.",
+  "D-Zone (자유·탐험형)":"🌊 즉흥적이고 창의적인 탐험가. 틀을 깨는 발상형."
 };
 
-const zoneDesc={
-"A-Zone":"현실·조직 중심, 계획과 안정의 영역",
-"B-Zone":"공감·감성 중심, 관계와 가치의 영역",
-"C-Zone":"전략·창의 중심, 분석과 비전의 영역",
-"D-Zone":"모험·자유 중심, 즉흥과 감각의 영역"
-};
+// 로컬스토리지 데이터 불러오기
+const ilju = localStorage.getItem("yourzoy_ilju") || "병자"; // 예시
+const zone = localStorage.getItem("yourzoy_zone") || "C-Zone (전략·정복형)";
 
-const data=iljuTable[ilju]||{fam:"리미티드조이",look:"미등록",char:"Uncoded Joy"};
-document.getElementById("out").innerHTML=`
-<h2>${data.char}</h2>
-<div class="card">
-<b>사주 일주</b><br>${ilju}<br>
-<b>가문</b>: ${data.fam}<br>
-<b>스타일</b>: ${data.look}
-</div>
-<div class="card">
-<b>MBTI</b>: ${mbti}<br>
-<b>ZONE</b>: ${zone}<br>
-설명: ${zoneDesc[zone]}
-</div>
-<div class="card">
-<b>조합 인사이트</b><br>
-당신은 <b>${data.fam}</b> 세계관 속에서 <b>${zone}</b> 유형의 사고 패턴을 가진 사람입니다.<br>
-${data.look} 룩의 감성과 ${zoneDesc[zone]}이 결합해 독특한 에너지를 만듭니다.<br><br>
-이 캐릭터는 ‘${data.char} (${ilju}일주)’와 ‘${mbti}(${zone})’의 조합으로,
-현실 행동과 내면 성향이 교차할 때 강한 몰입력과 영향력을 보여줍니다.
-</div>
-<button onclick="location.href='index.html'">다시하기</button>
-`;
+// 일주 분리
+const gan = ilju[0];
+const ji = ilju[1];
+
+// 매칭
+const color = elementColor[gan] || "무색";
+const animal = animalMap[ji] || "미등록";
+const emoji = emojiMap[ji] || "✨";
+const charName = `${color} ${animal} 조이`;
+
+// 결과 렌더링
+document.getElementById("animalEmoji").textContent = emoji;
+document.getElementById("titleText").textContent = charName;
+document.getElementById("zoneText").textContent = zone;
+document.getElementById("descText").textContent = zoneDesc[zone];
 </script>
 </body>
 </html>
