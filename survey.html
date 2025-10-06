@@ -1,197 +1,113 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>YOURZOY 성향 테스트</title>
 <style>
-  :root{
-    --navy:#0B132B;
-    --navy-2:#1C2541;
-    --gold:#FFD700;
-    --text:#FFFFFF;
-  }
-  html,body{
-    margin:0;
-    padding:0;
-    background:var(--navy);
-    color:var(--text);
-    font-family:"Noto Sans KR", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  }
-  .wrap{
-    max-width:520px;
-    margin:5vh auto 7vh;
-    padding:24px;
-    border-radius:22px;
-    background:linear-gradient(180deg,rgba(255,215,0,.08),rgba(255,215,0,0) 160px),var(--navy-2);
-    box-shadow:0 24px 60px rgba(0,0,0,.32);
-    border:1px solid rgba(255,215,0,.16);
-    transition:all .3s ease;
-  }
-  .title{display:flex;align-items:center;gap:10px;justify-content:center;margin:6px 0 10px}
-  .title .emoji{font-size:28px;filter:drop-shadow(0 2px 6px rgba(255,215,0,.25))}
-  h1{margin:0;font-size:22px;letter-spacing:.2px;color:var(--text)}
-  .subtitle{margin:4px 0 20px;text-align:center;color:rgba(255,255,255,.7);font-size:14px}
-  .question{margin:24px 0}
-  .question h3{font-size:17px;margin-bottom:14px;color:var(--gold)}
-  .options label{
-    display:block;
-    margin:8px 0;
-    padding:12px 16px;
-    border-radius:14px;
-    border:1px solid rgba(255,215,0,.25);
-    background:#0f1733;
-    cursor:pointer;
-    transition:.2s;
-  }
-  .options label:hover{
-    border-color:var(--gold);
-    box-shadow:0 0 6px rgba(255,215,0,.3);
-  }
-  input[type="radio"]{margin-right:8px;}
-  #nextBtn{
-    width:100%;
-    margin-top:24px;
-    background:var(--gold);
-    color:#111;
-    padding:13px 16px;
-    border:none;
-    border-radius:14px;
-    font-size:16px;
-    font-weight:800;
-    cursor:pointer;
-    transition:.2s;
-  }
-  #nextBtn:hover{filter:brightness(1.08)}
-  #resultZone{
-    display:none;
-    margin-top:28px;
-    background:#111833;
-    border:1px solid rgba(255,215,0,.25);
-    border-radius:16px;
-    padding:20px;
-    text-align:center;
-  }
-  #mbtiText b{color:var(--gold);font-size:18px}
-  a.btn{
-    display:inline-block;
-    margin-top:16px;
-    background:var(--gold);
-    color:#111;
-    padding:10px 16px;
-    border-radius:12px;
-    font-weight:700;
-    text-decoration:none;
-  }
-  footer{margin-top:20px;text-align:center;color:rgba(255,255,255,.5);font-size:12px}
+:root{--navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFF;}
+body{margin:0;background:var(--navy);color:var(--text);font-family:"Noto Sans KR",sans-serif;}
+.wrap{max-width:580px;margin:5vh auto;padding:30px;border-radius:24px;background:var(--navy2);box-shadow:0 20px 60px rgba(0,0,0,.4);}
+h1{text-align:center;color:var(--gold);margin:0 0 8px;}
+p{text-align:center;color:rgba(255,255,255,.75);}
+.question{margin:30px 0;}
+.question h3{color:var(--gold);font-size:17px;margin-bottom:14px;}
+.options{display:flex;flex-direction:column;gap:8px;}
+label{font-size:15px;}
+input[type=radio]{margin-right:6px;}
+button{margin-top:24px;width:100%;background:var(--gold);color:#111;padding:13px 16px;border:none;border-radius:14px;font-weight:800;cursor:pointer;}
+button:hover{filter:brightness(1.05);}
+.progress{height:6px;background:rgba(255,215,0,.25);border-radius:4px;overflow:hidden;margin:16px 0;}
+.progress-inner{height:6px;background:var(--gold);width:0;transition:.3s;}
+footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:20px;}
 </style>
 </head>
 <body>
-  <main class="wrap">
-    <div class="title"><span class="emoji">🧭</span><h1>YOURZOY 성향 테스트</h1></div>
-    <p class="subtitle">30개의 질문으로 당신의 <b>MBTI 섹터</b>를 분석해요.<br>솔직하게 답할수록 정확도가 높아요.</p>
-
-    <section id="quiz"></section>
-
-    <button id="nextBtn">다음</button>
-
-    <section id="resultZone">
-      <h3>결과 요약</h3>
-      <p id="mbtiText"></p>
-      <a href="result.html" class="btn">결과 리포트 보러가기</a>
-    </section>
-
-    <footer>© 2025 YOURZOY. All rights reserved.</footer>
-  </main>
+<main class="wrap">
+<h1>YOURZOY</h1>
+<p>30문항으로 당신의 성향을 분석합니다.<br>응답은 평균 3분 이내에 완료됩니다.</p>
+<div class="progress"><div class="progress-inner" id="bar"></div></div>
+<div id="quiz"></div>
+<button id="next">다음</button>
+<footer>© 2025 YOURZOY</footer>
+</main>
 
 <script>
-const questions = [
-  {q:"나는 즉흥적인 편이다.",a:"P",b:"J"},
-  {q:"나는 세부사항보다 큰 그림을 본다.",a:"N",b:"S"},
-  {q:"결정보다는 가능성을 더 중요하게 생각한다.",a:"P",b:"J"},
-  {q:"나는 감정보다 논리를 우선시한다.",a:"T",b:"F"},
-  {q:"새로운 아이디어를 떠올리는 게 즐겁다.",a:"N",b:"S"},
-  {q:"나는 타인과의 관계에서 에너지를 얻는다.",a:"E",b:"I"},
-  {q:"계획을 세우기보다 상황에 맞게 움직인다.",a:"P",b:"J"},
-  {q:"감정보다는 사실을 신뢰한다.",a:"T",b:"F"},
-  {q:"나는 낯선 사람에게 먼저 말을 거는 편이다.",a:"E",b:"I"},
-  {q:"내 공간은 체계적으로 정돈되어 있다.",a:"J",b:"P"},
-  {q:"나는 감정 표현이 솔직한 편이다.",a:"F",b:"T"},
-  {q:"나는 규칙보다는 창의성을 중시한다.",a:"P",b:"J"},
-  {q:"주변 사람들의 감정에 민감하다.",a:"F",b:"T"},
-  {q:"나는 세부적인 지시보다 자율적인 환경을 선호한다.",a:"P",b:"J"},
-  {q:"사람들과 함께 있을 때 활력이 생긴다.",a:"E",b:"I"},
-  {q:"논리적 근거가 없는 감정은 이해하기 어렵다.",a:"T",b:"F"},
-  {q:"미래의 가능성을 상상하는 것을 즐긴다.",a:"N",b:"S"},
-  {q:"일정한 루틴보다 즉흥적인 변화를 좋아한다.",a:"P",b:"J"},
-  {q:"나는 사람을 돕는 일에 기쁨을 느낀다.",a:"F",b:"T"},
-  {q:"나는 개인의 가치관보다 효율을 우선시한다.",a:"T",b:"F"},
-  {q:"조용한 시간보다 사람들과의 대화를 선호한다.",a:"E",b:"I"},
-  {q:"직관적으로 판단하기보다 자료를 분석한다.",a:"S",b:"N"},
-  {q:"나는 계획을 세워두면 마음이 편하다.",a:"J",b:"P"},
-  {q:"변화를 즐기기보다는 안정감을 선호한다.",a:"J",b:"P"},
-  {q:"사람들의 감정을 읽는 게 자연스럽다.",a:"F",b:"T"},
-  {q:"나는 새로운 시도에 두려움이 없다.",a:"N",b:"S"},
-  {q:"결정 내릴 때 감정보다는 객관성을 따른다.",a:"T",b:"F"},
-  {q:"친구들이 나를 사교적이라고 한다.",a:"E",b:"I"},
-  {q:"감각적인 경험이 삶의 큰 즐거움이다.",a:"S",b:"N"},
-  {q:"나는 즉시 행동하기보다 먼저 관찰한다.",a:"I",b:"E"},
+const ilju=new URLSearchParams(window.location.search).get("ilju");
+
+const Q=[
+  {q:"나는 새로운 환경에서 에너지를 얻는다.",t:"E"},
+  {q:"나는 세부사항보다는 전체적인 그림을 본다.",t:"N"},
+  {q:"나는 감정보다 사실을 중시한다.",t:"T"},
+  {q:"나는 즉흥적보다는 계획적이다.",t:"J"},
+  {q:"나는 혼자 있는 시간을 통해 재충전한다.",t:"I"},
+  {q:"나는 감정의 변화를 잘 느낀다.",t:"F"},
+  {q:"나는 현실적인 정보를 선호한다.",t:"S"},
+  {q:"나는 일보다는 관계를 우선시한다.",t:"F"},
+  {q:"나는 즉각적인 결정에 능하다.",t:"P"},
+  {q:"나는 전체 구조를 설계하는 것을 좋아한다.",t:"T"},
+  {q:"나는 타인의 감정에 예민하다.",t:"F"},
+  {q:"나는 즉흥적 모험을 즐긴다.",t:"P"},
+  {q:"나는 정리정돈된 환경을 선호한다.",t:"J"},
+  {q:"나는 규칙보다 직감을 따른다.",t:"N"},
+  {q:"나는 대화를 통해 생각이 정리된다.",t:"E"},
+  {q:"나는 데이터로 사고하는 편이다.",t:"T"},
+  {q:"나는 아이디어를 시각적으로 구상한다.",t:"N"},
+  {q:"나는 사람들의 분위기에 영향을 받는다.",t:"F"},
+  {q:"나는 혼자서도 즐겁게 논다.",t:"I"},
+  {q:"나는 계획에 따라 움직일 때 안정된다.",t:"J"},
+  {q:"나는 감각적인 자극을 좋아한다.",t:"S"},
+  {q:"나는 논리적으로 토론하기를 즐긴다.",t:"T"},
+  {q:"나는 상황에 따라 유연하게 바뀐다.",t:"P"},
+  {q:"나는 감정 표현이 솔직하다.",t:"F"},
+  {q:"나는 미래에 대한 상상을 자주 한다.",t:"N"},
+  {q:"나는 대담하고 즉흥적인 성격이다.",t:"E"},
+  {q:"나는 세세한 업무도 꼼꼼하게 한다.",t:"S"},
+  {q:"나는 일정한 루틴을 좋아한다.",t:"J"},
+  {q:"나는 새로운 사람을 만나는 게 설렌다.",t:"E"},
+  {q:"나는 완벽주의적 경향이 있다.",t:"J"}
 ];
 
-let idx = 0;
-const quizEl = document.getElementById("quiz");
-const nextBtn = document.getElementById("nextBtn");
-const resultZone = document.getElementById("resultZone");
-const mbtiText = document.getElementById("mbtiText");
+let i=0;let s={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
+const quiz=document.getElementById("quiz");const bar=document.getElementById("bar");
 
-const scores = {E:0, I:0, N:0, S:0, T:0, F:0, J:0, P:0};
-
-function renderQuestion(){
-  const q = questions[idx];
-  quizEl.innerHTML = `
-    <div class="question">
-      <h3>${idx+1}. ${q.q}</h3>
-      <div class="options">
-        <label><input type="radio" name="answer" value="${q.a}" /> 그렇다</label>
-        <label><input type="radio" name="answer" value="${q.b}" /> 아니다</label>
-      </div>
-    </div>
-  `;
+function drawQ(){
+  const q=Q[i];
+  quiz.innerHTML=`<div class="question"><h3>Q${i+1}. ${q.q}</h3>
+  <div class="options">
+  <label><input type="radio" name="a" value="1">전혀 아니다</label>
+  <label><input type="radio" name="a" value="2">아니다</label>
+  <label><input type="radio" name="a" value="3">보통이다</label>
+  <label><input type="radio" name="a" value="4">그렇다</label>
+  <label><input type="radio" name="a" value="5">매우 그렇다</label>
+  </div></div>`;
+  bar.style.width=`${(i/Q.length)*100}%`;
 }
+drawQ();
 
-nextBtn.addEventListener("click",()=>{
-  const choice = document.querySelector("input[name='answer']:checked");
-  if(!choice){alert("하나를 선택해주세요.");return;}
-  scores[choice.value]++;
-  idx++;
-  if(idx < questions.length){
-    renderQuestion();
-  } else {
-    showResult();
+document.getElementById("next").onclick=()=>{
+  const a=document.querySelector("input[name=a]:checked");
+  if(!a)return alert("응답을 선택해주세요!");
+  const val=parseInt(a.value);
+  const type=Q[i].t;
+  if(["E","N","T","J"].includes(type))s[type]+=val; else s[type]+=6-val;
+  i++;
+  if(i<Q.length){drawQ();}else{
+    const mbti=makeMBTI(s);
+    const zone=toZone(mbti);
+    window.location.href=`result.html?ilju=${ilju}&mbti=${mbti}&zone=${zone}`;
   }
-  document.querySelectorAll("input[name='answer']").forEach(el=>el.checked=false);
-});
+};
 
-function showResult(){
-  quizEl.style.display="none";
-  nextBtn.style.display="none";
-  resultZone.style.display="block";
-
-  let mbti = (scores.E>scores.I?"E":"I")
-            + (scores.N>scores.S?"N":"S")
-            + (scores.T>scores.F?"T":"F")
-            + (scores.J>scores.P?"J":"P");
-
-  let zone = "";
-  if(["INTJ","INTP","ENTJ","ENTP"].includes(mbti)) zone="C-ZONE (분석가)";
-  else if(["INFJ","INFP","ENFJ","ENFP"].includes(mbti)) zone="B-ZONE (외교관)";
-  else if(["ISTJ","ISFJ","ESTJ","ESFJ"].includes(mbti)) zone="A-ZONE (관리자)";
-  else zone="D-ZONE (탐험가)";
-
-  mbtiText.innerHTML = `<b>${mbti}</b> 유형입니다.<br>당신은 <b>${zone}</b> 성향이에요!`;
+function makeMBTI(s){
+  return (s.E>=s.I?"E":"I")+(s.S>=s.N?"S":"N")+(s.T>=s.F?"T":"F")+(s.J>=s.P?"J":"P");
 }
-
-renderQuestion();
+function toZone(m){
+  if(["INTJ","INTP","ENTJ","ENTP"].includes(m))return"C-Zone";
+  if(["INFJ","INFP","ENFJ","ENFP"].includes(m))return"B-Zone";
+  if(["ISTJ","ISFJ","ESTJ","ESFJ"].includes(m))return"A-Zone";
+  return"D-Zone";
+}
 </script>
 </body>
 </html>
