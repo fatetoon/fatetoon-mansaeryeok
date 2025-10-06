@@ -3,65 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>YOURZOY 사주 등록</title>
+<title>YourZoy Test</title>
 <style>
-:root {--navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFF;}
-body{margin:0;background:var(--navy);color:var(--text);font-family:"Noto Sans KR",sans-serif;}
-.wrap{max-width:520px;margin:6vh auto;padding:28px;border-radius:24px;background:var(--navy2);
-box-shadow:0 18px 50px rgba(0,0,0,.4);}
-h1{text-align:center;color:var(--gold);margin-bottom:4px;font-size:24px;}
-p{text-align:center;color:rgba(255,255,255,.7);margin-bottom:24px;}
-label{color:var(--gold);font-weight:700;font-size:14px;display:block;margin:10px 0 6px;}
-input,select,button{width:100%;padding:13px;border:none;border-radius:12px;box-sizing:border-box;}
-input,select{background:#0f1733;color:var(--text);border:1px solid rgba(255,215,0,.3);}
-button{background:var(--gold);color:#111;font-weight:800;margin-top:18px;cursor:pointer;}
-button:hover{filter:brightness(1.05);}
-footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:20px;}
+:root {
+  --navy: #0B132B;
+  --gold: #FFD700;
+  --text: #FFFFFF;
+}
+body {
+  margin: 0; padding: 0; background: var(--navy); color: var(--text);
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.wrap {
+  max-width: 480px; margin: 5vh auto; background: rgba(255,215,0,0.05);
+  border: 1px solid rgba(255,215,0,.25); border-radius: 18px;
+  box-shadow: 0 0 40px rgba(0,0,0,.3); padding: 24px;
+}
+h1 { text-align: center; color: var(--gold); margin-bottom: 10px; }
+label { display:block; margin-top:14px; color: var(--gold); font-weight:600; }
+input, select {
+  width:100%; padding:12px; margin-top:6px; border-radius:10px;
+  border:1px solid rgba(255,215,0,0.25); background:#0F1733; color:var(--text);
+}
+button {
+  width:100%; padding:14px; margin-top:24px; font-size:16px; font-weight:700;
+  background:var(--gold); color:#111; border:none; border-radius:12px; cursor:pointer;
+}
+.result {
+  background:rgba(255,255,255,0.05); padding:16px; border-radius:12px; margin-top:20px;
+  border:1px solid rgba(255,215,0,0.2);
+}
+footer { text-align:center; margin-top:18px; font-size:12px; color:rgba(255,255,255,.6); }
 </style>
 </head>
 <body>
 <main class="wrap">
-  <h1>YOURZOY</h1>
-  <p>생년월일과 시간을 입력하면 당신의 <b>일주</b>를 찾아드릴게요.</p>
-
+  <h1>🔮 YourZoy Test</h1>
+  <p style="text-align:center;color:rgba(255,255,255,.8);margin-bottom:16px;">
+    당신의 <b>기질 색상 + 동물</b>을 확인해보세요.
+  </p>
   <label>생년월일</label>
   <input id="birthdate" type="date">
-  <label>출생시간</label>
+  <label>출생 시간</label>
   <select id="birthtime">
-    <option value="0">자시 (23:00~00:59)</option>
-    <option value="1">축시 (01:00~02:59)</option>
-    <option value="2">인시 (03:00~04:59)</option>
-    <option value="3">묘시 (05:00~06:59)</option>
-    <option value="4">진시 (07:00~08:59)</option>
-    <option value="5">사시 (09:00~10:59)</option>
-    <option value="6">오시 (11:00~12:59)</option>
-    <option value="7">미시 (13:00~14:59)</option>
-    <option value="8">신시 (15:00~16:59)</option>
-    <option value="9">유시 (17:00~18:59)</option>
-    <option value="10">술시 (19:00~20:59)</option>
-    <option value="11">해시 (21:00~22:59)</option>
+    <option value="0">자시 (23~00)</option><option value="1">축시 (01~02)</option>
+    <option value="2">인시 (03~04)</option><option value="3">묘시 (05~06)</option>
+    <option value="4">진시 (07~08)</option><option value="5">사시 (09~10)</option>
+    <option value="6">오시 (11~12)</option><option value="7">미시 (13~14)</option>
+    <option value="8">신시 (15~16)</option><option value="9">유시 (17~18)</option>
+    <option value="10">술시 (19~20)</option><option value="11">해시 (21~22)</option>
   </select>
-
-  <button id="next">성향 테스트 시작</button>
+  <button id="go">결과 보기</button>
+  <div class="result" id="result" style="display:none"></div>
   <footer>© 2025 YOURZOY</footer>
 </main>
 
 <script>
-// 천간, 지지 계산 핵심 로직 (형 기존 만세력 코드 기반 요약)
 const stems=["갑","을","병","정","무","기","경","신","임","계"];
-const branchK=["자","축","인","묘","진","사","오","미","신","유","술","해"];
+const branch=["자","축","인","묘","진","사","오","미","신","유","술","해"];
+const ganColorMap={갑:"초록",을:"초록",병:"빨강",정:"빨강",무:"노란",기:"노란",경:"회색",신:"회색",임:"남색",계:"남색"};
+const animalMap={자:"쥐",축:"소",인:"호랑이",묘:"토끼",진:"용",사:"뱀",오:"말",미:"양",신:"원숭이",유:"닭",술:"개",해:"돼지"};
 
-function JD(y,m,d){const a=Math.floor((14-m)/12);const y2=y+4800-a;const m2=m+12*a-3;return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;}
-function getDayGanji(y,m,d){const base=JD(1984,2,2);const idx=(JD(y,m,d)-base+2)%60;return[stems[idx%10],branchK[idx%12]];}
+function JD(y,m,d){const a=Math.floor((14-m)/12);const y2=y+4800-a;const m2=m+12*a-3;
+return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;}
+function getDayGanji(y,m,d){const base=JD(1984,2,2);const idx=(JD(y,m,d)-base+2)%60;return[stems[idx%10],branch[idx%12]];}
 
-document.getElementById("next").addEventListener("click",()=>{
-  const dateStr=document.getElementById("birthdate").value;
-  if(!dateStr)return alert("생년월일을 선택해주세요!");
-  const [y,m,d]=dateStr.split("-").map(n=>parseInt(n,10));
-  const h=parseInt(document.getElementById("birthtime").value);
-  const [gan,ji]=getDayGanji(y,m,d);
-  const ilju=gan+ji;
-  window.location.href=`survey.html?ilju=${ilju}`;
+document.getElementById("go").addEventListener("click",()=>{
+  const date=document.getElementById("birthdate").value;
+  if(!date){alert("생년월일을 입력하세요.");return;}
+  const [y,m,d]=date.split("-").map(Number);
+  const [stem, br]=getDayGanji(y,m,d);
+  const color=ganColorMap[stem], animal=animalMap[br];
+  const result=`당신은 <b style="color:${color==='노란'?'#FFD700':color==='남색'?'#1E90FF':color==='회색'?'#CCCCCC':color==='초록'?'#00FF7F':'#FF4040'}">${color} ${animal}</b> 타입입니다.`;
+  document.getElementById("result").style.display="block";
+  document.getElementById("result").innerHTML=`<p>${result}</p>
+  <button onclick="location.href='survey.html'">성향 테스트 하러가기 →</button>`;
 });
 </script>
 </body>
