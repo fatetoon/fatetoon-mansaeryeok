@@ -161,3 +161,16 @@
   </script>
 </body>
 </html>
+<script>
+  const saju = localStorage.getItem("sajuType");
+  const mbti = localStorage.getItem("yourzoyType");
+
+  document.getElementById("sajuResult").textContent = saju ? saju : "사주 데이터 없음";
+  document.getElementById("mbtiResult").textContent = mbti ? mbti : "성향 데이터 없음";
+
+  // 통합 분석 문장
+  if(saju && mbti){
+    document.getElementById("totalResult").textContent =
+      `${saju}의 기운과 ${mbti} 성향이 결합되어, 리스크 속에서도 창의적으로 돌파하는 인물형입니다.`;
+  }
+</script>
