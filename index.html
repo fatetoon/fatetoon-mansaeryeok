@@ -1,87 +1,123 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YOURZOY 사주 테스트</title>
 <style>
-  :root{
-    --navy:#0B132B;
-    --navy-2:#1C2541;
-    --gold:#FFD700;
-    --text:#FFFFFF;
-  }
-  html,body{margin:0;padding:0;background:var(--navy);color:var(--text);font-family:"Noto Sans KR",system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Malgun Gothic,sans-serif;}
-  .wrap{max-width:520px;margin:5vh auto 7vh;padding:24px;border-radius:22px;background:linear-gradient(180deg,rgba(255,215,0,.08),rgba(255,215,0,0) 160px),var(--navy-2);box-shadow:0 24px 60px rgba(0,0,0,.32);border:1px solid rgba(255,215,0,.16)}
-  .title{display:flex;align-items:center;gap:10px;justify-content:center;margin:6px 0 10px}
-  .title .emoji{font-size:28px;filter:drop-shadow(0 2px 6px rgba(255,215,0,.25))}
-  h1{margin:0;font-size:22px;letter-spacing:.2px;color:var(--text)}
-  .subtitle{margin:4px 0 20px;text-align:center;color:rgba(255,255,255,.7);font-size:14px}
-  label{display:block;margin:14px 2px 8px;font-weight:700;color:var(--gold);font-size:13px;letter-spacing:.2px}
-  .input,select,button{width:100%;box-sizing:border-box}
-  .input,select{background:#0f1733;border:1px solid rgba(255,215,0,.25);color:var(--text);padding:12px 14px;border-radius:12px;font-size:15px;outline:none;transition:.18s}
-  .input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,215,0,.12)}
-  button{margin-top:16px;background:var(--gold);color:#111;padding:13px 16px;border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;transition:.2s}
-  button:hover{filter:brightness(1.03)}
-  .result{margin-top:18px;padding:16px;background:#111833;border:1px solid rgba(255,215,0,.18);border-radius:16px}
-  .gridLabels{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0 6px}
-  .gridLabels span{font-size:12px;color:rgba(255,255,255,.7);text-align:center}
-  .cardGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-  .card{background:var(--navy-2);border:1.8px solid rgba(255,215,0,.55);border-radius:12px;height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 0 32px rgba(255,215,0,.06)}
-  .big{font-size:28px;line-height:1;font-weight:800;letter-spacing:.02em;color:var(--text);text-shadow:0 1px 0 #000}
-  .small{font-size:12px;margin-top:2px;color:var(--gold);opacity:.95;font-weight:700}
-  .divider{height:1px;background:linear-gradient(90deg,rgba(255,215,0,0),rgba(255,215,0,.35),rgba(255,215,0,0));margin:14px 0}
-  .kv{background:#0f1733;border:1px solid rgba(255,215,0,.16);border-radius:12px;padding:10px 12px;font-size:14px}
-  .kv b{color:var(--gold)}
-  footer{margin-top:14px;text-align:center;color:rgba(255,255,255,.55);font-size:12px}
-  footer a{color:var(--gold);text-decoration:none;font-weight:700}
-  @media (max-width:420px){
-    .wrap{margin:2.8vh 16px 5.6vh;padding:20px;border-radius:18px}
-    .card{height:64px}
-    .big{font-size:24px}
-  }
+body {
+  background-color: #0d1424;
+  color: #fff;
+  font-family: "Pretendard", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+.container {
+  background: #182135;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  width: 350px;
+  box-shadow: 0 0 25px rgba(255,215,0,0.08);
+}
+h1 {
+  color: #FFD700;
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+}
+label {
+  display: block;
+  margin-top: 20px;
+  text-align: left;
+  color: #ccc;
+  font-size: 0.9rem;
+}
+input, select {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  margin-top: 6px;
+  font-size: 1rem;
+}
+button {
+  width: 100%;
+  background-color: #FFD700;
+  border: none;
+  color: #111;
+  font-weight: 700;
+  padding: 12px;
+  margin-top: 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+button:hover { background-color: #ffcc00; }
+
+.result {
+  background-color: #10192c;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 25px;
+  line-height: 1.6;
+  display: none;
+}
+#surveyBtn {
+  display: none;
+  text-decoration: none;
+  color: #111;
+  background: #FFD700;
+  padding: 14px 0;
+  border-radius: 16px;
+  font-weight: 800;
+  display: block;
+  text-align: center;
+  margin-top: 40px;
+}
+footer {
+  margin-top: 40px;
+  color: #777;
+  font-size: 0.8rem;
+}
 </style>
 </head>
+
 <body>
-  <main class="wrap">
-    <div class="title"><span class="emoji">🪄</span><h1>YOURZOY 사주 테스트</h1></div>
-    <p class="subtitle">생년월일/시간을 입력하면 <b>년주·월주·일주·시주</b>를 알려줘요.<br>MBTI보다 정확한 ‘당신의 기질 코드’ 찾기</p>
+<div class="container">
+  <h1>✨ YOURZOY 사주 테스트 ✨</h1>
+  <p style="font-size:0.9rem;color:#bbb;">생년월일과 시간을 입력하면<br>당신의 네주·일주·시주를 알려드립니다.</p>
 
-    <label for="birthdate">생년월일</label>
-    <input id="birthdate" class="input" type="date" />
-    <label for="birthtime">출생 시간</label>
-    <select id="birthtime">
-      <option value="0">자시 (23:00~00:59)</option>
-      <option value="1">축시 (01:00~02:59)</option>
-      <option value="2">인시 (03:00~04:59)</option>
-      <option value="3">묘시 (05:00~06:59)</option>
-      <option value="4">진시 (07:00~08:59)</option>
-      <option value="5">사시 (09:00~10:59)</option>
-      <option value="6">오시 (11:00~12:59)</option>
-      <option value="7">미시 (13:00~14:59)</option>
-      <option value="8">신시 (15:00~16:59)</option>
-      <option value="9">유시 (17:00~18:59)</option>
-      <option value="10">술시 (19:00~20:59)</option>
-      <option value="11">해시 (21:00~22:59)</option>
-    </select>
-    <button id="go">결과 보기</button>
+  <label>생년월일</label>
+  <input type="date" id="birthdate">
 
-    <section id="result" class="result" style="display:none">
-      <div class="gridLabels">
-        <span>시주(干)</span><span>일주(干)</span><span>월주(干)</span><span>년주(干)</span>
-      </div>
-      <div class="cardGrid" id="rowG"></div>
-      <div class="divider"></div>
-      <div class="gridLabels">
-        <span>시주(支)</span><span>일주(支)</span><span>월주(支)</span><span>년주(支)</span>
-      </div>
-      <div class="cardGrid" id="rowZ"></div>
-      <div class="divider"></div>
-      <div class="kv" id="fourpillarsText"></div>
-    </section>
+  <label>출생 시간</label>
+  <select id="birthtime">
+    <option value="0">자시 (23:00~00:59)</option>
+    <option value="1">축시 (01:00~02:59)</option>
+    <option value="2">인시 (03:00~04:59)</option>
+    <option value="3">묘시 (05:00~06:59)</option>
+    <option value="4">진시 (07:00~08:59)</option>
+    <option value="5">사시 (09:00~10:59)</option>
+    <option value="6">오시 (11:00~12:59)</option>
+    <option value="7">미시 (13:00~14:59)</option>
+    <option value="8">신시 (15:00~16:59)</option>
+    <option value="9">유시 (17:00~18:59)</option>
+    <option value="10">술시 (19:00~20:59)</option>
+    <option value="11">해시 (21:00~22:59)</option>
+  </select>
 
-    <footer>© 2025 <a href="https://yourzoy.com">YOURZOY</a>. 모든 콘텐츠는 참고용입니다.</footer>
-  </main>
+  <button id="go">결과 보기</button>
+
+  <div id="resultBox" class="result"></div>
+
+  <a id="surveyBtn" href="survey.html">성향 테스트 하러가기</a>
+</div>
+
+<footer>© 2025 YOURZOY. 모든 콘텐츠는 참고용입니다.</footer>
 
 <script>
 const stems=["갑","을","병","정","무","기","경","신","임","계"];
@@ -89,74 +125,33 @@ const stemsHZ=["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
 const branchK=["자","축","인","묘","진","사","오","미","신","유","술","해"];
 const branchH=["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
 
-const ganColorMap={갑:"푸른",을:"푸른",병:"붉은",정:"붉은",무:"노란",기:"노란",경:"하얀",신:"하얀",임:"검은",계:"검은"};
-const branchAnimalMap={자:"쥐",축:"소",인:"호랑이",묘:"토끼",진:"용",사:"뱀",오:"말",미:"양",신:"원숭이",유:"닭",술:"개",해:"돼지"};
-const elementSymbol={갑:"🌳",을:"🌳",병:"🔥",정:"🔥",무:"🟤",기:"🟤",경:"⚪",신:"⚪",임:"💧",계:"💧"};
-
 function JD(y,m,d){const a=Math.floor((14-m)/12);const y2=y+4800-a;const m2=m+12*a-3;return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;}
 function getDayGanji(y,m,d){const base=JD(1984,2,2);const idx=(JD(y,m,d)-base+2)%60;return[stems[idx%10],branchK[idx%12],stemsHZ[idx%10],branchH[idx%12]];}
 function getYearGanji(y,m,d){const adj=(m<2||(m===2&&d<4))?y-1:y;return[stems[(adj-4)%10],branchK[(adj-4)%12],stemsHZ[(adj-4)%10],branchH[(adj-4)%12],adj];}
 function getMonthGanji(adjYear,m,d){const boundaries={2:4,3:6,4:5,5:6,6:6,7:7,8:8,9:8,10:8,11:7,12:7,1:6};const monthOrder={2:0,3:1,4:2,5:3,6:4,7:5,8:6,9:7,10:8,11:9,12:10,1:11};let mbIdx;if(m===1&&d<boundaries[1])mbIdx=11;else{const usePrev=d<boundaries[m];const key=usePrev?(m>1?m-1:12):m;mbIdx=monthOrder[key];}const yStemIdx=(adjYear-4)%10;let tigerStemIdx;if(yStemIdx===0||yStemIdx===5)tigerStemIdx=2;else if(yStemIdx===1||yStemIdx===6)tigerStemIdx=4;else if(yStemIdx===2||yStemIdx===7)tigerStemIdx=6;else if(yStemIdx===3||yStemIdx===8)tigerStemIdx=8;else tigerStemIdx=0;const stem=stems[(tigerStemIdx+mbIdx)%10];const stemHZ=stemsHZ[(tigerStemIdx+mbIdx)%10];const branch=["인","묘","진","사","오","미","신","유","술","해","자","축"][mbIdx];const branchHZ=["寅","卯","辰","巳","午","未","申","酉","戌","亥","子","丑"][mbIdx];return[stem,branch,stemHZ,branchHZ];}
 function getHourGanji(dayStemIdx,hourBranchIdx){const hStemIdx=(dayStemIdx*2+hourBranchIdx)%10;return[stems[hStemIdx],branchK[hourBranchIdx],stemsHZ[hStemIdx],branchH[hourBranchIdx]];}
 
-function renderCards(gan,zi){
-  const rowG=document.getElementById("rowG"),rowZ=document.getElementById("rowZ");
-  rowG.innerHTML="";rowZ.innerHTML="";
-  const order=[0,1,2,3];
-  order.forEach(i=>{
-    const c=document.createElement("div");
-    c.className="card";
-    c.innerHTML=`<div class="big">${gan[i][2]}</div><div class="small">${gan[i][0]}</div>`;
-    rowG.appendChild(c);
-  });
-  order.forEach(i=>{
-    const c=document.createElement("div");
-    c.className="card";
-    c.innerHTML=`<div class="big">${zi[i][3]}</div><div class="small">${zi[i][1]}</div>`;
-    rowZ.appendChild(c);
-  });
-}
-
 function calcAndShow(){
   const dateStr=document.getElementById("birthdate").value;
   const hIdx=parseInt(document.getElementById("birthtime").value,10);
-  const out=document.getElementById("result");
-  if(!dateStr){out.style.display="block";out.querySelector("#fourpillarsText").innerHTML="생년월일을 먼저 선택해 주세요.";return;}
-  const [y,m,d]=dateStr.split("-").map(n=>parseInt(n,10));
-  const [yStem,yBranch,yHZs,yHZb,adjY]=getYearGanji(y,m,d);
-  const [mStem,mBranch,mHZs,mHZb]=getMonthGanji(adjY,m,d);
-  const [dStem,dBranch,dHZs,dHZb]=getDayGanji(y,m,d);
-  const dStemIdx=stems.indexOf(dStem);
-  const [hStem,hBranch,hHZs,hHZb]=getHourGanji(dStemIdx,hIdx);
-  renderCards(
-    [[hStem,hBranch,hHZs,hHZb],[dStem,dBranch,dHZs,dHZb],[mStem,mBranch,mHZs,mHZb],[yStem,yBranch,yHZs,yHZb]],
-    [[hStem,hBranch,hHZs,hHZb],[dStem,dBranch,dHZs,dHZb],[mStem,mBranch,mHZs,mHZb],[yStem,yBranch,yHZs,yHZb]]
-  );
-  const txt=`년주: ${yStem}${yBranch}　|　월주: ${mStem}${mBranch}　|　일주: ${dStem}${dBranch}　|　시주: ${hStem}${hBranch}`;
-  const colorWord=ganColorMap[dStem],animalWord=branchAnimalMap[dBranch],symbol=elementSymbol[dStem];
-  const rep=`${symbol} ${colorWord} ${animalWord}`;
-  document.getElementById("fourpillarsText").innerHTML=`<b>요약</b><br>${txt}<br><br><b>대표 일주</b><br>${rep} (${dStem}${dBranch}일주)`;
-  out.style.display="block";
+  if(!dateStr)return alert("생년월일을 입력하세요!");
+  const [y,m,d]=dateStr.split("-").map(Number);
+  const [yStem,yBranch]=getYearGanji(y,m,d);
+  const [mStem,mBranch]=getMonthGanji(y,m,d);
+  const [dStem,dBranch]=getDayGanji(y,m,d);
+  const [hStem,hBranch]=getHourGanji(stems.indexOf(dStem),hIdx);
+
+  const resultBox=document.getElementById("resultBox");
+  resultBox.innerHTML=`<b>당신의 일주:</b> ${dStem}${dBranch}<br><br>
+  <b>년주:</b> ${yStem}${yBranch}　|　<b>월주:</b> ${mStem}${mBranch}　|　<b>시주:</b> ${hStem}${hBranch}`;
+  resultBox.style.display="block";
+
+  // 결과 저장 + 버튼 표시
+  localStorage.setItem("sajuType", `${dStem}${dBranch}`);
+  document.getElementById("surveyBtn").style.display = "block";
 }
 
-(function init(){
-  const el=document.getElementById("birthdate");
-  const today=new Date();
-  const yyyy=today.getFullYear(),mm=String(today.getMonth()+1).padStart(2,"0"),dd=String(today.getDate()).padStart(2,"0");
-  el.value=`${yyyy}-${mm}-${dd}`;
-  document.getElementById("go").addEventListener("click",calcAndShow);
-})();
+document.getElementById("go").addEventListener("click", calcAndShow);
 </script>
 </body>
 </html>
-
-<!-- 사주 계산 완료 시 -->
-<script>
-  function goToSurvey(){
-    localStorage.setItem("sajuType", "병자일주"); // 여기에 실제 계산된 일주값 들어가게 변경
-    window.location.href = "survey.html";
-  }
-</script>
-
-<button onclick="goToSurvey()">성향 테스트 하러가기</button>
-
