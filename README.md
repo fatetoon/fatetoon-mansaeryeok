@@ -1,2 +1,2 @@
-# fatetoon-mansaeryeok
-FATE Toon 만세력 사이트
+# yourzoy
+yourzoy 성향테스트 사이트
