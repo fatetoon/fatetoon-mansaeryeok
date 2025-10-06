@@ -5,53 +5,105 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>YourZoy 결과</title>
 <style>
-body{
+body {
   background:#0B132B;
   color:#FFD700;
-  font-family:'Noto Sans KR',sans-serif;
+  font-family:'Noto Sans KR', sans-serif;
   padding:40px;
   line-height:1.7;
 }
-.wrap{max-width:720px;margin:auto;border:1px solid rgba(255,215,0,.25);border-radius:16px;padding:32px;background:#1C2541;}
-h1{text-align:center;font-size:26px;margin-bottom:10px;}
-h2{color:#fff;font-size:18px;margin-top:24px}
-.result-card{margin-top:20px;background:#0F1733;padding:20px;border-radius:14px;border:1px solid rgba(255,215,0,.3);}
-button{
-  background:#FFD700;color:#111;font-weight:700;
-  border:none;border-radius:12px;padding:12px 18px;
-  display:block;margin:24px auto 0;cursor:pointer;font-size:15px;
+.wrap {
+  max-width:720px;
+  margin:auto;
+  border:1px solid rgba(255,215,0,.25);
+  border-radius:16px;
+  padding:32px;
+  background:#1C2541;
+  text-align:center;
 }
-button:hover{filter:brightness(1.05);}
+h1 {
+  color:#FFD700;
+  font-size:26px;
+  margin-bottom:10px;
+}
+.result-card {
+  margin-top:20px;
+  background:#0F1733;
+  padding:20px;
+  border-radius:14px;
+  border:1px solid rgba(255,215,0,.3);
+  color:#fff;
+}
+button {
+  background:#FFD700;
+  color:#111;
+  font-weight:700;
+  border:none;
+  border-radius:12px;
+  padding:12px 18px;
+  display:block;
+  margin:24px auto 0;
+  cursor:pointer;
+  font-size:15px;
+}
+button:hover {filter:brightness(1.05);}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>🔮 YourZoy 결과</h1>
+    <h1>🐉 YourZoy 결과</h1>
     <div id="report" class="result-card"></div>
     <button onclick="location.href='survey.html'">성향테스트 하러 가기 →</button>
   </div>
 
 <script>
-// 리포트 데이터 (예시: 병자일주)
-const reports = {
-  "붉은 쥐": {
-    A: "🔥 붉은 쥐 A-Zone: 추진력과 정리력을 겸비한 리더형...",
-    B: "❤️ 붉은 쥐 B-Zone: 따뜻한 감성과 공감을 통한 영향력...",
-    C: "⚡ 붉은 쥐 C-Zone: 전략적이고 냉철한 판단력...",
-    D: "🌈 붉은 쥐 D-Zone: 자유로운 창조와 감각의 결합..."
-  },
-  // 여기에 나중에 240개 자동 리포트 붙일 예정
+// ---------------------------
+// 🔮 자동 리포트 생성
+// ---------------------------
+const colors = {
+  목: {name:"초록", emoji:"🌳", desc:"성장과 확장의 기운"},
+  화: {name:"붉은", emoji:"🔥", desc:"열정과 추진의 기운"},
+  토: {name:"노란", emoji:"🌞", desc:"안정과 중심의 기운"},
+  금: {name:"회색", emoji:"⚙️", desc:"질서와 논리의 기운"},
+  수: {name:"남색", emoji:"💧", desc:"감성·지혜의 기운"}
+};
+const animals = ["쥐","소","호랑이","토끼","용","뱀","말","양","원숭이","닭","개","돼지"];
+const zones = {
+  A:{name:"A-Zone",desc:"체계와 정리를 중시하는 구조적 성향"},
+  B:{name:"B-Zone",desc:"공감과 관계를 중시하는 따뜻한 성향"},
+  C:{name:"C-Zone",desc:"전략과 창조를 중시하는 분석적 성향"},
+  D:{name:"D-Zone",desc:"자유와 몰입을 중시하는 감각적 성향"}
 };
 
-// URL에서 일주, 존 파라미터 읽기
+// 5오행 * 12지지 = 60조합 * 4존 = 240 조합 자동생성
+const reports = {};
+const ohengKeys = Object.keys(colors);
+ohengKeys.forEach(oh => {
+  animals.forEach(an => {
+    const name = `${colors[oh].name} ${an}`;
+    reports[name] = {};
+    Object.keys(zones).forEach(z=>{
+      reports[name][z] = `${colors[oh].emoji} <b>${name}</b> ${zones[z].name}<br><br>` +
+      `${colors[oh].desc}과 ${zones[z].desc}이 결합되어 ` +
+      `당신은 '${name}'의 에너지로 세상을 탐험합니다. ` +
+      `균형 잡힌 사고와 강한 집중력을 통해 자신만의 길을 만들어가는 타입입니다.`;
+    });
+  });
+});
+
+// ---------------------------
+// 🧩 URL 데이터 로드
+// ---------------------------
 const params = new URLSearchParams(window.location.search);
-const ilju = params.get('ilju');  // 예: "붉은 쥐"
-const zone = params.get('zone');  // 예: "A"
+const ilju = params.get('ilju'); // ex) "붉은 쥐"
+const zone = params.get('zone'); // ex) "C"
 
 if (ilju && zone && reports[ilju] && reports[ilju][zone]) {
-  document.getElementById("report").innerHTML = `<b>${ilju}</b><br><br>${reports[ilju][zone]}`;
+  document.getElementById("report").innerHTML = reports[ilju][zone];
 } else {
-  document.getElementById("report").innerHTML = "⚠️ 데이터가 아직 연결되지 않았습니다.";
+  document.getElementById("report").innerHTML =
+  "⚠️ 데이터가 아직 연결되지 않았습니다.<br><br>" +
+  "<small>테스트를 처음부터 다시 진행해주세요.</small>";
 }
 </script>
 </body>
