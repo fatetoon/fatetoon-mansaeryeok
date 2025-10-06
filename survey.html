@@ -3,81 +3,160 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>YourZoy Test</title>
+<title>YourZoy 성향 테스트</title>
 <style>
-body{margin:0;padding:0;background:#0B132B;color:#fff;font-family:'Noto Sans KR',sans-serif;text-align:center;}
-.wrap{max-width:520px;margin:8vh auto;padding:30px;background:#1C2541;border-radius:20px;border:1px solid rgba(255,215,0,.25);}
-h1{color:#FFD700;}
-button{background:#FFD700;color:#111;padding:12px 22px;border:none;border-radius:12px;margin:6px;cursor:pointer;font-weight:700;}
-.progress{margin-bottom:16px;color:rgba(255,255,255,.7);}
+body{
+  background:#0B132B;
+  color:#fff;
+  font-family:'Noto Sans KR',sans-serif;
+  text-align:center;
+  margin:0;
+  padding:0;
+}
+.wrap{
+  max-width:600px;
+  margin:6vh auto;
+  padding:32px;
+  background:#1C2541;
+  border-radius:20px;
+  border:1px solid rgba(255,215,0,.25);
+  box-shadow:0 0 40px rgba(0,0,0,.3);
+}
+h1{color:#FFD700;margin-bottom:20px;}
+.qBox{
+  background:#0F1733;
+  padding:28px;
+  border-radius:16px;
+  border:1px solid rgba(255,215,0,.2);
+  font-size:17px;
+  line-height:1.6;
+  margin-bottom:24px;
+}
+.btn{
+  display:block;
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  margin:10px 0;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  background:#FFD700;
+  color:#111;
+  transition:.25s;
+}
+.btn:hover{filter:brightness(1.05);}
+.progress{
+  height:8px;
+  background:rgba(255,255,255,.1);
+  border-radius:5px;
+  margin:20px 0;
+}
+.progress-bar{
+  height:100%;
+  background:#FFD700;
+  width:0%;
+  border-radius:5px;
+  transition:width .3s ease;
+}
 </style>
 </head>
 <body>
-<main class="wrap">
-  <h1>🧠 YourZoy Test</h1>
-  <p class="progress" id="progress">1 / 30</p>
-  <div id="qBox"></div>
-</main>
+  <main class="wrap">
+    <h1>🌟 YourZoy 성향 테스트</h1>
+    <div class="progress"><div class="progress-bar" id="progress"></div></div>
+    <div class="qBox" id="question"></div>
+    <div id="answers"></div>
+  </main>
 
 <script>
-const questions=[
-  {q:"새로운 아이디어가 떠오르면 바로 실행한다.",zone:"C"},
-  {q:"사람 감정에 예민하게 반응한다.",zone:"B"},
-  {q:"계획이 정해져야 마음이 편하다.",zone:"A"},
-  {q:"즉흥적인 행동을 즐긴다.",zone:"D"},
-  {q:"미래보다는 현재의 감정이 더 중요하다.",zone:"B"},
-  {q:"주변을 이끌고 리더 역할을 자주 한다.",zone:"C"},
-  {q:"혼자만의 시간이 꼭 필요하다.",zone:"A"},
-  {q:"새로운 장소나 사람을 만나는 걸 즐긴다.",zone:"D"},
-  {q:"분석과 전략 짜는 것을 좋아한다.",zone:"C"},
-  {q:"사람의 숨은 의도를 잘 파악한다.",zone:"B"},
-  {q:"규칙과 원칙을 지키는 걸 중요하게 생각한다.",zone:"A"},
-  {q:"즉흥적으로 여행을 떠난 적이 많다.",zone:"D"},
-  {q:"큰 목표를 세우고 단계적으로 실행한다.",zone:"C"},
-  {q:"타인의 감정에 쉽게 공감한다.",zone:"B"},
-  {q:"일의 우선순위를 정해 처리한다.",zone:"A"},
-  {q:"흥미가 생기면 바로 도전한다.",zone:"D"},
-  {q:"복잡한 문제를 체계적으로 해결한다.",zone:"C"},
-  {q:"사람 관계에서 진심이 가장 중요하다.",zone:"B"},
-  {q:"정해진 틀 안에서 안정감을 느낀다.",zone:"A"},
-  {q:"새로운 시도나 모험을 좋아한다.",zone:"D"},
-  {q:"논리보다는 직감을 더 믿는 편이다.",zone:"B"},
-  {q:"시스템이나 구조를 개선하는 걸 좋아한다.",zone:"C"},
-  {q:"세부적인 계획을 세워야 안심된다.",zone:"A"},
-  {q:"즉흥적으로 행동할 때 에너지가 난다.",zone:"D"},
-  {q:"리더십을 발휘하는 상황이 많다.",zone:"C"},
-  {q:"타인에게 공감과 위로를 자주 건넨다.",zone:"B"},
-  {q:"루틴이 깨지면 불안하다.",zone:"A"},
-  {q:"즉시 결과가 나오는 일을 선호한다.",zone:"D"},
-  {q:"긴 안목으로 전략을 세운다.",zone:"C"},
-  {q:"감정 표현을 솔직하게 하는 편이다.",zone:"B"}
+const questions = [
+  { q:"나는 계획보단 즉흥적으로 움직이는 편이다.", a:["그렇다","아니다"], zone:{A:0,D:1} },
+  { q:"감정보다 논리적으로 판단하는 편이다.", a:["그렇다","아니다"], zone:{B:0,C:1} },
+  { q:"혼자 있을 때 에너지가 충전된다.", a:["그렇다","아니다"], zone:{A:1,B:0} },
+  { q:"사람들을 설득하거나 리드하는 게 즐겁다.", a:["그렇다","아니다"], zone:{C:1,B:0} },
+  { q:"새로운 걸 시도하는 게 두렵지 않다.", a:["그렇다","아니다"], zone:{D:1,A:0} },
+  { q:"감정 표현이 서툴다.", a:["그렇다","아니다"], zone:{C:1,B:0} },
+  { q:"규칙과 질서를 중요하게 생각한다.", a:["그렇다","아니다"], zone:{A:1,D:0} },
+  { q:"감정이 풍부하고 공감 능력이 높다.", a:["그렇다","아니다"], zone:{B:1,C:0} },
+  { q:"리스크가 커도 흥미로운 일엔 도전한다.", a:["그렇다","아니다"], zone:{D:1,A:0} },
+  { q:"사람들과 어울리는 게 좋다.", a:["그렇다","아니다"], zone:{B:1,A:0} },
+  { q:"생각보다 행동이 앞선다.", a:["그렇다","아니다"], zone:{D:1,C:0} },
+  { q:"논리적으로 체계를 세우는 걸 좋아한다.", a:["그렇다","아니다"], zone:{C:1,B:0} },
+  { q:"감정 기복이 적고 차분하다.", a:["그렇다","아니다"], zone:{A:1,B:0} },
+  { q:"즉흥적인 모험보다 안전한 선택을 한다.", a:["그렇다","아니다"], zone:{A:1,D:0} },
+  { q:"타인의 감정을 쉽게 눈치챈다.", a:["그렇다","아니다"], zone:{B:1,C:0} },
+  { q:"큰 그림을 그리고 실행하는 걸 즐긴다.", a:["그렇다","아니다"], zone:{C:1,A:0} },
+  { q:"사람들과 감정적으로 연결되는 게 중요하다.", a:["그렇다","아니다"], zone:{B:1,C:0} },
+  { q:"감각적 경험(음악, 향기, 색 등)을 중시한다.", a:["그렇다","아니다"], zone:{D:1,A:0} },
+  { q:"규칙이 있는 환경이 편하다.", a:["그렇다","아니다"], zone:{A:1,D:0} },
+  { q:"팀보다 개인 프로젝트가 좋다.", a:["그렇다","아니다"], zone:{A:1,B:0} },
+  { q:"감정보다 데이터가 더 믿음 간다.", a:["그렇다","아니다"], zone:{C:1,B:0} },
+  { q:"남을 도울 때 보람을 느낀다.", a:["그렇다","아니다"], zone:{B:1,C:0} },
+  { q:"즉흥적인 아이디어로 문제를 해결한다.", a:["그렇다","아니다"], zone:{D:1,A:0} },
+  { q:"자기 성찰을 자주 한다.", a:["그렇다","아니다"], zone:{A:1,B:0} },
+  { q:"효율적 시스템을 구축하는 걸 좋아한다.", a:["그렇다","아니다"], zone:{C:1,B:0} },
+  { q:"사람의 감정선보다 일의 효율이 우선이다.", a:["그렇다","아니다"], zone:{C:1,B:0} },
+  { q:"새로운 자극이 없으면 쉽게 지루해진다.", a:["그렇다","아니다"], zone:{D:1,A:0} },
+  { q:"타인의 감정을 깊이 이해한다.", a:["그렇다","아니다"], zone:{B:1,C:0} },
+  { q:"혼자 조용히 집중할 때 효율이 높다.", a:["그렇다","아니다"], zone:{A:1,B:0} },
+  { q:"틀에 박힌 규칙보다 유연한 환경이 좋다.", a:["그렇다","아니다"], zone:{D:1,A:0} }
 ];
-let current=0;
-const score={A:0,B:0,C:0,D:0};
-const qBox=document.getElementById("qBox"),progress=document.getElementById("progress");
 
-function renderQ(){
-  const q=questions[current];
-  progress.textContent=`${current+1} / ${questions.length}`;
-  qBox.innerHTML=`
-    <p style="font-size:18px;margin-bottom:20px;">${q.q}</p>
-    <button onclick="answer(1)">전혀 아니다</button>
-    <button onclick="answer(2)">아니다</button>
-    <button onclick="answer(3)">그렇다</button>
-    <button onclick="answer(4)">매우 그렇다</button>
-  `;
+let current = 0;
+let scores = {A:0,B:0,C:0,D:0};
+
+function showQuestion(){
+  const q = questions[current];
+  document.getElementById("question").innerText = `${current+1}. ${q.q}`;
+  const btnBox = document.getElementById("answers");
+  btnBox.innerHTML = "";
+  q.a.forEach((ans, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.innerText = ans;
+    btn.onclick = () => {
+      if(idx === 0){
+        for(let z in q.zone){scores[z]+=q.zone[z];}
+      }
+      nextQuestion();
+    };
+    btnBox.appendChild(btn);
+  });
+  document.getElementById("progress").style.width = ((current+1)/questions.length)*100 + "%";
 }
-function answer(val){
-  score[questions[current].zone]+=val;
+
+function nextQuestion(){
   current++;
-  if(current<questions.length) renderQ();
-  else{
-    const top=Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
-    localStorage.setItem("yourzoy_zone",top);
-    location.href="result.html";
+  if(current < questions.length){
+    showQuestion();
+  } else {
+    finishTest();
   }
 }
-renderQ();
+
+function finishTest(){
+  // 가장 높은 점수 Zone 계산
+  let maxZone = "A";
+  let maxScore = 0;
+  for(let z in scores){
+    if(scores[z] > maxScore){
+      maxScore = scores[z];
+      maxZone = z;
+    }
+  }
+
+  // 사주(일주) 가져오기
+  const ilju = localStorage.getItem("yourzoy_ilju") || "붉은 쥐";
+  localStorage.setItem("yourzoy_zone", maxZone);
+
+  // 결과 페이지로 이동
+  window.location.href = `result.html?ilju=${encodeURIComponent(ilju)}&zone=${maxZone}`;
+}
+
+// 시작
+showQuestion();
 </script>
 </body>
 </html>
