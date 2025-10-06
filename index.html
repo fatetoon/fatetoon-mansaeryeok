@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FATETOON 만세력</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🔮 FATETOON 만세력</h1>
+    <p>생년월일과 시간을 입력하면 당신의 년·월·일·시주를 바로 보여드릴게요.</p>
+
+    <div class="form">
+      <label>생년월일</label>
+      <input type="date" id="birthdate">
+      <label>출생 시간</label>
+     <select id="birthtime">
+  		<option value="0">자시 (23:00~00:59)</option>
+  		<option value="1">축시 (01:00~02:59)</option>
+  		<option value="2">인시 (03:00~04:59)</option>
+  		<option value="3">묘시 (05:00~06:59)</option>
+  		<option value="4">진시 (07:00~08:59)</option>
+  		<option value="5">사시 (09:00~10:59)</option>
+  		<option value="6">오시 (11:00~12:59)</option>
+  		<option value="7">미시 (13:00~14:59)</option>
+  		<option value="8">신시 (15:00~16:59)</option>
+  		<option value="9">유시 (17:00~18:59)</option>
+  		<option value="10">술시 (19:00~20:59)</option>
+  		<option value="11">해시 (21:00~22:59)</option>
+	</select>
+      <button onclick="calculateSaju()">결과 보기</button>
+    </div>
+
+    <div id="result" class="result"></div>
+
+    <footer>
+      <p>© 2025 FATETOON. 모든 콘텐츠는 참고용입니다.</p>
+    </footer>
+  </div>
+
+<script src="saju-accurate.js"></script>
+</body>
+</html>
