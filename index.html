@@ -57,32 +57,7 @@ button {
   transition: 0.2s;
 }
 button:hover { background-color: #ffcc00; }
-
-.result {
-  background-color: #10192c;
-  border-radius: 12px;
-  padding: 20px;
-  margin-top: 25px;
-  line-height: 1.6;
-  display: none;
-}
-#surveyBtn {
-  display: none;
-  text-decoration: none;
-  color: #111;
-  background: #FFD700;
-  padding: 14px 0;
-  border-radius: 16px;
-  font-weight: 800;
-  display: block;
-  text-align: center;
-  margin-top: 40px;
-}
-footer {
-  margin-top: 40px;
-  color: #777;
-  font-size: 0.8rem;
-}
+footer { margin-top: 40px; color: #777; font-size: 0.8rem; }
 </style>
 </head>
 
@@ -111,10 +86,6 @@ footer {
   </select>
 
   <button id="go">결과 보기</button>
-
-  <div id="resultBox" class="result"></div>
-
-  <a id="surveyBtn" href="survey.html">성향 테스트 하러가기</a>
 </div>
 
 <footer>© 2025 YOURZOY. 모든 콘텐츠는 참고용입니다.</footer>
@@ -126,12 +97,12 @@ const branchK=["자","축","인","묘","진","사","오","미","신","유","술"
 const branchH=["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
 
 function JD(y,m,d){const a=Math.floor((14-m)/12);const y2=y+4800-a;const m2=m+12*a-3;return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;}
-function getDayGanji(y,m,d){const base=JD(1984,2,2);const idx=(JD(y,m,d)-base+2)%60;return[stems[idx%10],branchK[idx%12],stemsHZ[idx%10],branchH[idx%12]];}
-function getYearGanji(y,m,d){const adj=(m<2||(m===2&&d<4))?y-1:y;return[stems[(adj-4)%10],branchK[(adj-4)%12],stemsHZ[(adj-4)%10],branchH[(adj-4)%12],adj];}
-function getMonthGanji(adjYear,m,d){const boundaries={2:4,3:6,4:5,5:6,6:6,7:7,8:8,9:8,10:8,11:7,12:7,1:6};const monthOrder={2:0,3:1,4:2,5:3,6:4,7:5,8:6,9:7,10:8,11:9,12:10,1:11};let mbIdx;if(m===1&&d<boundaries[1])mbIdx=11;else{const usePrev=d<boundaries[m];const key=usePrev?(m>1?m-1:12):m;mbIdx=monthOrder[key];}const yStemIdx=(adjYear-4)%10;let tigerStemIdx;if(yStemIdx===0||yStemIdx===5)tigerStemIdx=2;else if(yStemIdx===1||yStemIdx===6)tigerStemIdx=4;else if(yStemIdx===2||yStemIdx===7)tigerStemIdx=6;else if(yStemIdx===3||yStemIdx===8)tigerStemIdx=8;else tigerStemIdx=0;const stem=stems[(tigerStemIdx+mbIdx)%10];const stemHZ=stemsHZ[(tigerStemIdx+mbIdx)%10];const branch=["인","묘","진","사","오","미","신","유","술","해","자","축"][mbIdx];const branchHZ=["寅","卯","辰","巳","午","未","申","酉","戌","亥","子","丑"][mbIdx];return[stem,branch,stemHZ,branchHZ];}
-function getHourGanji(dayStemIdx,hourBranchIdx){const hStemIdx=(dayStemIdx*2+hourBranchIdx)%10;return[stems[hStemIdx],branchK[hourBranchIdx],stemsHZ[hStemIdx],branchH[hourBranchIdx]];}
+function getDayGanji(y,m,d){const base=JD(1984,2,2);const idx=(JD(y,m,d)-base+2)%60;return[stems[idx%10],branchK[idx%12]];}
+function getYearGanji(y,m,d){const adj=(m<2||(m===2&&d<4))?y-1:y;return[stems[(adj-4)%10],branchK[(adj-4)%12]];}
+function getMonthGanji(adjYear,m,d){const boundaries={2:4,3:6,4:5,5:6,6:6,7:7,8:8,9:8,10:8,11:7,12:7,1:6};const monthOrder={2:0,3:1,4:2,5:3,6:4,7:5,8:6,9:7,10:8,11:9,12:10,1:11};let mbIdx;if(m===1&&d<boundaries[1])mbIdx=11;else{const usePrev=d<boundaries[m];const key=usePrev?(m>1?m-1:12):m;mbIdx=monthOrder[key];}const yStemIdx=(adjYear-4)%10;let tigerStemIdx;if(yStemIdx===0||yStemIdx===5)tigerStemIdx=2;else if(yStemIdx===1||yStemIdx===6)tigerStemIdx=4;else if(yStemIdx===2||yStemIdx===7)tigerStemIdx=6;else if(yStemIdx===3||yStemIdx===8)tigerStemIdx=8;else tigerStemIdx=0;const stem=stems[(tigerStemIdx+mbIdx)%10];const branch=["인","묘","진","사","오","미","신","유","술","해","자","축"][mbIdx];return[stem,branch];}
+function getHourGanji(dayStemIdx,hourBranchIdx){const hStemIdx=(dayStemIdx*2+hourBranchIdx)%10;return[stems[hStemIdx],branchK[hourBranchIdx]];}
 
-function calcAndShow(){
+document.getElementById("go").addEventListener("click", ()=>{
   const dateStr=document.getElementById("birthdate").value;
   const hIdx=parseInt(document.getElementById("birthtime").value,10);
   if(!dateStr)return alert("생년월일을 입력하세요!");
@@ -141,17 +112,15 @@ function calcAndShow(){
   const [dStem,dBranch]=getDayGanji(y,m,d);
   const [hStem,hBranch]=getHourGanji(stems.indexOf(dStem),hIdx);
 
-  const resultBox=document.getElementById("resultBox");
-  resultBox.innerHTML=`<b>당신의 일주:</b> ${dStem}${dBranch}<br><br>
-  <b>년주:</b> ${yStem}${yBranch}　|　<b>월주:</b> ${mStem}${mBranch}　|　<b>시주:</b> ${hStem}${hBranch}`;
-  resultBox.style.display="block";
-
-  // 결과 저장 + 버튼 표시
-  localStorage.setItem("sajuType", `${dStem}${dBranch}`);
-  document.getElementById("surveyBtn").style.display = "block";
-}
-
-document.getElementById("go").addEventListener("click", calcAndShow);
+  const result={
+    year:`${yStem}${yBranch}`,
+    month:`${mStem}${mBranch}`,
+    day:`${dStem}${dBranch}`,
+    hour:`${hStem}${hBranch}`
+  };
+  localStorage.setItem("sajuResult", JSON.stringify(result));
+  location.href="result.html";
+});
 </script>
 </body>
 </html>
