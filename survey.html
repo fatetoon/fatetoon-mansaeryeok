@@ -1,190 +1,46 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YOURZOY 성향 설문</title>
-  <style>
-    body {
-      font-family: 'Pretendard', sans-serif;
-      background-color: #0e1424;
-      color: #f5f5f5;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 0;
-      padding: 0;
-    }
-
-    h1 {
-      margin-top: 40px;
-      color: #ffcc00;
-      font-size: 1.8rem;
-    }
-
-    .container {
-      width: 90%;
-      max-width: 600px;
-      background: #141a2b;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(255, 204, 0, 0.2);
-      margin-bottom: 50px;
-    }
-
-    .question {
-      margin-bottom: 25px;
-      font-size: 1rem;
-      line-height: 1.5;
-    }
-
-    .scale {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }
-
-    .scale button {
-      background-color: #1e2438;
-      color: #fff;
-      border: 1px solid #333;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .scale button:hover,
-    .scale button.selected {
-      background-color: #ffcc00;
-      color: #000;
-    }
-
-    .submit-btn {
-      width: 100%;
-      background-color: #ffcc00;
-      color: #000;
-      font-weight: 700;
-      border: none;
-      border-radius: 8px;
-      padding: 15px;
-      cursor: pointer;
-      font-size: 1rem;
-      margin-top: 20px;
-    }
-
-    .submit-btn:hover {
-      background-color: #ffd633;
-    }
-
-    footer {
-      color: #777;
-      margin-bottom: 40px;
-      font-size: 0.85rem;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YOURZOY 성향 테스트</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>✨ YOURZOY 성향 설문 ✨</h1>
-  <p>당신의 현재 ‘상황 성향’을 진단합니다. (MBTI 30문항)</p>
+  <div class="container">
+    <h1>🧠 YOURZOY 성향 테스트</h1>
+    <p>당신의 사고 패턴과 행동 성향을 파악합니다.<br>각 문항에서 가장 가까운 쪽을 선택하세요.</p>
 
-  <div class="container" id="survey-container">
-    <!-- 질문이 JS로 자동 삽입됨 -->
+    <form id="surveyForm"></form>
+    <button id="submitSurvey">결과 보기</button>
   </div>
 
-  <button class="submit-btn" onclick="calculateResult()">결과 보기</button>
-
-  <footer>© 2025 YOURZOY. 모든 콘텐츠는 참고용입니다.</footer>
-
   <script>
+    // 🧩 MBTI 4섹터 구분 로직
+    // A = 관리자(SJ) / B = 외교관(NF) / C = 분석가(NT) / D = 탐험가(SP)
     const questions = [
-      "나는 새로운 사람을 만날 때 금방 친해지는 편이다.",
-      "혼자 있는 시간이 나를 회복시킨다.",
-      "감정보다는 논리로 판단하는 편이다.",
-      "주변 사람의 기분에 쉽게 영향을 받는다.",
-      "계획을 세우기보다 즉흥적으로 움직인다.",
-      "일정이나 목표를 세우는 걸 좋아한다.",
-      "새로운 아이디어를 자주 떠올린다.",
-      "눈에 보이는 현실적인 정보가 더 신뢰된다.",
-      "토론에서 내 의견을 강하게 주장한다.",
-      "상대의 기분이 상하지 않게 말하려고 한다.",
-      "목표를 위해 감정을 숨길 수 있다.",
-      "사람들과 함께할 때 에너지가 생긴다.",
-      "세부 계획보다는 큰 방향이 중요하다고 느낀다.",
-      "미리 준비하고 대비하는 편이다.",
-      "불확실한 상황이 오히려 흥미롭다.",
-      "조용한 환경에서 집중이 잘 된다.",
-      "결과보다 과정이 중요하다고 생각한다.",
-      "구체적이고 실용적인 걸 좋아한다.",
-      "감정 표현이 솔직한 편이다.",
-      "다른 사람의 요청을 거절하기 어렵다.",
-      "내 주장을 굽히지 않는 편이다.",
-      "즉흥적인 결정이 많다.",
-      "일의 순서를 정해두고 진행한다.",
-      "대화에서 상대의 말보다 내 생각을 정리하는 편이다.",
-      "다수의 모임보다는 깊은 관계가 좋다.",
-      "감정보다 사실이 중요하다고 생각한다.",
-      "다른 사람의 평가에 예민하다.",
-      "새로운 시도보다 안정된 걸 선호한다.",
-      "나에게 집중할 시간이 꼭 필요하다.",
-      "결과를 예측하고 대비하는 걸 좋아한다."
-    ];
-
-    const surveyContainer = document.getElementById("survey-container");
-
-    questions.forEach((q, i) => {
-      const div = document.createElement("div");
-      div.classList.add("question");
-      div.innerHTML = `
-        <p>${i + 1}. ${q}</p>
-        <div class="scale" id="q${i}">
-          ${[1, 2, 3, 4, 5]
-            .map(
-              (num) =>
-                `<button onclick="selectOption(${i}, ${num}, this)">${num}</button>`
-            )
-            .join("")}
-        </div>
-      `;
-      surveyContainer.appendChild(div);
-    });
-
-    const answers = new Array(questions.length).fill(0);
-
-    function selectOption(qIndex, score, button) {
-      answers[qIndex] = score;
-      const btns = document.querySelectorAll(`#q${qIndex} button`);
-      btns.forEach((b) => b.classList.remove("selected"));
-      button.classList.add("selected");
-    }
-
-    function calculateResult() {
-      if (answers.includes(0)) {
-        alert("모든 문항에 응답해주세요!");
-        return;
-      }
-
-      let total = answers.reduce((a, b) => a + b, 0);
-      let type = "";
-
-      if (total <= 90) type = "내향적 현실형 (I-S-T-J)";
-      else if (total <= 110) type = "감성 조율형 (I-N-F-P)";
-      else if (total <= 130) type = "직관 탐색형 (E-N-T-P)";
-      else type = "외향적 추진형 (E-S-T-J)";
-
-      localStorage.setItem("yourzoyType", type);
-      window.location.href = "result.html";
-    }
-  </script>
-</body>
-</html>
-
-<script>
-  function goToResult(){
-    localStorage.setItem("yourzoyType", "E-N-T-P"); // 설문 결과값
-    window.location.href = "result.html";
-  }
-</script>
-
-<button onclick="goToResult()">결과 리포트 보기</button>
+      { q: "새로운 아이디어보다 검증된 방식을 선호한다.", type: "S" },
+      { q: "감정보다 논리로 판단하려 한다.", type: "T" },
+      { q: "타인의 감정에 민감하게 반응한다.", type: "F" },
+      { q: "즉흥적으로 행동하는 편이다.", type: "P" },
+      { q: "계획을 세우는 것이 안정감을 준다.", type: "J" },
+      { q: "세부적인 것보다 전체 구조를 보는 게 편하다.", type: "N" },
+      { q: "감정 표현을 자제하는 편이다.", type: "T" },
+      { q: "사람과의 관계에서 에너지를 얻는다.", type: "E" },
+      { q: "실패보다 도전을 우선시한다.", type: "P" },
+      { q: "변화보다는 안정된 환경을 선호한다.", type: "S" },
+      { q: "자신의 가치관이 중요하다고 느낀다.", type: "F" },
+      { q: "일정한 루틴이 삶을 잡아준다고 생각한다.", type: "J" },
+      { q: "직감이 자주 맞는다고 느낀다.", type: "N" },
+      { q: "논쟁에서 설득하는 걸 즐긴다.", type: "T" },
+      { q: "감성적인 영화나 음악에 쉽게 몰입한다.", type: "F" },
+      { q: "새로운 자극을 자주 찾는다.", type: "P" },
+      { q: "현실적인 결과를 중시한다.", type: "S" },
+      { q: "이해보다 공감이 더 중요하다.", type: "F" },
+      { q: "일을 체계적으로 정리하는 걸 좋아한다.", type: "J" },
+      { q: "직감적으로 미래를 예측하려 한다.", type: "N" },
+      { q: "즉시 행동보다 계획 후 실행이 맞다고 생각한다.", type: "J" },
+      { q: "새로운 도전을 두려워하지 않는다.", type: "P" },
+      { q: "논리적인 사람들과 있을 때 편하다.", type: "T" },
+      { q: "감정보다는 사실을 더 신뢰한다.", type: "S" },
+      { q: "누군가
