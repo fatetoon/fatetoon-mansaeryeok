@@ -3,30 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>YOURZOY - 사주 기반 성향 테스트</title>
+<title>YOURZOY 사주 등록</title>
 <style>
-:root {--navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFFFFF;}
+:root {--navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFF;}
 body{margin:0;background:var(--navy);color:var(--text);font-family:"Noto Sans KR",sans-serif;}
-.wrap{max-width:520px;margin:7vh auto;padding:28px;border-radius:24px;background:var(--navy2);box-shadow:0 20px 60px rgba(0,0,0,.4);}
-h1{text-align:center;color:var(--gold);margin:0 0 10px}
-p{text-align:center;color:rgba(255,255,255,.75)}
-label{display:block;margin:14px 2px 8px;font-weight:700;color:var(--gold)}
-input,select,button{width:100%;box-sizing:border-box;font-family:inherit}
-.input,select{background:#0f1733;border:1px solid rgba(255,215,0,.25);color:var(--text);padding:12px 14px;border-radius:12px;font-size:15px}
-button{margin-top:20px;background:var(--gold);color:#111;padding:13px 16px;border:none;border-radius:14px;font-weight:800;cursor:pointer;transition:.2s}
-.result{margin-top:20px;padding:16px;background:#111833;border:1px solid rgba(255,215,0,.25);border-radius:16px;display:none}
-footer{text-align:center;color:rgba(255,255,255,.5);font-size:12px;margin-top:20px}
+.wrap{max-width:520px;margin:6vh auto;padding:28px;border-radius:24px;background:var(--navy2);
+box-shadow:0 18px 50px rgba(0,0,0,.4);}
+h1{text-align:center;color:var(--gold);margin-bottom:4px;font-size:24px;}
+p{text-align:center;color:rgba(255,255,255,.7);margin-bottom:24px;}
+label{color:var(--gold);font-weight:700;font-size:14px;display:block;margin:10px 0 6px;}
+input,select,button{width:100%;padding:13px;border:none;border-radius:12px;box-sizing:border-box;}
+input,select{background:#0f1733;color:var(--text);border:1px solid rgba(255,215,0,.3);}
+button{background:var(--gold);color:#111;font-weight:800;margin-top:18px;cursor:pointer;}
+button:hover{filter:brightness(1.05);}
+footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:20px;}
 </style>
 </head>
 <body>
 <main class="wrap">
   <h1>YOURZOY</h1>
-  <p>사주로 당신의 기본 기질을 확인하고,<br>다음 단계에서 성향 테스트로 이어집니다.</p>
+  <p>생년월일과 시간을 입력하면 당신의 <b>일주</b>를 찾아드릴게요.</p>
 
   <label>생년월일</label>
-  <input id="birthdate" class="input" type="date">
-
-  <label>출생 시간</label>
+  <input id="birthdate" type="date">
+  <label>출생시간</label>
   <select id="birthtime">
     <option value="0">자시 (23:00~00:59)</option>
     <option value="1">축시 (01:00~02:59)</option>
@@ -42,40 +42,26 @@ footer{text-align:center;color:rgba(255,255,255,.5);font-size:12px;margin-top:20
     <option value="11">해시 (21:00~22:59)</option>
   </select>
 
-  <button id="go">결과 보기</button>
-
-  <section id="result" class="result">
-    <div id="text"></div>
-  </section>
-
+  <button id="next">성향 테스트 시작</button>
   <footer>© 2025 YOURZOY</footer>
 </main>
 
 <script>
+// 천간, 지지 계산 핵심 로직 (형 기존 만세력 코드 기반 요약)
 const stems=["갑","을","병","정","무","기","경","신","임","계"];
-const branch=["자","축","인","묘","진","사","오","미","신","유","술","해"];
+const branchK=["자","축","인","묘","진","사","오","미","신","유","술","해"];
 
 function JD(y,m,d){const a=Math.floor((14-m)/12);const y2=y+4800-a;const m2=m+12*a-3;return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;}
-function getDayGanji(y,m,d){const base=JD(1984,2,2);const idx=(JD(y,m,d)-base+2)%60;return[stems[idx%10],branch[idx%12]];}
-function getYearGanji(y,m,d){const adj=(m<2||(m===2&&d<4))?y-1:y;return[stems[(adj-4)%10],branch[(adj-4)%12]];}
-function getMonthGanji(adjYear,m){const yStem=(adjYear-4)%10;const offset=[2,4,6,8,0][Math.floor(yStem/2)];const s=(offset+m-1)%10;return[stems[s],branch[(m+1)%12]];}
-function getHourGanji(dayStemIdx,hourIdx){return[stems[(dayStemIdx*2+hourIdx)%10],branch[hourIdx]];}
+function getDayGanji(y,m,d){const base=JD(1984,2,2);const idx=(JD(y,m,d)-base+2)%60;return[stems[idx%10],branchK[idx%12]];}
 
-document.getElementById("go").addEventListener("click",()=>{
-  const date=document.getElementById("birthdate").value;
-  if(!date) return alert("생년월일을 입력하세요.");
-  const [y,m,d]=date.split("-").map(Number);
-  const hourIdx=parseInt(document.getElementById("birthtime").value);
-  const [yG,yZ]=getYearGanji(y,m,d);
-  const [mG,mZ]=getMonthGanji(y,m);
-  const [dG,dZ]=getDayGanji(y,m,d);
-  const [hG,hZ]=getHourGanji(stems.indexOf(dG),hourIdx);
-  const txt=`년주: ${yG}${yZ}, 월주: ${mG}${mZ}, 일주: ${dG}${dZ}, 시주: ${hG}${hZ}`;
-  document.getElementById("text").innerText=txt;
-  document.getElementById("result").style.display="block";
-  // 자동 이동
-  const params=new URLSearchParams({y:yG+yZ,m:mG+mZ,d:dG+dZ,h:hG+hZ});
-  setTimeout(()=>{window.location.href=`survey.html?${params}`;},2500);
+document.getElementById("next").addEventListener("click",()=>{
+  const dateStr=document.getElementById("birthdate").value;
+  if(!dateStr)return alert("생년월일을 선택해주세요!");
+  const [y,m,d]=dateStr.split("-").map(n=>parseInt(n,10));
+  const h=parseInt(document.getElementById("birthtime").value);
+  const [gan,ji]=getDayGanji(y,m,d);
+  const ilju=gan+ji;
+  window.location.href=`survey.html?ilju=${ilju}`;
 });
 </script>
 </body>
