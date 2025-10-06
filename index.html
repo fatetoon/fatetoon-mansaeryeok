@@ -150,3 +150,13 @@ function calcAndShow(){
 </body>
 </html>
 
+<!-- 사주 계산 완료 시 -->
+<script>
+  function goToSurvey(){
+    localStorage.setItem("sajuType", "병자일주"); // 여기에 실제 계산된 일주값 들어가게 변경
+    window.location.href = "survey.html";
+  }
+</script>
+
+<button onclick="goToSurvey()">성향 테스트 하러가기</button>
+
