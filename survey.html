@@ -1,46 +1,125 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YOURZOY 성향 테스트</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>YOURZOY 성향 테스트</title>
+<link rel="stylesheet" href="style.css" />
+<style>
+  .question {margin-bottom: 24px;}
+  .question h3 {font-size: 16px;margin-bottom:8px;}
+  .options label {display:block;margin:6px 0;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,215,0,0.2);background:#0f1733;cursor:pointer;}
+  .options input {margin-right:8px;}
+  #nextBtn {margin-top:24px;}
+  #resultZone {display:none;margin-top:28px;}
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>🧠 YOURZOY 성향 테스트</h1>
-    <p>당신의 사고 패턴과 행동 성향을 파악합니다.<br>각 문항에서 가장 가까운 쪽을 선택하세요.</p>
+  <main class="wrap">
+    <div class="title"><span class="emoji">🧭</span><h1>YOURZOY 성향 테스트</h1></div>
+    <p class="subtitle">30개의 질문으로 당신의 MBTI 섹터를 분석해요.<br><b>솔직하게</b> 답할수록 정확도가 올라갑니다.</p>
 
-    <form id="surveyForm"></form>
-    <button id="submitSurvey">결과 보기</button>
-  </div>
+    <section id="quiz"></section>
 
-  <script>
-    // 🧩 MBTI 4섹터 구분 로직
-    // A = 관리자(SJ) / B = 외교관(NF) / C = 분석가(NT) / D = 탐험가(SP)
-    const questions = [
-      { q: "새로운 아이디어보다 검증된 방식을 선호한다.", type: "S" },
-      { q: "감정보다 논리로 판단하려 한다.", type: "T" },
-      { q: "타인의 감정에 민감하게 반응한다.", type: "F" },
-      { q: "즉흥적으로 행동하는 편이다.", type: "P" },
-      { q: "계획을 세우는 것이 안정감을 준다.", type: "J" },
-      { q: "세부적인 것보다 전체 구조를 보는 게 편하다.", type: "N" },
-      { q: "감정 표현을 자제하는 편이다.", type: "T" },
-      { q: "사람과의 관계에서 에너지를 얻는다.", type: "E" },
-      { q: "실패보다 도전을 우선시한다.", type: "P" },
-      { q: "변화보다는 안정된 환경을 선호한다.", type: "S" },
-      { q: "자신의 가치관이 중요하다고 느낀다.", type: "F" },
-      { q: "일정한 루틴이 삶을 잡아준다고 생각한다.", type: "J" },
-      { q: "직감이 자주 맞는다고 느낀다.", type: "N" },
-      { q: "논쟁에서 설득하는 걸 즐긴다.", type: "T" },
-      { q: "감성적인 영화나 음악에 쉽게 몰입한다.", type: "F" },
-      { q: "새로운 자극을 자주 찾는다.", type: "P" },
-      { q: "현실적인 결과를 중시한다.", type: "S" },
-      { q: "이해보다 공감이 더 중요하다.", type: "F" },
-      { q: "일을 체계적으로 정리하는 걸 좋아한다.", type: "J" },
-      { q: "직감적으로 미래를 예측하려 한다.", type: "N" },
-      { q: "즉시 행동보다 계획 후 실행이 맞다고 생각한다.", type: "J" },
-      { q: "새로운 도전을 두려워하지 않는다.", type: "P" },
-      { q: "논리적인 사람들과 있을 때 편하다.", type: "T" },
-      { q: "감정보다는 사실을 더 신뢰한다.", type: "S" },
-      { q: "누군가
+    <button id="nextBtn">다음</button>
+
+    <section id="resultZone" class="zone">
+      <h3>결과</h3>
+      <p id="mbtiText"></p>
+      <a href="result.html" class="btn">결과 리포트 보러가기</a>
+    </section>
+
+    <footer>© 2025 YOURZOY. All rights reserved.</footer>
+  </main>
+
+<script>
+const questions = [
+  {q:"나는 즉흥적인 편이다.",a:"P",b:"J"},
+  {q:"나는 세부사항보다 큰 그림을 본다.",a:"N",b:"S"},
+  {q:"결정보다는 가능성을 더 중요하게 생각한다.",a:"P",b:"J"},
+  {q:"나는 감정보다 논리를 우선시한다.",a:"T",b:"F"},
+  {q:"새로운 아이디어를 떠올리는 게 즐겁다.",a:"N",b:"S"},
+  {q:"나는 타인과의 관계에서 에너지를 얻는다.",a:"E",b:"I"},
+  {q:"계획을 세우기보다 상황에 맞게 움직인다.",a:"P",b:"J"},
+  {q:"감정보다는 사실을 신뢰한다.",a:"T",b:"F"},
+  {q:"나는 낯선 사람에게 먼저 말을 거는 편이다.",a:"E",b:"I"},
+  {q:"내 공간은 체계적으로 정돈되어 있다.",a:"J",b:"P"},
+  {q:"나는 감정 표현이 솔직한 편이다.",a:"F",b:"T"},
+  {q:"나는 규칙보다는 창의성을 중시한다.",a:"P",b:"J"},
+  {q:"주변 사람들의 감정에 민감하다.",a:"F",b:"T"},
+  {q:"나는 세부적인 지시보다 자율적인 환경을 선호한다.",a:"P",b:"J"},
+  {q:"사람들과 함께 있을 때 활력이 생긴다.",a:"E",b:"I"},
+  {q:"논리적 근거가 없는 감정은 이해하기 어렵다.",a:"T",b:"F"},
+  {q:"미래의 가능성을 상상하는 것을 즐긴다.",a:"N",b:"S"},
+  {q:"일정한 루틴보다 즉흥적인 변화를 좋아한다.",a:"P",b:"J"},
+  {q:"나는 사람을 돕는 일에 기쁨을 느낀다.",a:"F",b:"T"},
+  {q:"나는 개인의 가치관보다 효율을 우선시한다.",a:"T",b:"F"},
+  {q:"조용한 시간보다 사람들과의 대화를 선호한다.",a:"E",b:"I"},
+  {q:"직관적으로 판단하기보다 자료를 분석한다.",a:"S",b:"N"},
+  {q:"나는 계획을 세워두면 마음이 편하다.",a:"J",b:"P"},
+  {q:"변화를 즐기기보다는 안정감을 선호한다.",a:"J",b:"P"},
+  {q:"사람들의 감정을 읽는 게 자연스럽다.",a:"F",b:"T"},
+  {q:"나는 새로운 시도에 두려움이 없다.",a:"N",b:"S"},
+  {q:"결정 내릴 때 감정보다는 객관성을 따른다.",a:"T",b:"F"},
+  {q:"친구들이 나를 사교적이라고 한다.",a:"E",b:"I"},
+  {q:"감각적인 경험이 삶의 큰 즐거움이다.",a:"S",b:"N"},
+  {q:"나는 즉시 행동하기보다 먼저 관찰한다.",a:"I",b:"E"},
+];
+
+let idx = 0;
+const quizEl = document.getElementById("quiz");
+const nextBtn = document.getElementById("nextBtn");
+const resultZone = document.getElementById("resultZone");
+const mbtiText = document.getElementById("mbtiText");
+
+const scores = {E:0, I:0, N:0, S:0, T:0, F:0, J:0, P:0};
+
+function renderQuestion(){
+  const q = questions[idx];
+  quizEl.innerHTML = `
+    <div class="question">
+      <h3>${idx+1}. ${q.q}</h3>
+      <div class="options">
+        <label><input type="radio" name="answer" value="${q.a}" /> 그렇다</label>
+        <label><input type="radio" name="answer" value="${q.b}" /> 아니다</label>
+      </div>
+    </div>
+  `;
+}
+
+nextBtn.addEventListener("click",()=>{
+  const choice = document.querySelector("input[name='answer']:checked");
+  if(!choice){alert("하나를 선택해주세요.");return;}
+  scores[choice.value]++;
+  idx++;
+  if(idx < questions.length){
+    renderQuestion();
+  } else {
+    showResult();
+  }
+  document.querySelectorAll("input[name='answer']").forEach(el=>el.checked=false);
+});
+
+function showResult(){
+  quizEl.style.display="none";
+  nextBtn.style.display="none";
+  resultZone.style.display="block";
+
+  let mbti = (scores.E>scores.I?"E":"I")
+            + (scores.N>scores.S?"N":"S")
+            + (scores.T>scores.F?"T":"F")
+            + (scores.J>scores.P?"J":"P");
+
+  let zone = "";
+  if(["INTJ","INTP","ENTJ","ENTP"].includes(mbti)) zone="C-ZONE (분석가)";
+  else if(["INFJ","INFP","ENFJ","ENFP"].includes(mbti)) zone="B-ZONE (외교관)";
+  else if(["ISTJ","ISFJ","ESTJ","ESFJ"].includes(mbti)) zone="A-ZONE (관리자)";
+  else zone="D-ZONE (탐험가)";
+
+  mbtiText.innerHTML = `<b>${mbti}</b> 유형입니다.<br>당신은 <b>${zone}</b> 성향이에요!`;
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
