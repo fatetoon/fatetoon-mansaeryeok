@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YOURZOY 결과 리포트</title>
+  <style>
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background-color: #0e1424;
+      color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 700px;
+      background: #141a2b;
+      padding: 30px;
+      border-radius: 15px;
+      margin-top: 40px;
+      box-shadow: 0 0 20px rgba(255, 204, 0, 0.25);
+    }
+
+    h1 {
+      color: #ffcc00;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .section {
+      margin: 25px 0;
+      padding: 15px 20px;
+      border-radius: 10px;
+      background: #1c2238;
+    }
+
+    .highlight {
+      color: #ffcc00;
+      font-weight: bold;
+    }
+
+    .code {
+      font-size: 1.3rem;
+      text-align: center;
+      color: #ffcc00;
+      margin: 10px 0 20px 0;
+    }
+
+    .desc {
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .btn-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      background-color: #ffcc00;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      padding: 12px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #ffd633;
+    }
+
+    footer {
+      margin: 30px 0;
+      font-size: 0.9rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✨ YOURZOY 결과 리포트 ✨</h1>
+    <p class="desc" style="text-align:center;">당신의 <span class="highlight">타고난 코드(사주)</span>와<br><span class="highlight">현재 성향 코드(MBTI형)</span>를 함께 분석합니다.</p>
+
+    <div class="section">
+      <h2>🔹 타고난 코드</h2>
+      <div class="code" id="sajuType">불러오는 중...</div>
+      <p class="desc" id="sajuDesc">당신의 사주 기반 핵심 성향을 분석 중입니다.</p>
+    </div>
+
+    <div class="section">
+      <h2>🔸 현재 성향 코드</h2>
+      <div class="code" id="surveyType">불러오는 중...</div>
+      <p class="desc" id="surveyDesc">당신의 최근 감정·행동 패턴을 반영한 MBTI형 성향입니다.</p>
+    </div>
+
+    <div class="section">
+      <h2>🌕 통합 리포트</h2>
+      <p class="desc" id="combinedResult">AI가 당신의 타고난 기운과 현재 성향을 통합 분석 중입니다...</p>
+    </div>
+
+    <div class="btn-wrap">
+      <button class="btn" onclick="location.href='index.html'">사주 다시보기</button>
+      <button class="btn" onclick="location.href='survey.html'">설문 다시하기</button>
+    </div>
+  </div>
+
+  <footer>© 2025 YOURZOY. 모든 콘텐츠는 참고용입니다.</footer>
+
+  <script>
+    // --- 데이터 불러오기 ---
+    const sajuType = localStorage.getItem("sajuType") || "병자일주 (예시)";
+    const surveyType = localStorage.getItem("yourzoyType") || "외향적 추진형 (E-S-T-J)";
+
+    document.getElementById("sajuType").innerText = sajuType;
+    document.getElementById("surveyType").innerText = surveyType;
+
+    // --- 사주 기반 설명 ---
+    const sajuDescriptions = {
+      "병자일주 (예시)": "뜨겁고 직관적인 불의 기운. 추진력 강하고 리스크 감지에 예민합니다. 감정보다 목표 중심.",
+      "정인형": "섬세하고 감성적이며 사람 중심으로 사고합니다. 감정의 깊이를 통해 관계를 구축합니다.",
+      "편관형": "책임감과 리더십이 강하고, 규율과 시스템에 적응력이 높습니다.",
+    };
+
+    // --- MBTI 기반 설명 ---
+    const mbtiDescriptions = {
+      "내향적 현실형 (I-S-T-J)": "논리적이고 실용적입니다. 감정보다는 사실 중심으로 판단하며, 책임감이 강합니다.",
+      "감성 조율형 (I-N-F-P)": "공감력과 감수성이 높고, 내면의 조화를 중시합니다.",
+      "직관 탐색형 (E-N-T-P)": "새로운 아이디어를 탐구하고, 유연한 사고로 문제를 푸는 유형입니다.",
+      "외향적 추진형 (E-S-T-J)": "목표 중심적이고, 실행력과 리더십이 탁월합니다."
+    };
+
+    // --- 통합 결과 생성 로직 ---
+    function generateCombinedResult(saju, mbti) {
+      if (saju.includes("병자") && mbti.includes("E")) {
+        return "🔥 당신은 ‘리스크 속에서 길을 찾는 추진가형’. 불의 에너지와 외향적 실행력이 결합되어, 새로운 시도에서 성과를 냅니다.";
+      } else if (saju.includes("병자") && mbti.includes("I")) {
+        return "💡 ‘내면의 불꽃형’. 겉으론 차분하지만, 내면엔 완벽주의적 열정이 있습니다. 안정 속 혁신을 추구하세요.";
+      } else if (mbti.includes("F")) {
+        return "🌿 ‘감성전달형’. 사람 중심의 관계에서 영감을 얻습니다. 다만 타인의 감정에 너무 휘둘리지 않도록 주의.";
+      } else {
+        return "⚡ ‘균형형 현실가’. 상황 판단이 빠르고, 문제 해결 중심입니다. 계획력과 행동력의 밸런스가 탁월합니다.";
+      }
+    }
+
+    const sajuDesc = sajuDescriptions[sajuType] || "당신의 타고난 기운을 기반으로 분석된 성향입니다.";
+    const surveyDesc = mbtiDescriptions[surveyType] || "당신의 현재 상황과 감정 패턴을 반영한 MBTI형입니다.";
+    const combined = generateCombinedResult(sajuType, surveyType);
+
+    document.getElementById("sajuDesc").innerText = sajuDesc;
+    document.getElementById("surveyDesc").innerText = surveyDesc;
+    document.getElementById("combinedResult").innerText = combined;
+  </script>
+</body>
+</html>
