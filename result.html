@@ -1,78 +1,147 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YOURZOY 결과 리포트</title>
-<style>
-body {
-  background-color: #0d1424;
-  color: #fff;
-  font-family: "Pretendard", sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  margin: 0;
-}
-.container {
-  background: #182135;
-  padding: 40px;
-  border-radius: 20px;
-  text-align: center;
-  width: 350px;
-  box-shadow: 0 0 25px rgba(255,215,0,0.08);
-}
-h1 {
-  color: #FFD700;
-  margin-bottom: 20px;
-}
-.result-box {
-  background-color: #10192c;
-  padding: 20px;
-  border-radius: 12px;
-  line-height: 1.8;
-  font-size: 0.95rem;
-}
-button {
-  width: 100%;
-  background-color: #FFD700;
-  border: none;
-  color: #111;
-  font-weight: 700;
-  padding: 12px;
-  margin-top: 25px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-button:hover { background-color: #ffcc00; }
-footer { margin-top: 40px; color: #777; font-size: 0.8rem; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YOURZOY 리포트</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: #0b132b;
+      color: #fff;
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      text-align: center;
+      padding: 40px 16px;
+    }
+    .wrap {
+      background: #1c2541;
+      border-radius: 18px;
+      padding: 30px 20px;
+      max-width: 520px;
+      margin: 0 auto;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 215, 0, 0.25);
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: #ffd700;
+    }
+    h2 {
+      font-size: 20px;
+      margin-top: 24px;
+      color: #fff;
+    }
+    .charCard {
+      margin: 18px auto;
+      padding: 20px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(255,215,0,0.1), rgba(255,215,0,0.02));
+      border: 1.5px solid rgba(255,215,0,0.4);
+    }
+    .charName {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffd700;
+    }
+    .charSub {
+      font-size: 14px;
+      opacity: 0.85;
+    }
+    .zone {
+      background: #111833;
+      border-radius: 10px;
+      margin-top: 20px;
+      padding: 18px;
+      border: 1px solid rgba(255,215,0,0.2);
+    }
+    .zone h3 {
+      margin-bottom: 6px;
+      color: #ffd700;
+    }
+    .desc {
+      font-size: 15px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.85);
+      margin-top: 8px;
+    }
+    .btnBox {
+      margin-top: 28px;
+    }
+    .btn {
+      background: #ffd700;
+      color: #0b132b;
+      padding: 12px 18px;
+      font-weight: 700;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+    .btn:hover {
+      filter: brightness(1.1);
+    }
+  </style>
 </head>
-
 <body>
-<div class="container">
-  <h1>✨ YOURZOY 결과 리포트 ✨</h1>
-  <div id="result" class="result-box"></div>
-  <button id="surveyBtn">성향 테스트 하러가기</button>
-</div>
+  <div class="wrap">
+    <h1>YOURZOY 리포트</h1>
+    <div id="charSection" class="charCard"></div>
+    <div id="zoneSection" class="zone"></div>
 
-<footer>© 2025 YOURZOY. 모든 콘텐츠는 참고용입니다.</footer>
+    <div class="btnBox">
+      <button class="btn" onclick="restart()">다시 테스트하기</button>
+    </div>
+  </div>
 
-<script>
-const data = JSON.parse(localStorage.getItem("sajuResult"));
-if(data){
-  document.getElementById("result").innerHTML = `
-  <b>당신의 일주:</b> ${data.day}<br>
-  <b>년주:</b> ${data.year}　|　<b>월주:</b> ${data.month}　|　<b>시주:</b> ${data.hour}<br><br>
-  <span style="color:#FFD700;">이제 당신의 성향 코드(MBTI형)를 확인해보세요!</span>
-  `;
-}
+  <script>
+    const iljuData = JSON.parse(localStorage.getItem("iljuData"));
+    const mbtiZone = localStorage.getItem("mbtiZone");
 
-document.getElementById("surveyBtn").addEventListener("click",()=>{
-  location.href="survey.html";
-});
-</script>
+    const zoneDesc = {
+      "A-ZONE": {
+        name: "A-ZONE (Absorb)",
+        tagline: "정리·책임·안정의 관리자형",
+        desc: "체계와 원칙을 중시하며 실질적인 성과를 만드는 사람. 당신은 약속과 신뢰를 가장 중요하게 생각하며, 누군가의 버팀목이 됩니다. YOURZOY 세계에서 A-ZONE은 '현실을 다루는 관리자'이자, 문제 해결의 중심에 서는 타입입니다."
+      },
+      "B-ZONE": {
+        name: "B-ZONE (Balance)",
+        tagline: "공감·인간관계·가치의 외교관형",
+        desc: "사람을 이해하고 관계를 조율하는 천부적인 감각을 지녔습니다. 당신의 에너지는 타인의 감정을 읽고 조화롭게 이끄는 데서 나옵니다. YOURZOY 세계에서 B-ZONE은 ‘감정의 균형자’, ‘빛의 메신저’로 불립니다."
+      },
+      "C-ZONE": {
+        name: "C-ZONE (Conquer)",
+        tagline: "전략·창의·사고의 분석가형",
+        desc: "논리와 직관을 함께 다루는 전략가. 큰 그림을 그리고, 혼자서도 완성도 높은 구조를 세울 줄 압니다. YOURZOY 세계의 C-ZONE은 ‘아이디어의 설계자’로, 현실을 이성적으로 재구성하는 역할을 합니다."
+      },
+      "D-ZONE": {
+        name: "D-ZONE (Drift)",
+        tagline: "자유·도전·몰입의 탐험가형",
+        desc: "새로운 세계를 향해 끊임없이 움직이는 모험가. 즉흥적이지만 몰입력이 강하고, 한 번 빠지면 끝까지 파고드는 성향입니다. YOURZOY 세계에서 D-ZONE은 ‘자유의 항해자’, ‘경계를 넘는 드리머’로 불립니다."
+      }
+    };
+
+    if (iljuData && mbtiZone) {
+      document.getElementById("charSection").innerHTML = `
+        <div class="charName">${iljuData.name}</div>
+        <div class="charSub">(${iljuData.ilju}일주 · ${iljuData.family})</div>
+        <div class="desc">🔥 오행: ${iljuData.element} / 룩: ${iljuData.look}</div>
+      `;
+
+      const z = zoneDesc[mbtiZone];
+      document.getElementById("zoneSection").innerHTML = `
+        <h3>${z.name}</h3>
+        <div class="charSub">${z.tagline}</div>
+        <div class="desc">${z.desc}</div>
+      `;
+    } else {
+      document.querySelector(".wrap").innerHTML = "<p>⚠️ 데이터가 없습니다. 처음부터 다시 진행해주세요.</p>";
+    }
+
+    function restart() {
+      localStorage.clear();
+      window.location.href = "index.html";
+    }
+  </script>
 </body>
 </html>
