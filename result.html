@@ -3,103 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>YourZoy 결과</title>
+<title>YourZoy Result</title>
 <style>
-:root {
-  --navy:#0B132B; --gold:#FFD700; --text:#FFFFFF; --deep:#0F1733;
-}
-body {
-  margin:0; padding:0; background:var(--navy); color:var(--text);
-  font-family:'Noto Sans KR',sans-serif;
-}
-.wrap {
-  max-width:560px; margin:6vh auto; padding:28px; border-radius:22px;
-  background:linear-gradient(180deg,rgba(255,215,0,.08),rgba(255,215,0,0) 200px),var(--deep);
-  border:1px solid rgba(255,215,0,.2); box-shadow:0 0 50px rgba(0,0,0,.3);
-  text-align:center;
-}
-h1 {color:var(--gold); font-size:24px; margin-bottom:10px;}
-p.sub {color:rgba(255,255,255,.7); font-size:14px; margin-bottom:30px;}
-.result-card {
-  background:#0B132B; border:1.5px solid rgba(255,215,0,.4); border-radius:18px;
-  padding:24px; margin-bottom:20px; box-shadow:0 0 30px rgba(255,215,0,.05);
-}
-.animal {
-  font-size:64px; line-height:1.2; margin-bottom:8px; text-shadow:0 2px 8px rgba(0,0,0,.4);
-}
-.title {
-  font-size:20px; font-weight:800; margin-bottom:6px; color:var(--gold);
-}
-.zone {
-  font-size:15px; color:rgba(255,255,255,.75); margin-bottom:8px;
-}
-.desc {
-  font-size:14px; line-height:1.6; color:rgba(255,255,255,.8);
-}
-button {
-  width:100%; margin-top:20px; padding:14px;
-  background:var(--gold); color:#111; border:none; border-radius:14px;
-  font-size:16px; font-weight:800; cursor:pointer;
-}
-button:hover {filter:brightness(1.1);}
-footer {margin-top:24px; color:rgba(255,255,255,.55); font-size:12px;}
+body{margin:0;padding:0;background:#0B132B;color:#fff;font-family:'Noto Sans KR',sans-serif;text-align:center;}
+.wrap{max-width:520px;margin:8vh auto;padding:30px;background:#1C2541;border-radius:20px;border:1px solid rgba(255,215,0,.25);}
+h1{color:#FFD700;}
+.resultBox{margin-top:20px;padding:18px;background:#111833;border-radius:16px;}
 </style>
 </head>
 <body>
 <main class="wrap">
-  <h1>🔮 YourZoy 결과</h1>
-  <p class="sub">당신의 사주 기반 기질 캐릭터가 완성되었어요.</p>
-  <div class="result-card" id="resultCard">
-    <div class="animal" id="animalEmoji">🐉</div>
-    <div class="title" id="titleText">붉은 용 조이</div>
-    <div class="zone" id="zoneText">C-Zone (전략·정복형)</div>
-    <div class="desc" id="descText">
-      구조적 사고와 창의적 비전으로 목표를 향해 나아갑니다.<br>
-      냉철하지만, 내면의 열정이 세상을 움직입니다.
-    </div>
-  </div>
-  <button onclick="location.href='index.html'">다시 테스트하기</button>
-  <footer>© 2025 YOURZOY</footer>
+  <h1>🌟 YourZoy Result</h1>
+  <div class="resultBox" id="res"></div>
 </main>
 
 <script>
-// 색상 및 동물 매핑
-const elementColor = {
-  '갑':'초록','을':'초록','병':'빨강','정':'빨강','무':'노란','기':'노란','경':'회색','신':'회색','임':'남색','계':'남색'
-};
-const animalMap = {
-  '자':'쥐','축':'소','인':'호랑이','묘':'토끼','진':'용','사':'뱀',
-  '오':'말','미':'양','신':'원숭이','유':'닭','술':'개','해':'돼지'
-};
-const emojiMap = {
-  '자':'🐭','축':'🐮','인':'🐯','묘':'🐰','진':'🐉','사':'🐍','오':'🐎','미':'🐑','신':'🐒','유':'🐔','술':'🐕','해':'🐷'
-};
-const zoneDesc = {
-  "A-Zone (질서·관리형)":"🧩 안정적이며 체계적인 성향. 신뢰받는 실행자 타입.",
-  "B-Zone (공감·균형형)":"💞 사람과의 조화를 중시하며, 감정적으로 따뜻한 조언자.",
-  "C-Zone (전략·정복형)":"🚀 비전을 제시하고 주도하는 리더형. 논리와 추진력 모두 강함.",
-  "D-Zone (자유·탐험형)":"🌊 즉흥적이고 창의적인 탐험가. 틀을 깨는 발상형."
-};
-
-// 로컬스토리지 데이터 불러오기
-const ilju = localStorage.getItem("yourzoy_ilju") || "병자"; // 예시
-const zone = localStorage.getItem("yourzoy_zone") || "C-Zone (전략·정복형)";
-
-// 일주 분리
-const gan = ilju[0];
-const ji = ilju[1];
-
-// 매칭
-const color = elementColor[gan] || "무색";
-const animal = animalMap[ji] || "미등록";
-const emoji = emojiMap[ji] || "✨";
-const charName = `${color} ${animal} 조이`;
-
-// 결과 렌더링
-document.getElementById("animalEmoji").textContent = emoji;
-document.getElementById("titleText").textContent = charName;
-document.getElementById("zoneText").textContent = zone;
-document.getElementById("descText").textContent = zoneDesc[zone];
+const ilju=localStorage.getItem("yourzoy_ilju")||"Unknown";
+const zone=localStorage.getItem("yourzoy_zone")||"A";
+const zoneName={A:"A-Zone (정리·관리형)",B:"B-Zone (공감·균형형)",C:"C-Zone (전략·정복형)",D:"D-Zone (자유·탐험형)"};
+document.getElementById("res").innerHTML=`
+  <h2>${ilju}</h2>
+  <p style="color:#FFD700;font-weight:700;">${zoneName[zone]}</p>
+  <p>당신은 <b>${ilju}</b>의 기운을 가진 <b>${zoneName[zone]}</b> 타입입니다.<br>
+  타고난 에너지와 현재 성향이 결합된 당신만의 <b>YourZoy 코드</b>는<br><br>
+  <span style="font-size:20px;color:#FFD700;">${ilju} + ${zone}</span><br><br>
+  입니다.</p>
+`;
 </script>
 </body>
 </html>
