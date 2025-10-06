@@ -1,71 +1,13 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>YourZoy 결과</title>
-<style>
-body {
-  background:#0B132B;
-  color:#FFD700;
-  font-family:'Noto Sans KR', sans-serif;
-  padding:40px;
-  line-height:1.7;
-}
-.wrap {
-  max-width:720px;
-  margin:auto;
-  border:1px solid rgba(255,215,0,.25);
-  border-radius:16px;
-  padding:32px;
-  background:#1C2541;
-  text-align:center;
-}
-h1 {
-  color:#FFD700;
-  font-size:26px;
-  margin-bottom:10px;
-}
-.result-card {
-  margin-top:20px;
-  background:#0F1733;
-  padding:20px;
-  border-radius:14px;
-  border:1px solid rgba(255,215,0,.3);
-  color:#fff;
-}
-button {
-  background:#FFD700;
-  color:#111;
-  font-weight:700;
-  border:none;
-  border-radius:12px;
-  padding:12px 18px;
-  display:block;
-  margin:24px auto 0;
-  cursor:pointer;
-  font-size:15px;
-}
-button:hover {filter:brightness(1.05);}
-</style>
-</head>
-<body>
-  <div class="wrap">
-    <h1>🐉 YourZoy 결과</h1>
-    <div id="report" class="result-card"></div>
-    <button onclick="location.href='survey.html'">성향테스트 하러 가기 →</button>
-  </div>
-
 <script>
 // ---------------------------
-// 🔮 자동 리포트 생성
+// 🔮 자동 리포트 생성(그대로 유지)
 // ---------------------------
 const colors = {
-  목: {name:"초록", emoji:"🌳", desc:"성장과 확장의 기운"},
-  화: {name:"붉은", emoji:"🔥", desc:"열정과 추진의 기운"},
-  토: {name:"노란", emoji:"🌞", desc:"안정과 중심의 기운"},
-  금: {name:"회색", emoji:"⚙️", desc:"질서와 논리의 기운"},
-  수: {name:"남색", emoji:"💧", desc:"감성·지혜의 기운"}
+  목:{name:"초록",emoji:"🌳",desc:"성장과 확장의 기운"},
+  화:{name:"붉은",emoji:"🔥",desc:"열정과 추진의 기운"},
+  토:{name:"노란",emoji:"🌞",desc:"안정과 중심의 기운"},
+  금:{name:"회색",emoji:"⚙️",desc:"질서와 논리의 기운"},
+  수:{name:"남색",emoji:"💧",desc:"감성·지혜의 기운"}
 };
 const animals = ["쥐","소","호랑이","토끼","용","뱀","말","양","원숭이","닭","개","돼지"];
 const zones = {
@@ -75,36 +17,79 @@ const zones = {
   D:{name:"D-Zone",desc:"자유와 몰입을 중시하는 감각적 성향"}
 };
 
-// 5오행 * 12지지 = 60조합 * 4존 = 240 조합 자동생성
+// 240개 자동 생성
 const reports = {};
-const ohengKeys = Object.keys(colors);
-ohengKeys.forEach(oh => {
-  animals.forEach(an => {
-    const name = `${colors[oh].name} ${an}`;
-    reports[name] = {};
+Object.keys(colors).forEach(oh=>{
+  animals.forEach(an=>{
+    const key = `${colors[oh].name} ${an}`;
+    reports[key] = {};
     Object.keys(zones).forEach(z=>{
-      reports[name][z] = `${colors[oh].emoji} <b>${name}</b> ${zones[z].name}<br><br>` +
-      `${colors[oh].desc}과 ${zones[z].desc}이 결합되어 ` +
-      `당신은 '${name}'의 에너지로 세상을 탐험합니다. ` +
-      `균형 잡힌 사고와 강한 집중력을 통해 자신만의 길을 만들어가는 타입입니다.`;
+      reports[key][z] =
+        `${colors[oh].emoji} <b>${key}</b> ${zones[z].name}<br><br>`+
+        `${colors[oh].desc}과 ${zones[z].desc}이 결합되어 `+
+        `당신은 '${key}'의 에너지로 세상을 탐험합니다. `+
+        `균형 잡힌 사고와 강한 집중력을 통해 자신만의 길을 만들어가는 타입입니다.`;
     });
   });
 });
 
 // ---------------------------
-// 🧩 URL 데이터 로드
+// 🧩 정규화 유틸
+// ---------------------------
+const stemToColor = {갑:"초록",을:"초록",병:"붉은",정:"붉은",무:"노란",기:"노란",경:"회색",신:"회색",임:"남색",계:"남색"};
+const branchToAnimal = {자:"쥐",축:"소",인:"호랑이",묘:"토끼",진:"용",사:"뱀",오:"말",미:"양",신:"원숭이",유:"닭",술:"개",해:"돼지"};
+
+function normalizeColor(c){
+  const map = {
+    "초록":"초록","푸른":"초록","녹색":"초록","그린":"초록",
+    "붉은":"붉은","빨강":"붉은","빨간":"붉은","적색":"붉은","레드":"붉은",
+    "노란":"노란","노랑":"노란","옐로":"노란",
+    "회색":"회색","그레이":"회색","은색":"회색","실버":"회색","하얀":"회색","흰색":"회색",
+    "남색":"남색","파랑":"남색","파란":"남색","블루":"남색","검은":"남색","검정":"남색","흑색":"남색"
+  };
+  return map[c] || c;
+}
+
+function canonicalIlju(raw){
+  if(!raw) return null;
+  let s = decodeURIComponent(raw).trim();
+
+  // 간지 2글자 → 색상+동물
+  const noSpace = s.replace(/\s+/g,"");
+  if(/^[갑을병정무기경신임계][자축인묘진사오미신유술해]$/.test(noSpace)){
+    const color = stemToColor[noSpace[0]];
+    const animal = branchToAnimal[noSpace[1]];
+    return `${color} ${animal}`;
+  }
+  // '붉은쥐' 같이 붙어온 경우
+  const m = noSpace.match(/(초록|푸른|붉은|빨강|빨간|노란|회색|남색|검은|하얀|흰색)(쥐|소|호랑이|토끼|용|뱀|말|양|원숭이|닭|개|돼지)/);
+  if(m){
+    return `${normalizeColor(m[1])} ${m[2]}`;
+  }
+  // '붉은 쥐' 같이 띄어쓰기 있는 경우
+  const parts = s.split(/\s+/);
+  if(parts.length>=2 && animals.includes(parts[1])){
+    return `${normalizeColor(parts[0])} ${parts[1]}`;
+  }
+  return s; // 마지막 시도
+}
+
+// ---------------------------
+// 🔗 파라미터/스토리지에서 읽어서 표시
 // ---------------------------
 const params = new URLSearchParams(window.location.search);
-const ilju = params.get('ilju'); // ex) "붉은 쥐"
-const zone = params.get('zone'); // ex) "C"
+const rawIlju = params.get('ilju') || localStorage.getItem('yourzoy_ilju');
+const ilju = canonicalIlju(rawIlju);
+const zone = (params.get('zone') || localStorage.getItem('yourzoy_zone') || 'A').toUpperCase();
 
-if (ilju && zone && reports[ilju] && reports[ilju][zone]) {
-  document.getElementById("report").innerHTML = reports[ilju][zone];
+const reportBox = document.getElementById("report");
+if (ilju && reports[ilju] && reports[ilju][zone]) {
+  reportBox.innerHTML = reports[ilju][zone];
 } else {
-  document.getElementById("report").innerHTML =
-  "⚠️ 데이터가 아직 연결되지 않았습니다.<br><br>" +
-  "<small>테스트를 처음부터 다시 진행해주세요.</small>";
+  reportBox.innerHTML =
+    "⚠️ 데이터가 아직 연결되지 않았습니다.<br><br>" +
+    `<small>받은 값: ilju="${rawIlju ?? ''}", zone="${zone}"</small><br>` +
+    `<small>테스트 URL 예시: <code>result.html?ilju=${encodeURIComponent('붉은 쥐')}&zone=C</code></small><br>`+
+    `<small>또는 간지로도 가능: <code>result.html?ilju=${encodeURIComponent('병자')}&zone=A</code></small>`;
 }
 </script>
-</body>
-</html>
