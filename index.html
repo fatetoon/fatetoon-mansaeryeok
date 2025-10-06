@@ -3,62 +3,125 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>YourZoy Birth Code</title>
+<title>YourZoy | 시작하기</title>
 <style>
-:root {--navy:#0B132B; --gold:#FFD700; --navy2:#1C2541; --text:#fff;}
-body {margin:0;padding:0;background:var(--navy);color:var(--text);font-family:'Noto Sans KR',sans-serif;text-align:center;}
-.wrap {max-width:520px;margin:8vh auto;padding:30px;background:var(--navy2);border-radius:20px;box-shadow:0 0 40px rgba(0,0,0,.4);border:1px solid rgba(255,215,0,.25);}
-h1 {color:var(--gold);}
-label {display:block;margin-top:14px;text-align:left;color:var(--gold);font-weight:600;}
-input,select,button {width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,215,0,.3);background:#0f1733;color:#fff;margin-top:8px;}
-button {margin-top:20px;background:var(--gold);color:#111;font-weight:700;cursor:pointer;}
-.result {margin-top:20px;padding:14px;background:#111833;border-radius:12px;border:1px solid rgba(255,215,0,.2);}
+body {
+  background: #0B132B;
+  color: #FFD700;
+  font-family: 'Noto Sans KR', sans-serif;
+  margin: 0; padding: 0;
+  text-align: center;
+}
+.container {
+  max-width: 480px;
+  margin: 10vh auto;
+  background: #1C2541;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  padding: 40px 30px;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.1);
+}
+h1 {
+  font-size: 26px;
+  color: #FFD700;
+  margin-bottom: 8px;
+}
+p.sub {
+  color: #fff;
+  font-size: 15px;
+  margin-bottom: 24px;
+}
+label {
+  display: block;
+  color: #fff;
+  margin: 12px 0 6px;
+  font-weight: 600;
+}
+input, select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  text-align: center;
+}
+button {
+  background: #FFD700;
+  color: #111;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 700;
+  padding: 14px 20px;
+  margin-top: 28px;
+  width: 100%;
+  cursor: pointer;
+  transition: 0.2s;
+}
+button:hover {
+  filter: brightness(1.05);
+}
+footer {
+  margin-top: 40px;
+  color: #777;
+  font-size: 13px;
+}
 </style>
 </head>
 <body>
-<main class="wrap">
-  <h1>🔮 YourZoy Birth Code</h1>
-  <p>생년월일과 출생 시간을 입력하세요.</p>
-  <label>생년월일</label>
-  <input type="date" id="birthdate">
-  <label>출생시간</label>
-  <select id="birthtime">
-    <option value="0">자시 (23:00~00:59)</option>
-    <option value="1">축시 (01:00~02:59)</option>
-    <option value="2">인시 (03:00~04:59)</option>
-    <option value="3">묘시 (05:00~06:59)</option>
-    <option value="4">진시 (07:00~08:59)</option>
-    <option value="5">사시 (09:00~10:59)</option>
-    <option value="6">오시 (11:00~12:59)</option>
-    <option value="7">미시 (13:00~14:59)</option>
-    <option value="8">신시 (15:00~16:59)</option>
-    <option value="9">유시 (17:00~18:59)</option>
-    <option value="10">술시 (19:00~20:59)</option>
-    <option value="11">해시 (21:00~22:59)</option>
-  </select>
-  <button onclick="goSurvey()">성향테스트 시작하기</button>
-  <div id="resultBox" class="result" style="display:none"></div>
-</main>
+  <main class="container">
+    <h1>🔮 YourZoy</h1>
+    <p class="sub">태어난 정보를 입력하면 당신의 기본 에너지를 분석합니다.</p>
+
+    <form id="birthForm">
+      <label>생년</label>
+      <input type="number" id="year" placeholder="예: 1995" required>
+
+      <label>생월</label>
+      <input type="number" id="month" placeholder="예: 2" required>
+
+      <label>생일</label>
+      <input type="number" id="day" placeholder="예: 14" required>
+
+      <label>출생 시 (24시간 기준)</label>
+      <input type="number" id="hour" placeholder="예: 17" required>
+
+      <button type="submit">성향 테스트 시작하기 →</button>
+    </form>
+  </main>
+
+  <footer>© 2025 YOURZOY</footer>
 
 <script>
-const stems=["갑","을","병","정","무","기","경","신","임","계"];
-const branchK=["자","축","인","묘","진","사","오","미","신","유","술","해"];
-const colorMap={갑:"초록",을:"초록",병:"빨강",정:"빨강",무:"노랑",기:"노랑",경:"회색",신:"회색",임:"남색",계:"남색"};
-const animalMap={자:"쥐",축:"소",인:"호랑이",묘:"토끼",진:"용",사:"뱀",오:"말",미:"양",신:"원숭이",유:"닭",술:"개",해:"돼지"};
+// 12지신 + 오행 조합 기본 테이블
+const iljuTable = [
+  "푸른 쥐","푸른 소","푸른 호랑이","푸른 토끼",
+  "붉은 용","붉은 뱀","붉은 말","붉은 양",
+  "노란 원숭이","노란 닭","노란 개","노란 돼지",
+  "회색 쥐","회색 소","회색 호랑이","회색 토끼",
+  "남색 용","남색 뱀","남색 말","남색 양",
+  "초록 원숭이","초록 닭","초록 개","초록 돼지"
+];
 
-function JD(y,m,d){const a=Math.floor((14-m)/12);const y2=y+4800-a;const m2=m+12*a-3;return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;}
-function getDayGanji(y,m,d){const base=JD(1984,2,2);const idx=(JD(y,m,d)-base+2)%60;return[stems[idx%10],branchK[idx%12]];}
-
-function goSurvey(){
-  const date=document.getElementById("birthdate").value;
-  if(!date) return alert("생년월일을 입력하세요!");
-  const [y,m,d]=date.split("-").map(Number);
-  const [stem,branch]=getDayGanji(y,m,d);
-  const color=colorMap[stem],animal=animalMap[branch];
-  const ilju=color+" "+animal;
-  localStorage.setItem("yourzoy_ilju",ilju);
-  window.location.href="survey.html";
+// 일주 계산 (MVP용 단순화 버전)
+function getIlju(y, m, d, h){
+  const idx = (y + m + d + Math.floor(h/2)) % iljuTable.length;
+  return iljuTable[idx];
 }
+
+// 폼 제출 이벤트
+document.getElementById("birthForm").addEventListener("submit", (e)=>{
+  e.preventDefault();
+  const y = parseInt(document.getElementById("year").value);
+  const m = parseInt(document.getElementById("month").value);
+  const d = parseInt(document.getElementById("day").value);
+  const h = parseInt(document.getElementById("hour").value);
+  const ilju = getIlju(y,m,d,h);
+
+  localStorage.setItem("yourzoy_ilju", ilju);
+  location.href = "survey.html"; // 설문 페이지로 이동
+});
 </script>
 </body>
 </html>
