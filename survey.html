@@ -87,14 +87,14 @@ const Q = [
 ];
 
 // ---------- 로직 ----------
-let i=0;
-let s={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
-const quiz=document.getElementById("quiz");
-const bar=document.getElementById("bar");
+let i = 0;
+let s = { E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0 };
+const quiz = document.getElementById("quiz");
+const bar = document.getElementById("bar");
 
-function drawQ(){
-  const q=Q[i];
-  quiz.innerHTML=`
+function drawQ() {
+  const q = Q[i];
+  quiz.innerHTML = `
     <div class="question">
       <h3>Q${i+1}. ${q.q}</h3>
       <div class="options">
@@ -104,42 +104,58 @@ function drawQ(){
         <label><input type="radio" name="a" value="4">그렇다</label>
         <label><input type="radio" name="a" value="5">매우 그렇다</label>
       </div>
-    </div>`;
-  bar.style.width=`${(i/Q.length)*100}%`;
+    </div>
+  `;
+  bar.style.width = `${(i / Q.length) * 100}%`;
 }
 drawQ();
 
-// ---------- 다음 버튼 ----------
-document.getElementById("next").onclick=()=>{
-  const a=document.querySelector("input[name=a]:checked");
-  if(!a)return alert("응답을 선택해주세요!");
-  const val=parseInt(a.value);
-  const type=Q[i].t;
-  if(["E","N","T","J"].includes(type)) s[type]+=val;
-  else s[type]+=6-val;
+document.getElementById("next").onclick = () => {
+  const a = document.querySelector("input[name=a]:checked");
+  if (!a) return alert("응답을 선택해주세요!");
+  const val = parseInt(a.value);
+  const type = Q[i].t;
+
+  // 🔥 MBTI 점수 계산 로직 (쌍으로 보정)
+  switch (type) {
+    case "E": s.E += val; s.I += 6 - val; break;
+    case "I": s.I += val; s.E += 6 - val; break;
+    case "S": s.S += val; s.N += 6 - val; break;
+    case "N": s.N += val; s.S += 6 - val; break;
+    case "T": s.T += val; s.F += 6 - val; break;
+    case "F": s.F += val; s.T += 6 - val; break;
+    case "J": s.J += val; s.P += 6 - val; break;
+    case "P": s.P += val; s.J += 6 - val; break;
+  }
+
   i++;
-  if(i<Q.length){drawQ();}
-  else{
-    const mbti=makeMBTI(s);
-    const zone=toZone(mbti);
-    localStorage.setItem("surveyType", JSON.stringify({mbti, zone}));
-    window.location.href="result.html";
+  if (i < Q.length) {
+    drawQ();
+  } else {
+    const mbti = makeMBTI(s);
+    const zone = toZone(mbti);
+
+    // 저장
+    localStorage.setItem("surveyType", JSON.stringify({ mbti, zone }));
+
+    // 이동
+    window.location.href = `result.html`;
   }
 };
 
-// ---------- MBTI 생성 ----------
-function makeMBTI(s){
-  return (s.E>=s.I?"E":"I")+
-         (s.S>=s.N?"S":"N")+
-         (s.T>=s.F?"T":"F")+
-         (s.J>=s.P?"J":"P");
+function makeMBTI(s) {
+  return (
+    (s.E >= s.I ? "E" : "I") +
+    (s.S >= s.N ? "S" : "N") +
+    (s.T >= s.F ? "T" : "F") +
+    (s.J >= s.P ? "J" : "P")
+  );
 }
 
-// ---------- MBTI → Zone 변환 ----------
-function toZone(m){
-  if(["INTJ","INTP","ENTJ","ENTP"].includes(m))return "C-Zone";
-  if(["INFJ","INFP","ENFJ","ENFP"].includes(m))return "B-Zone";
-  if(["ISTJ","ISFJ","ESTJ","ESFJ"].includes(m))return "A-Zone";
+function toZone(m) {
+  if (["INTJ", "INTP", "ENTJ", "ENTP"].includes(m)) return "C-Zone";
+  if (["INFJ", "INFP", "ENFJ", "ENFP"].includes(m)) return "B-Zone";
+  if (["ISTJ", "ISFJ", "ESTJ", "ESFJ"].includes(m)) return "A-Zone";
   return "D-Zone";
 }
 </script>
