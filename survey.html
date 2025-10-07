@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>YOURZOY 성향 테스트</title>
 <style>
 :root{--navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFF;}
 body{margin:0;background:var(--navy);color:var(--text);font-family:"Noto Sans KR",sans-serif;}
-.wrap{max-width:580px;margin:5vh auto;padding:30px;border-radius:24px;background:var(--navy2);box-shadow:0 20px 60px rgba(0,0,0,.4);}
+.wrap{max-width:580px;margin:5vh auto;padding:30px;border-radius:24px;background:var(--navy2);
+box-shadow:0 20px 60px rgba(0,0,0,.4);}
 h1{text-align:center;color:var(--gold);margin:0 0 8px;}
 p{text-align:center;color:rgba(255,255,255,.75);}
 .question{margin:30px 0;}
@@ -14,7 +16,8 @@ p{text-align:center;color:rgba(255,255,255,.75);}
 .options{display:flex;flex-direction:column;gap:8px;}
 label{font-size:15px;}
 input[type=radio]{margin-right:6px;}
-button{margin-top:24px;width:100%;background:var(--gold);color:#111;padding:13px 16px;border:none;border-radius:14px;font-weight:800;cursor:pointer;}
+button{margin-top:24px;width:100%;background:var(--gold);color:#111;padding:13px 16px;border:none;
+border-radius:14px;font-weight:800;cursor:pointer;}
 button:hover{filter:brightness(1.05);}
 .progress{height:6px;background:rgba(255,215,0,.25);border-radius:4px;overflow:hidden;margin:16px 0;}
 .progress-inner{height:6px;background:var(--gold);width:0;transition:.3s;}
@@ -25,6 +28,7 @@ footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:2
 <main class="wrap">
 <h1>YOURZOY</h1>
 <p>30문항으로 당신의 성향을 분석합니다.<br>응답은 약 3분 내외입니다.</p>
+
 <div class="progress"><div class="progress-inner" id="bar"></div></div>
 <div id="quiz"></div>
 <button id="next">다음</button>
@@ -32,6 +36,7 @@ footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:2
 </main>
 
 <script>
+// ======================== 질문 세트 =========================
 const Q=[
   {q:"나는 새로운 환경에서 에너지를 얻는다.",t:"E"},
   {q:"나는 세부사항보다는 전체적인 그림을 본다.",t:"N"},
@@ -64,46 +69,64 @@ const Q=[
   {q:"나는 새로운 사람을 만나는 게 설렌다.",t:"E"},
   {q:"나는 완벽주의적 경향이 있다.",t:"J"}
 ];
-let i=0;let s={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
-const quiz=document.getElementById("quiz"),bar=document.getElementById("bar");
+
+// ======================== 진행 상태 =========================
+let i=0;
+let s={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
+const quiz=document.getElementById("quiz");
+const bar=document.getElementById("bar");
+
+// ======================== 문항 표시 =========================
 function drawQ(){
   const q=Q[i];
-  quiz.innerHTML=`<div class="question"><h3>Q${i+1}. ${q.q}</h3>
-  <div class="options">
-  <label><input type="radio" name="a" value="1">전혀 아니다</label>
-  <label><input type="radio" name="a" value="2">아니다</label>
-  <label><input type="radio" name="a" value="3">보통이다</label>
-  <label><input type="radio" name="a" value="4">그렇다</label>
-  <label><input type="radio" name="a" value="5">매우 그렇다</label>
-  </div></div>`;
+  quiz.innerHTML=`
+  <div class="question">
+    <h3>Q${i+1}. ${q.q}</h3>
+    <div class="options">
+      <label><input type="radio" name="a" value="1">전혀 아니다</label>
+      <label><input type="radio" name="a" value="2">아니다</label>
+      <label><input type="radio" name="a" value="3">보통이다</label>
+      <label><input type="radio" name="a" value="4">그렇다</label>
+      <label><input type="radio" name="a" value="5">매우 그렇다</label>
+    </div>
+  </div>`;
   bar.style.width=`${(i/Q.length)*100}%`;
 }
 drawQ();
 
+// ======================== 응답 처리 =========================
 document.getElementById("next").onclick=()=>{
   const a=document.querySelector("input[name=a]:checked");
-  if(!a)return alert("응답을 선택해주세요!");
+  if(!a) return alert("응답을 선택해주세요!");
   const val=parseInt(a.value);
   const t=Q[i].t;
-  switch(t){
-    case"E":s.E+=val;s.I+=6-val;break;
-    case"I":s.I+=val;s.E+=6-val;break;
-    case"S":s.S+=val;s.N+=6-val;break;
-    case"N":s.N+=val;s.S+=6-val;break;
-    case"T":s.T+=val;s.F+=6-val;break;
-    case"F":s.F+=val;s.T+=6-val;break;
-    case"J":s.J+=val;s.P+=6-val;break;
-    case"P":s.P+=val;s.J+=6-val;break;
-  }
+
+  // 점수 누적
+  if(["E","S","T","J"].includes(t)) s[t]+=val;
+  else s[t]+=6-val;
+
   i++;
   if(i<Q.length){drawQ();}
   else{
-    const mbti=(s.E>=s.I?"E":"I")+(s.S>=s.N?"S":"N")+(s.T>=s.F?"T":"F")+(s.J>=s.P?"J":"P");
+    // MBTI 계산
+    const mbti =
+      (s.E>=s.I?"E":"I")+
+      (s.S>=s.N?"S":"N")+
+      (s.T>=s.F?"T":"F")+
+      (s.J>=s.P?"J":"P");
+
+    // ZONE 구분
     let zone="D-Zone";
-    if(["INTJ","INTP","ENTJ","ENTP"].includes(mbti))zone="C-Zone";
-    else if(["INFJ","INFP","ENFJ","ENFP"].includes(mbti))zone="B-Zone";
-    else if(["ISTJ","ISFJ","ESTJ","ESFJ"].includes(mbti))zone="A-Zone";
-    localStorage.setItem("surveyType",JSON.stringify({mbti,zone}));
+    if(["INTJ","INTP","ENTJ","ENTP"].includes(mbti)) zone="C-Zone";
+    else if(["INFJ","INFP","ENFJ","ENFP"].includes(mbti)) zone="B-Zone";
+    else if(["ISTJ","ISFJ","ESTJ","ESFJ"].includes(mbti)) zone="A-Zone";
+
+    // 저장 및 결과 이동
+    const surveyData={mbti,zone};
+    localStorage.setItem("surveyType", JSON.stringify(surveyData));
+    console.log("✅ 설문 결과:", surveyData);
+
+    // result.html로 이동
     window.location.href="result.html";
   }
 };
