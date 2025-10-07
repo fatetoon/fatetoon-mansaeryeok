@@ -3,124 +3,169 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>YourZoy | 시작하기</title>
+<title>YOURZOY 사주 등록</title>
 <style>
-body {
-  background: #0B132B;
-  color: #FFD700;
-  font-family: 'Noto Sans KR', sans-serif;
-  margin: 0; padding: 0;
-  text-align: center;
+:root {
+  --navy:#0B132B;
+  --navy2:#1C2541;
+  --gold:#FFD700;
+  --text:#FFF;
 }
-.container {
-  max-width: 480px;
-  margin: 10vh auto;
-  background: #1C2541;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 215, 0, 0.25);
-  padding: 40px 30px;
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.1);
+body {
+  margin:0;
+  background:var(--navy);
+  color:var(--text);
+  font-family:"Noto Sans KR",sans-serif;
+}
+.wrap {
+  max-width:520px;
+  margin:6vh auto;
+  padding:28px;
+  border-radius:24px;
+  background:var(--navy2);
+  box-shadow:0 18px 50px rgba(0,0,0,.4);
 }
 h1 {
-  font-size: 26px;
-  color: #FFD700;
-  margin-bottom: 8px;
+  text-align:center;
+  color:var(--gold);
+  margin-bottom:4px;
+  font-size:24px;
 }
-p.sub {
-  color: #fff;
-  font-size: 15px;
-  margin-bottom: 24px;
+p {
+  text-align:center;
+  color:rgba(255,255,255,.7);
+  margin-bottom:24px;
 }
 label {
-  display: block;
-  color: #fff;
-  margin: 12px 0 6px;
-  font-weight: 600;
+  color:var(--gold);
+  font-weight:700;
+  font-size:14px;
+  display:block;
+  margin:10px 0 6px;
 }
-input, select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-  font-size: 15px;
-  text-align: center;
+input,select,button {
+  width:100%;
+  padding:13px;
+  border:none;
+  border-radius:12px;
+  box-sizing:border-box;
+}
+input,select {
+  background:#0f1733;
+  color:var(--text);
+  border:1px solid rgba(255,215,0,.3);
 }
 button {
-  background: #FFD700;
-  color: #111;
-  border: none;
-  border-radius: 12px;
-  font-size: 17px;
-  font-weight: 700;
-  padding: 14px 20px;
-  margin-top: 28px;
-  width: 100%;
-  cursor: pointer;
-  transition: 0.2s;
+  background:var(--gold);
+  color:#111;
+  font-weight:800;
+  margin-top:18px;
+  cursor:pointer;
 }
-button:hover {
-  filter: brightness(1.05);
-}
+button:hover {filter:brightness(1.05);}
 footer {
-  margin-top: 40px;
-  color: #777;
-  font-size: 13px;
+  text-align:center;
+  color:rgba(255,255,255,.45);
+  font-size:12px;
+  margin-top:20px;
 }
 </style>
 </head>
+
 <body>
-  <main class="container">
-    <h1>🔮 YourZoy</h1>
-    <p class="sub">태어난 정보를 입력하면 당신의 기본 에너지를 분석합니다.</p>
+<main class="wrap">
+  <h1>YOURZOY</h1>
+  <p>생년월일과 시간을 입력하면 당신의<br><b>오행+동물 일주</b>를 찾아드릴게요 🐉</p>
 
-    <form id="birthForm">
-      <label>생년</label>
-      <input type="number" id="year" placeholder="예: 1995" required>
+  <label>생년월일</label>
+  <input id="birthdate" type="date">
 
-      <label>생월</label>
-      <input type="number" id="month" placeholder="예: 2" required>
+  <label>출생시간</label>
+  <select id="birthtime">
+    <option value="0">자시 (23:00~00:59)</option>
+    <option value="1">축시 (01:00~02:59)</option>
+    <option value="2">인시 (03:00~04:59)</option>
+    <option value="3">묘시 (05:00~06:59)</option>
+    <option value="4">진시 (07:00~08:59)</option>
+    <option value="5">사시 (09:00~10:59)</option>
+    <option value="6">오시 (11:00~12:59)</option>
+    <option value="7">미시 (13:00~14:59)</option>
+    <option value="8">신시 (15:00~16:59)</option>
+    <option value="9">유시 (17:00~18:59)</option>
+    <option value="10">술시 (19:00~20:59)</option>
+    <option value="11">해시 (21:00~22:59)</option>
+  </select>
 
-      <label>생일</label>
-      <input type="number" id="day" placeholder="예: 14" required>
-
-      <label>출생 시 (24시간 기준)</label>
-      <input type="number" id="hour" placeholder="예: 17" required>
-
-      <button type="submit">성향 테스트 시작하기 →</button>
-    </form>
-  </main>
-
+  <button id="next">성향 테스트 시작</button>
   <footer>© 2025 YOURZOY</footer>
+</main>
 
 <script>
-// 12지신 + 오행 조합 기본 테이블
-const iljuTable = [
-  "푸른 쥐","푸른 소","푸른 호랑이","푸른 토끼",
-  "붉은 용","붉은 뱀","붉은 말","붉은 양",
-  "노란 원숭이","노란 닭","노란 개","노란 돼지",
-  "회색 쥐","회색 소","회색 호랑이","회색 토끼",
-  "남색 용","남색 뱀","남색 말","남색 양",
-  "초록 원숭이","초록 닭","초록 개","초록 돼지"
-];
+// ----------------------
+// 1. 천간/지지 기본 배열
+// ----------------------
+const stems=["갑","을","병","정","무","기","경","신","임","계"];
+const branches=["자","축","인","묘","진","사","오","미","신","유","술","해"];
 
-// 일주 계산 (MVP용 단순화 버전)
-function getIlju(y, m, d, h){
-  const idx = (y + m + d + Math.floor(h/2)) % iljuTable.length;
-  return iljuTable[idx];
+// ----------------------
+// 2. 천간별 오행 + 색상
+// ----------------------
+const elementMap={
+  "갑":"목","을":"목",
+  "병":"화","정":"화",
+  "무":"토","기":"토",
+  "경":"금","신":"금",
+  "임":"수","계":"수"
+};
+const colorMap={
+  "목":"초록",
+  "화":"빨강",
+  "토":"노랑",
+  "금":"회색",
+  "수":"남색"
+};
+
+// ----------------------
+// 3. 일자별 간지 계산식 (만세력 간략 버전)
+// ----------------------
+function JD(y,m,d){
+  const a=Math.floor((14-m)/12);
+  const y2=y+4800-a;
+  const m2=m+12*a-3;
+  return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;
+}
+function getDayGanji(y,m,d){
+  const base=JD(1984,2,2);
+  const idx=(JD(y,m,d)-base+2)%60;
+  return [stems[idx%10],branches[idx%12]];
 }
 
-// 폼 제출 이벤트
-document.getElementById("birthForm").addEventListener("submit", (e)=>{
-  e.preventDefault();
-  const y = parseInt(document.getElementById("year").value);
-  const m = parseInt(document.getElementById("month").value);
-  const d = parseInt(document.getElementById("day").value);
-  const h = parseInt(document.getElementById("hour").value);
-  const ilju = getIlju(y,m,d,h);
+// ----------------------
+// 4. 버튼 클릭 이벤트
+// ----------------------
+document.getElementById("next").addEventListener("click",()=>{
+  const dateStr=document.getElementById("birthdate").value;
+  if(!dateStr)return alert("생년월일을 선택해주세요!");
 
-  localStorage.setItem("yourzoy_ilju", ilju);
-  location.href = "survey.html"; // 설문 페이지로 이동
+  const [y,m,d]=dateStr.split("-").map(n=>parseInt(n,10));
+  const h=parseInt(document.getElementById("birthtime").value);
+  const [gan,ji]=getDayGanji(y,m,d);
+
+  // 오행, 색상, 동물명 매핑
+  const elem=elementMap[gan];
+  const color=colorMap[elem];
+  const animalMap={
+    "자":"쥐","축":"소","인":"호랑이","묘":"토끼",
+    "진":"용","사":"뱀","오":"말","미":"양",
+    "신":"원숭이","유":"닭","술":"개","해":"돼지"
+  };
+  const animal=animalMap[ji];
+
+  const iljuName=`${color} ${animal}`;
+  const data={gan,ji,elem,color,animal,iljuName,hour:h};
+  localStorage.setItem("birthData",JSON.stringify(data));
+
+  window.location.href="survey.html";
 });
 </script>
 </body>
