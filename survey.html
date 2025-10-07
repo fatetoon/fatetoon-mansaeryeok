@@ -3,189 +3,145 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>YourZoy 성향 테스트</title>
+<title>YOURZOY 성향 테스트</title>
 <style>
-body {
-  background: #0B132B;
-  color: #FFD700;
-  font-family: 'Noto Sans KR', sans-serif;
-  margin: 0;
-  padding: 0;
-  text-align: center;
+:root{
+  --navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFF;
 }
-.container {
-  max-width: 600px;
-  margin: 8vh auto;
-  background: #1C2541;
-  border-radius: 20px;
-  padding: 40px 30px;
-  border: 1px solid rgba(255,215,0,0.25);
-  box-shadow: 0 0 12px rgba(255,215,0,0.1);
+body{
+  margin:0;background:var(--navy);color:var(--text);
+  font-family:"Noto Sans KR",sans-serif;
 }
-h1 {
-  font-size: 26px;
-  margin-bottom: 10px;
-  color: #FFD700;
+.wrap{
+  max-width:580px;margin:5vh auto;padding:30px;
+  border-radius:24px;background:var(--navy2);
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
 }
-.question {
-  font-size: 18px;
-  color: #fff;
-  margin-bottom: 28px;
-  line-height: 1.5;
+h1{text-align:center;color:var(--gold);margin:0 0 8px;}
+p{text-align:center;color:rgba(255,255,255,.75);}
+.question{margin:30px 0;}
+.question h3{color:var(--gold);font-size:17px;margin-bottom:14px;}
+.options{display:flex;flex-direction:column;gap:8px;}
+label{font-size:15px;}
+input[type=radio]{margin-right:6px;}
+button{
+  margin-top:24px;width:100%;background:var(--gold);color:#111;
+  padding:13px 16px;border:none;border-radius:14px;
+  font-weight:800;cursor:pointer;
 }
-.options {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-button.option {
-  flex: 1;
-  min-width: 80px;
-  background: #111833;
-  color: #FFD700;
-  border: 1px solid rgba(255,215,0,0.3);
-  border-radius: 10px;
-  padding: 10px 0;
-  cursor: pointer;
-  transition: 0.25s;
-  font-weight: 600;
-}
-button.option:hover {
-  background: #FFD700;
-  color: #111;
-}
-button.next {
-  margin-top: 24px;
-  width: 100%;
-  background: #FFD700;
-  color: #111;
-  border: none;
-  border-radius: 12px;
-  padding: 14px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.2s;
-}
-button.next:hover { filter: brightness(1.05); }
-.progress {
-  height: 6px;
-  background: rgba(255,215,0,0.2);
-  border-radius: 3px;
-  overflow: hidden;
-  margin-bottom: 20px;
-}
-.progress-bar {
-  width: 0%;
-  height: 100%;
-  background: #FFD700;
-  transition: width 0.3s;
-}
+button:hover{filter:brightness(1.05);}
+.progress{height:6px;background:rgba(255,215,0,.25);
+  border-radius:4px;overflow:hidden;margin:16px 0;}
+.progress-inner{height:6px;background:var(--gold);width:0;transition:.3s;}
+footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:20px;}
 </style>
 </head>
+
 <body>
-  <main class="container">
-    <h1>✨ YourZoy 성향 테스트 ✨</h1>
-    <div class="progress"><div id="bar" class="progress-bar"></div></div>
-    <div id="quizBox">
-      <div class="question" id="q"></div>
-      <div class="options" id="opts"></div>
-      <button class="next" id="nextBtn">다음 ▶</button>
-    </div>
-  </main>
+<main class="wrap">
+  <h1>YOURZOY</h1>
+  <p>30문항으로 당신의 성향을 분석합니다.<br>3분 내로 완료돼요 ⚡</p>
+  <div class="progress"><div class="progress-inner" id="bar"></div></div>
+  <div id="quiz"></div>
+  <button id="next">다음</button>
+  <footer>© 2025 YOURZOY</footer>
+</main>
 
 <script>
-// 30개 문항
-const questions = [
-  "계획을 세우고 차근차근 진행하는 걸 좋아한다.",
-  "감정보다는 논리로 판단하는 편이다.",
-  "다른 사람의 감정에 쉽게 공감한다.",
-  "새로운 도전을 하면 에너지가 생긴다.",
-  "정리와 체계가 잡혀 있을 때 마음이 편하다.",
-  "즉흥적인 일정을 즐긴다.",
-  "사람들과 함께 있을 때 힘이 난다.",
-  "혼자 있는 시간이 꼭 필요하다.",
-  "결정할 때 오래 고민하지 않는다.",
-  "감정보다는 결과가 중요하다.",
-  "새로운 환경에 쉽게 적응한다.",
-  "문제의 근본 원인을 찾는 걸 좋아한다.",
-  "세부사항보다는 큰 그림을 본다.",
-  "다른 사람을 돕는 게 기분 좋다.",
-  "규칙보다는 자유로운 게 좋다.",
-  "타인의 시선이 신경 쓰인다.",
-  "현실적이고 실용적인 조언을 자주 한다.",
-  "리더 역할을 맡는 걸 즐긴다.",
-  "상상력이 풍부하다.",
-  "논쟁보다 조화를 중시한다.",
-  "계획이 틀어지면 불안하다.",
-  "결과보다 과정이 중요하다고 생각한다.",
-  "감정 표현이 솔직한 편이다.",
-  "새로운 아이디어를 떠올리는 게 재미있다.",
-  "즉흥적으로 여행 가는 걸 좋아한다.",
-  "정리되지 않은 공간이 스트레스를 준다.",
-  "문제를 빠르게 해결하려 한다.",
-  "감정적인 사람을 이해하기 어렵다.",
-  "규칙적인 생활을 선호한다.",
-  "자기 생각을 표현하는 걸 두려워하지 않는다."
+// ---------- 기본 세팅 ----------
+const birthData = JSON.parse(localStorage.getItem("birthData") || "{}");
+console.log("받은 데이터:", birthData);
+
+// ---------- 질문 리스트 ----------
+const Q = [
+  {q:"나는 새로운 사람을 만날 때 에너지가 생긴다.",t:"E"},
+  {q:"나는 직감적으로 미래를 예측하는 편이다.",t:"N"},
+  {q:"나는 논리적 근거로 판단한다.",t:"T"},
+  {q:"나는 계획을 세워 움직이는 걸 선호한다.",t:"J"},
+  {q:"나는 혼자 있는 시간이 필요하다.",t:"I"},
+  {q:"나는 감정 변화를 잘 인식한다.",t:"F"},
+  {q:"나는 구체적인 사실에 집중한다.",t:"S"},
+  {q:"나는 사람과의 관계를 중요시한다.",t:"F"},
+  {q:"나는 즉흥적으로 결정을 내릴 때가 많다.",t:"P"},
+  {q:"나는 큰 그림을 먼저 본다.",t:"N"},
+  {q:"나는 감정보다는 사실을 택한다.",t:"T"},
+  {q:"나는 정리정돈을 잘 한다.",t:"J"},
+  {q:"나는 직관적으로 판단한다.",t:"N"},
+  {q:"나는 다른 사람과 함께 있을 때 활력이 생긴다.",t:"E"},
+  {q:"나는 데이터를 중시한다.",t:"T"},
+  {q:"나는 감성적 자극에 영향을 받는다.",t:"F"},
+  {q:"나는 디테일보다는 아이디어 중심이다.",t:"N"},
+  {q:"나는 분위기 변화를 잘 감지한다.",t:"F"},
+  {q:"나는 실용적이다.",t:"S"},
+  {q:"나는 완벽을 추구한다.",t:"J"},
+  {q:"나는 감각적인 경험을 선호한다.",t:"S"},
+  {q:"나는 분석적이고 전략적이다.",t:"T"},
+  {q:"나는 상황에 따라 유연하게 행동한다.",t:"P"},
+  {q:"나는 직감으로 결정을 내린다.",t:"N"},
+  {q:"나는 감정 표현이 솔직하다.",t:"F"},
+  {q:"나는 새로운 아이디어를 즐긴다.",t:"N"},
+  {q:"나는 사교적이다.",t:"E"},
+  {q:"나는 계획대로 진행될 때 안정된다.",t:"J"},
+  {q:"나는 즉흥적인 변화를 즐긴다.",t:"P"},
+  {q:"나는 새로운 시도를 좋아한다.",t:"E"}
 ];
 
-let step = 0;
-let scores = { A:0, B:0, C:0, D:0 };
+// ---------- 로직 ----------
+let i=0;
+let s={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
+const quiz=document.getElementById("quiz");
+const bar=document.getElementById("bar");
 
-const qBox = document.getElementById("q");
-const optBox = document.getElementById("opts");
-const bar = document.getElementById("bar");
-const nextBtn = document.getElementById("nextBtn");
-
-function showQuestion(){
-  qBox.innerText = `(${step+1}/30) ${questions[step]}`;
-  optBox.innerHTML = "";
-  const opts = ["전혀 그렇지 않다", "그렇지 않다", "보통이다", "그렇다", "매우 그렇다"];
-  opts.forEach((txt,i)=>{
-    const btn=document.createElement("button");
-    btn.className="option";
-    btn.innerText=txt;
-    btn.onclick=()=>selectOption(i);
-    optBox.appendChild(btn);
-  });
-  bar.style.width = ((step)/30)*100 + "%";
-  nextBtn.disabled=true;
-  nextBtn.style.opacity=0.5;
+function drawQ(){
+  const q=Q[i];
+  quiz.innerHTML=`
+    <div class="question">
+      <h3>Q${i+1}. ${q.q}</h3>
+      <div class="options">
+        <label><input type="radio" name="a" value="1">전혀 아니다</label>
+        <label><input type="radio" name="a" value="2">아니다</label>
+        <label><input type="radio" name="a" value="3">보통이다</label>
+        <label><input type="radio" name="a" value="4">그렇다</label>
+        <label><input type="radio" name="a" value="5">매우 그렇다</label>
+      </div>
+    </div>`;
+  bar.style.width=`${(i/Q.length)*100}%`;
 }
+drawQ();
 
-let selected=null;
-function selectOption(i){
-  selected=i;
-  nextBtn.disabled=false;
-  nextBtn.style.opacity=1;
-  // 시각 피드백
-  document.querySelectorAll(".option").forEach(btn=>{
-    btn.style.background="#111833";
-    btn.style.color="#FFD700";
-  });
-  event.target.style.background="#FFD700";
-  event.target.style.color="#111";
-}
-
-nextBtn.onclick=()=>{
-  if(selected===null) return;
-  // 점수 계산 (단순화)
-  const z = ["A","B","C","D"][step%4];
-  scores[z] += selected;
-  selected=null;
-  step++;
-  if(step<questions.length){showQuestion();}
-  else{finishTest();}
+// ---------- 다음 버튼 ----------
+document.getElementById("next").onclick=()=>{
+  const a=document.querySelector("input[name=a]:checked");
+  if(!a)return alert("응답을 선택해주세요!");
+  const val=parseInt(a.value);
+  const type=Q[i].t;
+  if(["E","N","T","J"].includes(type)) s[type]+=val;
+  else s[type]+=6-val;
+  i++;
+  if(i<Q.length){drawQ();}
+  else{
+    const mbti=makeMBTI(s);
+    const zone=toZone(mbti);
+    localStorage.setItem("surveyType", JSON.stringify({mbti, zone}));
+    window.location.href="result.html";
+  }
 };
 
-function finishTest(){
-  const maxZone = Object.keys(scores).reduce((a,b)=>scores[a]>scores[b]?a:b);
-  const ilju = localStorage.getItem("yourzoy_ilju") || "알 수 없음";
-  location.href=`result.html?ilju=${encodeURIComponent(ilju)}&zone=${maxZone}`;
+// ---------- MBTI 생성 ----------
+function makeMBTI(s){
+  return (s.E>=s.I?"E":"I")+
+         (s.S>=s.N?"S":"N")+
+         (s.T>=s.F?"T":"F")+
+         (s.J>=s.P?"J":"P");
 }
 
-showQuestion();
+// ---------- MBTI → Zone 변환 ----------
+function toZone(m){
+  if(["INTJ","INTP","ENTJ","ENTP"].includes(m))return "C-Zone";
+  if(["INFJ","INFP","ENFJ","ENFP"].includes(m))return "B-Zone";
+  if(["ISTJ","ISFJ","ESTJ","ESFJ"].includes(m))return "A-Zone";
+  return "D-Zone";
+}
 </script>
 </body>
 </html>
