@@ -17,25 +17,31 @@ body{
   border-radius:24px;background:var(--navy2);
   box-shadow:0 20px 60px rgba(0,0,0,.4);
 }
-h1{text-align:center;color:var(--gold);margin-bottom:8px;font-size:26px;}
-p{text-align:center;color:rgba(255,255,255,.7);font-size:15px;line-height:1.6;}
-.card{
-  background:#0f1733;padding:24px;margin:18px 0;
-  border:1px solid rgba(255,215,0,.25);
-  border-radius:18px;
-  transition:transform .25s ease, box-shadow .25s ease;
+h1{text-align:center;color:var(--gold);margin-bottom:8px;}
+p{text-align:center;color:rgba(255,255,255,.7);}
+.user-info{
+  background:#0f1733;border:1px solid rgba(255,215,0,.25);
+  border-radius:14px;padding:16px;text-align:center;margin:20px 0;
 }
-.card:hover{transform:translateY(-5px);box-shadow:0 10px 25px rgba(255,215,0,.1);}
+.user-info b{color:var(--gold);}
+.card{
+  background:#0f1733;padding:24px;margin:16px 0;
+  border:1px solid rgba(255,215,0,.25);
+  border-radius:16px;
+  transition:transform .2s ease, box-shadow .2s ease;
+  cursor:pointer;
+}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(255,215,0,.1);}
 h2{color:var(--gold);margin-bottom:6px;font-size:18px;}
 .price{color:#FFD700;font-weight:800;margin-top:6px;}
-.desc{font-size:14px;line-height:1.6;color:rgba(255,255,255,.85);}
+.desc{font-size:14px;line-height:1.6;color:rgba(255,255,255,.8);}
 button{
   width:100%;padding:13px;margin-top:18px;
   border:none;border-radius:14px;background:var(--gold);
-  color:#111;font-weight:800;cursor:pointer;transition:all .2s;
+  color:#111;font-weight:800;cursor:pointer;
 }
-button:hover{filter:brightness(1.07);}
-footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:28px;}
+button:hover{filter:brightness(1.05);}
+footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:24px;}
 .highlight{color:var(--gold);font-weight:700;}
 </style>
 </head>
@@ -43,66 +49,76 @@ footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:2
 <body>
 <main class="wrap">
   <h1>YOURZOY 리포트 선택</h1>
-  <p>
-    당신의 사주와 성향을 기반으로 <b class="highlight">AI 맞춤 리포트</b>를 생성합니다.<br>
-    지금 원하는 리포트 타입을 선택해주세요.
-  </p>
+  <p>당신의 사주와 성향을 기반으로 <b class="highlight">AI 리포트</b>를 생성합니다.<br>원하는 리포트 타입을 선택해주세요.</p>
 
-  <!-- MINI REPORT -->
-  <div class="card" id="mini">
-    <h2>🔸 Mini 리포트 (₩3,900)</h2>
-    <p class="desc">
-      • 이번 달 TOP3 주의 신호<br>
-      • 개인 금기시간 + 대체 행동 가이드<br>
-      • 짧고 간결한 리마인더 카드 (PNG 형식)
-    </p>
-    <p class="price">소요 시간: 약 30초 / 자동 발송</p>
-    <button onclick="goPay('mini')">이 리포트 선택</button>
+  <div class="user-info" id="userInfo">
+    <!-- 사주 + MBTI 정보 표시 영역 -->
   </div>
 
-  <!-- MAIN REPORT -->
-  <div class="card" id="main">
+  <div class="card" id="mini" onclick="goPay('mini')">
+    <h2>🔸 Mini 리포트 (₩3,900)</h2>
+    <p class="desc">
+      • 이번 달 TOP3 주의사항<br>
+      • 개인 금기시간 + 대체 행동<br>
+      • 짧고 간결한 리마인더 카드 (PNG)
+    </p>
+    <p class="price">소요: 약 30초 / 자동 발송</p>
+  </div>
+
+  <div class="card" id="main" onclick="goPay('main')">
     <h2>💠 Main 리포트 (₩19,800)</h2>
     <p class="desc">
       • 관계 / 돈 / 타이밍 / 정서 4축 <b>RI 지수</b> 분석<br>
-      • 실제 리스크 포인트 + 행동 처방 카드<br>
+      • 실제 리스크 포인트 + 행동 처방<br>
       • 인스타 공유용 요약 카드 포함
     </p>
-    <p class="price">소요 시간: 약 1분 / 자동 발송</p>
-    <button onclick="goPay('main')">이 리포트 선택</button>
+    <p class="price">소요: 약 1분 / 자동 발송</p>
   </div>
 
-  <!-- PREMIUM REPORT -->
-  <div class="card" id="premium">
+  <div class="card" id="premium" onclick="goPay('premium')">
     <h2>👑 Premium 리포트 (₩29,800)</h2>
     <p class="desc">
       • 연말 총정리 + 다음 해 준비 로드맵<br>
-      • 금전 / 관계 / 기회운 시점별 예측<br>
+      • 금전/관계/기회운 시점별 예측<br>
       • 맞춤형 리스크 대체 행동 3세트 포함
     </p>
-    <p class="price">소요 시간: 약 2분 / 자동 발송</p>
-    <button onclick="goPay('premium')">이 리포트 선택</button>
+    <p class="price">소요: 약 2분 / 자동 발송</p>
   </div>
 
+  <button onclick="location.href='index.html'">처음으로</button>
   <footer>© 2025 YOURZOY</footer>
 </main>
 
 <script>
 // ===============================
-// 1️⃣ 로컬 데이터 확인
+// 1️⃣ URL로 전달된 데이터 수신
 // ===============================
-const birthData = JSON.parse(localStorage.getItem("birthData") || "{}");
-const surveyType = JSON.parse(localStorage.getItem("surveyType") || "{}");
+const params = new URLSearchParams(window.location.search);
+let decodedData = null;
 
-if(!birthData.iljuName || !surveyType.zone){
-  alert("⚠️ 데이터가 누락되었습니다. 처음부터 다시 진행해주세요.");
-  window.location.href="index.html";
+try {
+  decodedData = JSON.parse(decodeURIComponent(params.get("data")));
+} catch(e) {
+  console.warn("데이터 없음 또는 파싱 오류", e);
+}
+
+if (decodedData && decodedData.birth && decodedData.survey) {
+  const b = decodedData.birth;
+  const s = decodedData.survey;
+  const infoHTML = `
+    <p><b>${b.color} ${b.animal} JOY</b> · ${s.mbti} · ${s.zone}</p>
+    <small>${b.yearP} / ${b.monthP} / ${b.dayP} / ${b.hourP}</small>
+  `;
+  document.getElementById("userInfo").innerHTML = infoHTML;
+} else {
+  document.getElementById("userInfo").innerHTML = `
+    ⚠️ 데이터가 연결되지 않았습니다.<br>
+    <small>결과 페이지에서 다시 시도해주세요.</small>`;
 }
 
 // ===============================
-// 2️⃣ Tally 결제 연동
+// 2️⃣ 리포트 선택 → 결제 연결
 // ===============================
-// 실제 사용 시 각 리포트별 Tally URL로 연결 가능
 const TALLY_LINKS = {
   mini: "https://tally.so/r/mini-yourzoy",
   main: "https://tally.so/r/main-yourzoy",
@@ -110,26 +126,26 @@ const TALLY_LINKS = {
 };
 
 function goPay(type){
-  const link = TALLY_LINKS[type];
-  const payload = {
-    ilju: birthData.iljuName,
-    elem: birthData.elem,
-    color: birthData.color,
-    animal: birthData.animal,
-    mbti: surveyType.mbti,
-    zone: surveyType.zone,
-    report: type,
-    timestamp: new Date().toISOString()
+  const link = TALLY_LINKS[type] || "#";
+  const data = decodedData || {};
+  const send = {
+    ilju: data.birth?.iljuName,
+    elem: data.birth?.elem,
+    color: data.birth?.color,
+    animal: data.birth?.animal,
+    mbti: data.survey?.mbti,
+    zone: data.survey?.zone,
+    report: type
   };
 
-  // ✅ Google Sheets / Webhook 예시 (비활성)
-  // fetch("https://script.google.com/macros/s/YOUR_WEBAPP_URL/exec", {
-  //   method: "POST",
-  //   body: JSON.stringify(payload)
-  // });
+  if(link === "#"){
+    alert("⚠️ 결제 페이지가 아직 연결되지 않았습니다.");
+    return;
+  }
 
-  // ✅ 결제 폼 이동
-  window.location.href = link + `?data=${encodeURIComponent(JSON.stringify(payload))}`;
+  // ✅ 결제 페이지 이동 (데이터 포함)
+  const encoded = encodeURIComponent(JSON.stringify(send));
+  window.location.href = link + `?data=${encoded}`;
 }
 </script>
 </body>
