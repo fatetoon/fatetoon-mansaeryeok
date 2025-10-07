@@ -7,89 +7,108 @@
 <style>
 :root{--navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFF;}
 body{margin:0;background:var(--navy);color:var(--text);font-family:"Noto Sans KR",sans-serif;}
-.wrap{max-width:700px;margin:6vh auto;padding:32px;border-radius:24px;background:var(--navy2);box-shadow:0 20px 60px rgba(0,0,0,.4);}
+.wrap{max-width:640px;margin:6vh auto;padding:32px;border-radius:24px;background:var(--navy2);box-shadow:0 20px 60px rgba(0,0,0,.4);}
 h1{text-align:center;color:var(--gold);}
-h2{text-align:center;margin:6px 0 18px;color:var(--gold);}
-.card{padding:22px;background:#0f1733;border:1px solid rgba(255,215,0,.25);border-radius:14px;margin-bottom:18px;}
+h2{text-align:center;margin:10px 0 25px;}
+.card{padding:20px;background:#0f1733;border:1px solid rgba(255,215,0,.25);border-radius:14px;margin-bottom:18px;}
 b{color:var(--gold);}
-footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:24px;}
-button{width:100%;padding:13px;border:none;border-radius:14px;background:var(--gold);color:#111;font-weight:800;margin-top:16px;cursor:pointer;}
-.warn{text-align:center;color:#fff;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.4);border-radius:14px;padding:25px;}
-table{width:100%;border-collapse:collapse;margin-top:12px;}
-td,th{border:1px solid rgba(255,215,0,.25);padding:8px;text-align:center;}
-th{background:rgba(255,215,0,.15);}
-.desc{color:rgba(255,255,255,.8);line-height:1.6;font-size:15px;}
+table{width:100%;border-collapse:collapse;margin-top:10px;}
+th,td{border:1px solid rgba(255,215,0,.15);padding:8px;text-align:center;}
+th{background:rgba(255,215,0,.1);color:var(--gold);}
+button{width:100%;padding:13px;border:none;border-radius:14px;background:var(--gold);color:#111;font-weight:800;margin-top:20px;cursor:pointer;}
+button:hover{filter:brightness(1.05);}
+footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:20px;}
 </style>
 </head>
 <body>
 <main class="wrap">
-  <h1>YOURZOY 결과</h1>
-  <div id="out"></div>
-  <footer>© 2025 YOURZOY</footer>
+<h1>YOURZOY 결과</h1>
+<div id="out"></div>
+<footer>© 2025 YOURZOY</footer>
 </main>
 
 <script>
-// ========== 데이터 불러오기 ==========
-const birthData = JSON.parse(localStorage.getItem("birthData")||"{}");
-const surveyType = JSON.parse(localStorage.getItem("surveyType")||"{}");
+// ============= 기본 매핑 테이블 ==================
+const elementMap = {
+  "갑": {elem:"목", color:"초록"},
+  "을": {elem:"목", color:"초록"},
+  "병": {elem:"화", color:"빨강"},
+  "정": {elem:"화", color:"빨강"},
+  "무": {elem:"토", color:"노랑"},
+  "기": {elem:"토", color:"노랑"},
+  "경": {elem:"금", color:"회색"},
+  "신": {elem:"금", color:"회색"},
+  "임": {elem:"수", color:"파랑"},
+  "계": {elem:"수", color:"파랑"}
+};
+const animalMap = {
+  "자":"쥐","축":"소","인":"호랑이","묘":"토끼","진":"용","사":"뱀",
+  "오":"말","미":"양","신":"원숭이","유":"닭","술":"개","해":"돼지"
+};
+const zoneDesc = {
+  "A-Zone":"현실·조직 중심, 계획과 안정의 영역",
+  "B-Zone":"공감·감성 중심, 관계와 가치의 영역",
+  "C-Zone":"전략·창의 중심, 분석과 비전의 영역",
+  "D-Zone":"모험·자유 중심, 즉흥과 감각의 영역"
+};
 
-// ========== 데이터 없을 때 ==========
-if(!birthData.dayP){
-  document.getElementById("out").innerHTML=`
-  <div class='warn'>
-  ⚠️ 데이터가 아직 연결되지 않았습니다.<br><br>
-  <button onclick="location.href='index.html'">다시하기</button>
-  </div>`;
+// ============= URL + 로컬데이터 병합 ==================
+const p = new URLSearchParams(window.location.search);
+const mbti = p.get("mbti") || "ENFP";
+const zone = p.get("zone") || "B-Zone";
+const local = JSON.parse(localStorage.getItem("birthData") || "{}");
+
+if(!local.dayP){
+  document.getElementById("out").innerHTML = `
+  <div class="card">
+    ⚠️ 데이터가 연결되지 않았습니다.<br>
+    <small>index.html에서 생년월일을 다시 입력해주세요.</small>
+  </div>
+  <button onclick="location.href='index.html'">다시하기</button>`;
 }else{
-  const elemDesc={
-    "목":"성장과 창조의 에너지, 자유로운 확장력",
-    "화":"열정과 추진력, 직관과 리더십의 기운",
-    "토":"균형과 안정, 신뢰를 만드는 중심의 힘",
-    "금":"통찰과 결단, 구조화된 지혜의 에너지",
-    "수":"지혜와 흐름, 직감과 순응의 기운"
-  };
-  const zoneDesc={
-    "A-Zone":"현실·조직 중심 — 계획과 책임감의 리더형",
-    "B-Zone":"감성·공감 중심 — 사람과 가치를 중시하는 조화형",
-    "C-Zone":"전략·창의 중심 — 분석적 사고의 비전형",
-    "D-Zone":"자유·모험 중심 — 즉흥적 경험의 탐험형"
-  };
-  const {yearP,monthP,dayP,hourP,elem,color,animal,iljuName}=birthData;
-  const {mbti,zone}=surveyType;
+  // ✅ 일간·일지 기준 색상/동물 도출
+  const ilGan = local.dayP[0];
+  const ilJi = local.dayP[1];
+  const elem = elementMap[ilGan].elem;
+  const color = elementMap[ilGan].color;
+  const animal = animalMap[ilJi];
+  const iljuName = `${color} ${animal} JOY`;
 
-  document.getElementById("out").innerHTML=`
-  <h2>${color} ${animal} JOY 🐾</h2>
+  // ============= HTML 출력 ==================
+  document.getElementById("out").innerHTML = `
+  <h2>${iljuName} 🐾</h2>
 
   <div class="card">
-    <b>사주 4주</b><br>
+    <b>사주 4주</b>
     <table>
       <tr><th>구분</th><th>간지</th></tr>
-      <tr><td>년주</td><td>${yearP}</td></tr>
-      <tr><td>월주</td><td>${monthP}</td></tr>
-      <tr><td>일주</td><td>${dayP}</td></tr>
-      <tr><td>시주</td><td>${hourP}</td></tr>
+      <tr><td>년주</td><td>${local.yearP}</td></tr>
+      <tr><td>월주</td><td>${local.monthP}</td></tr>
+      <tr><td>일주</td><td>${local.dayP}</td></tr>
+      <tr><td>시주</td><td>${local.hourP}</td></tr>
     </table>
   </div>
 
   <div class="card">
-    <b>오행</b>: ${elem}<br>
-    <b>색상</b>: ${color}<br>
-    <b>동물</b>: ${animal}<br><br>
-    ${elemDesc[elem]}
+    <b>오행:</b> ${elem}<br>
+    <b>색상:</b> ${color}<br>
+    <b>동물:</b> ${animal}<br>
+    <small>자신의 내면적 에너지, 핵심 성향의 상징</small>
   </div>
 
   <div class="card">
-    <b>MBTI</b>: ${mbti}<br>
-    <b>ZONE</b>: ${zone}<br><br>
-    ${zoneDesc[zone]}
+    <b>MBTI:</b> ${mbti}<br>
+    <b>ZONE:</b> ${zone}<br>
+    설명: ${zoneDesc[zone]}
   </div>
 
-  <div class="card desc">
+  <div class="card">
+    <b>조합 인사이트</b><br>
     당신은 <b>${color} ${animal}</b>의 기운을 타고난 사람입니다.<br>
-    ${elemDesc[elem]}<br><br>
-    ${zoneDesc[zone]}<br>
-    현실의 행동 패턴과 내면의 에너지가 어우러져,<br>
-    <b>“${iljuName} JOY”</b>로 표현되는 독특한 성향을 만듭니다.
+    ${elem}의 에너지를 중심으로 움직이며,<br>
+    <b>${zone}</b>(${zoneDesc[zone]}) 영역의 사고 패턴을 가지고 있습니다.<br><br>
+    감성과 분석이 결합되어, 내면의 에너지를 외부 세계로 전달하는 리더형.<br>
+    <b>"${iljuName}"</b>는 자신만의 색깔로 세상을 조율하는 JOY 타입입니다.
   </div>
 
   <button onclick="location.href='index.html'">다시하기</button>
