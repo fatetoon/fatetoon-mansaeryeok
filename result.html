@@ -1,36 +1,18 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>YOURZOY 결과</title>
 <style>
-:root{
-  --navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFF;
-}
-body{
-  margin:0;background:var(--navy);color:var(--text);
-  font-family:"Noto Sans KR",sans-serif;
-}
-.wrap{
-  max-width:640px;margin:6vh auto;padding:32px;
-  border-radius:24px;background:var(--navy2);
-  box-shadow:0 20px 60px rgba(0,0,0,.4);
-}
+:root{--navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFF;}
+body{margin:0;background:var(--navy);color:var(--text);font-family:"Noto Sans KR",sans-serif;}
+.wrap{max-width:640px;margin:6vh auto;padding:32px;border-radius:24px;background:var(--navy2);box-shadow:0 20px 60px rgba(0,0,0,.4);}
 h1{text-align:center;color:var(--gold);}
 h2{text-align:center;margin:6px 0 18px;color:var(--gold);}
-.card{
-  padding:22px;background:#0f1733;
-  border:1px solid rgba(255,215,0,.25);
-  border-radius:14px;margin-bottom:18px;
-}
+.card{padding:22px;background:#0f1733;border:1px solid rgba(255,215,0,.25);border-radius:14px;margin-bottom:18px;}
 b{color:var(--gold);}
 footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:24px;}
-button{
-  width:100%;padding:13px;border:none;border-radius:14px;
-  background:var(--gold);color:#111;font-weight:800;margin-top:16px;cursor:pointer;
-}
-button:hover{filter:brightness(1.05);}
+button{width:100%;padding:13px;border:none;border-radius:14px;background:var(--gold);color:#111;font-weight:800;margin-top:16px;cursor:pointer;}
 .desc{color:rgba(255,255,255,.8);line-height:1.6;font-size:15px;}
 </style>
 </head>
@@ -40,82 +22,46 @@ button:hover{filter:brightness(1.05);}
   <div id="out"></div>
   <footer>© 2025 YOURZOY</footer>
 </main>
-
 <script>
-// =========================
-// 1️⃣ 저장된 데이터 불러오기
-// =========================
-const birthData = JSON.parse(localStorage.getItem("birthData") || "{}");
-const surveyType = JSON.parse(localStorage.getItem("surveyType") || "{}");
-
-// =========================
-// 2️⃣ 데이터 유효성 체크
-// =========================
-if(!birthData.iljuName){
-  document.getElementById("out").innerHTML = `
-    <div class="card">
-      ⚠️ 데이터가 연결되지 않았습니다.<br>
-      <br>
-      <button onclick="location.href='index.html'">처음부터 다시하기</button>
-    </div>
-  `;
-} else {
-  showResult();
-}
-
-// =========================
-// 3️⃣ 결과 출력 함수
-// =========================
-function showResult(){
-  const ilju = birthData.iljuName || "미등록";
-  const elem = birthData.elem || "";
-  const color = birthData.color || "";
-  const animal = birthData.animal || "";
-  const mbti = surveyType.mbti || "테스트 미진행";
-  const zone = surveyType.zone || "무존";
-
-  // 오행 설명
-  const elemDesc = {
-    "목":"성장, 창조, 유연함의 기운",
-    "화":"열정, 추진력, 직관의 기운",
-    "토":"균형, 신뢰, 안정의 기운",
-    "금":"통찰, 결단, 정리의 기운",
-    "수":"지혜, 흐름, 직감의 기운"
+const birthData=JSON.parse(localStorage.getItem("birthData")||"{}");
+const surveyType=JSON.parse(localStorage.getItem("surveyType")||"{}");
+if(!birthData.dayP){
+  document.getElementById("out").innerHTML=`<div class='card'>⚠️ 데이터가 연결되지 않았습니다.<br><button onclick="location.href='index.html'">다시하기</button></div>`;
+}else{
+  const elemDesc={
+    "목":"성장과 창조의 에너지, 자유로운 확장력",
+    "화":"열정과 추진력, 직관과 리더십의 기운",
+    "토":"균형과 안정, 신뢰를 만드는 중심의 힘",
+    "금":"통찰과 결단, 구조화된 지혜의 에너지",
+    "수":"지혜와 흐름, 직감과 순응의 기운"
   };
-
-  // Zone 설명
-  const zoneDesc = {
-    "A-Zone":"현실 중심형 — 계획, 규율, 안정, 책임감이 강함.",
-    "B-Zone":"감성 중심형 — 공감, 관계, 감정적 통찰력이 뛰어남.",
-    "C-Zone":"전략 중심형 — 분석적 사고, 창의성과 통찰이 강함.",
-    "D-Zone":"자유 중심형 — 모험, 즉흥, 경험 중심의 에너지형."
+  const zoneDesc={
+    "A-Zone":"현실·조직 중심 — 계획과 책임감의 리더형",
+    "B-Zone":"감성·공감 중심 — 사람과 가치를 중시하는 조화형",
+    "C-Zone":"전략·창의 중심 — 분석적 사고의 비전형",
+    "D-Zone":"자유·모험 중심 — 즉흥적 경험의 탐험형"
   };
-
-  document.getElementById("out").innerHTML = `
-    <h2>${color} ${animal} JOY 🐾</h2>
-
-    <div class="card">
-      <b>🌞 오행</b>: ${elem}<br>
-      <b>🎨 색상</b>: ${color}<br>
-      <b>🐾 동물</b>: ${animal}<br>
-      <b>설명</b>: ${elemDesc[elem] || "에너지 정보 없음"}
-    </div>
-
-    <div class="card">
-      <b>🧩 MBTI</b>: ${mbti}<br>
-      <b>🌍 ZONE</b>: ${zone}<br>
-      <b>설명</b>: ${zoneDesc[zone] || "분석 결과 없음"}
-    </div>
-
-    <div class="card desc">
-      당신은 <b>${color} ${animal}</b>의 기운을 타고난 사람입니다.<br>
-      ${elemDesc[elem] || ""}<br><br>
-      ${zoneDesc[zone] || ""}
-    </div>
-
-    <button onclick="location.href='design.html'">리포트 선택하러 가기 →</button>
-    <button onclick="location.href='index.html'">다시하기</button>
-  `;
+  const {yearP,monthP,dayP,hourP,elem,color,animal,iljuName}=birthData;
+  const {mbti,zone}=surveyType;
+  document.getElementById("out").innerHTML=`
+  <h2>${color} ${animal} JOY 🐾</h2>
+  <div class="card">
+    <b>사주 4주</b><br>
+    년주: ${yearP}<br>
+    월주: ${monthP}<br>
+    일주: ${dayP}<br>
+    시주: ${hourP}
+  </div>
+  <div class="card"><b>오행</b>: ${elem}<br><b>색상</b>: ${color}<br><b>동물</b>: ${animal}<br><b>설명</b>: ${elemDesc[elem]}</div>
+  <div class="card"><b>MBTI</b>: ${mbti}<br><b>ZONE</b>: ${zone}<br><b>성향</b>: ${zoneDesc[zone]}</div>
+  <div class="card desc">
+  당신은 <b>${color} ${animal}</b>의 기운을 타고난 사람입니다.<br>
+  ${elemDesc[elem]}<br><br>
+  ${zoneDesc[zone]}<br>
+  현실의 행동 패턴과 내면의 에너지가 어우러져<br>
+  “${iljuName} JOY”로 표현되는 독특한 성향을 만듭니다.
+  </div>
+  <button onclick="location.href='index.html'">다시하기</button>`;
 }
 </script>
 </body>
