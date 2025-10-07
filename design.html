@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YOURZOY 리포트 선택</title>
+<style>
+:root{
+  --navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFF;
+}
+body{
+  margin:0;background:var(--navy);color:var(--text);
+  font-family:"Noto Sans KR",sans-serif;
+}
+.wrap{
+  max-width:640px;margin:6vh auto;padding:32px;
+  border-radius:24px;background:var(--navy2);
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+h1{text-align:center;color:var(--gold);margin-bottom:8px;}
+p{text-align:center;color:rgba(255,255,255,.7);}
+.card{
+  background:#0f1733;padding:24px;margin:16px 0;
+  border:1px solid rgba(255,215,0,.25);
+  border-radius:16px;
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(255,215,0,.1);}
+h2{color:var(--gold);margin-bottom:6px;font-size:18px;}
+.price{color:#FFD700;font-weight:800;margin-top:6px;}
+.desc{font-size:14px;line-height:1.6;color:rgba(255,255,255,.8);}
+button{
+  width:100%;padding:13px;margin-top:18px;
+  border:none;border-radius:14px;background:var(--gold);
+  color:#111;font-weight:800;cursor:pointer;
+}
+button:hover{filter:brightness(1.05);}
+footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:24px;}
+.highlight{color:var(--gold);font-weight:700;}
+</style>
+</head>
+
+<body>
+<main class="wrap">
+  <h1>YOURZOY 리포트 선택</h1>
+  <p>당신의 사주와 성향을 기반으로 <b class="highlight">AI 리포트</b>를 생성합니다.<br>원하는 리포트 타입을 선택해주세요.</p>
+
+  <div class="card" id="mini">
+    <h2>🔸 Mini 리포트 (₩3,900)</h2>
+    <p class="desc">
+      • 이번 달 TOP3 주의사항<br>
+      • 개인 금기시간 + 대체 행동<br>
+      • 짧고 간결한 리마인더 카드 (PNG)
+    </p>
+    <p class="price">소요: 약 30초 / 자동 발송</p>
+    <button onclick="goPay('mini')">이 리포트 선택</button>
+  </div>
+
+  <div class="card" id="main">
+    <h2>💠 Main 리포트 (₩19,800)</h2>
+    <p class="desc">
+      • 관계 / 돈 / 타이밍 / 정서 4축 <b>RI 지수</b> 분석<br>
+      • 실제 리스크 포인트 + 행동 처방<br>
+      • 인스타 공유용 요약 카드 포함
+    </p>
+    <p class="price">소요: 약 1분 / 자동 발송</p>
+    <button onclick="goPay('main')">이 리포트 선택</button>
+  </div>
+
+  <div class="card" id="premium">
+    <h2>👑 Premium 리포트 (₩29,800)</h2>
+    <p class="desc">
+      • 연말 총정리 + 다음 해 준비 로드맵<br>
+      • 금전/관계/기회운 시점별 예측<br>
+      • 맞춤형 리스크 대체 행동 3세트 포함
+    </p>
+    <p class="price">소요: 약 2분 / 자동 발송</p>
+    <button onclick="goPay('premium')">이 리포트 선택</button>
+  </div>
+
+  <footer>© 2025 YOURZOY</footer>
+</main>
+
+<script>
+// ===============================
+// 1️⃣ 저장된 결과 데이터 가져오기
+// ===============================
+const birthData = JSON.parse(localStorage.getItem("birthData") || "{}");
+const surveyType = JSON.parse(localStorage.getItem("surveyType") || "{}");
+
+if(!birthData.iljuName || !surveyType.zone){
+  alert("⚠️ 데이터가 누락되었습니다. 처음부터 다시 진행해주세요.");
+  window.location.href="index.html";
+}
+
+// ===============================
+// 2️⃣ 리포트 선택 → 결제 연결
+// ===============================
+// 실제 운영 시, 아래 URL을 각 리포트별 Tally 폼으로 교체하면 완벽 자동화됨
+const TALLY_LINKS = {
+  mini: "https://tally.so/r/mini-yourzoy",
+  main: "https://tally.so/r/main-yourzoy",
+  premium: "https://tally.so/r/premium-yourzoy"
+};
+
+function goPay(type){
+  const link = TALLY_LINKS[type];
+  const data = {
+    ilju: birthData.iljuName,
+    elem: birthData.elem,
+    color: birthData.color,
+    animal: birthData.animal,
+    mbti: surveyType.mbti,
+    zone: surveyType.zone,
+    report: type
+  };
+
+  // ✅ Google Sheets 자동 저장용 (옵션)
+  // fetch("https://script.google.com/macros/s/YOUR_WEBAPP_URL/exec", {
+  //   method: "POST",
+  //   body: JSON.stringify(data)
+  // });
+
+  // ✅ 결제 페이지로 이동 (Tally)
+  window.location.href = link + `?data=${encodeURIComponent(JSON.stringify(data))}`;
+}
+</script>
+</body>
+</html>
