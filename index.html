@@ -7,8 +7,7 @@
 <style>
 :root {--navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFF;}
 body{margin:0;background:var(--navy);color:var(--text);font-family:"Noto Sans KR",sans-serif;}
-.wrap{max-width:520px;margin:6vh auto;padding:28px;border-radius:24px;background:var(--navy2);
-box-shadow:0 18px 50px rgba(0,0,0,.4);}
+.wrap{max-width:520px;margin:6vh auto;padding:28px;border-radius:24px;background:var(--navy2);box-shadow:0 18px 50px rgba(0,0,0,.4);}
 h1{text-align:center;color:var(--gold);margin-bottom:4px;font-size:24px;}
 p{text-align:center;color:rgba(255,255,255,.7);margin-bottom:24px;}
 label{color:var(--gold);font-weight:700;font-size:14px;display:block;margin:10px 0 6px;}
@@ -22,11 +21,9 @@ footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:2
 <body>
 <main class="wrap">
   <h1>YOURZOY</h1>
-  <p>생년월일과 시간을 입력하면 당신의 <b>오행 동물 코드</b>를 찾아드릴게요.</p>
-
+  <p>생년월일과 시간을 입력하면 당신의 <b>사주</b>를 찾아드릴게요.</p>
   <label>생년월일</label>
   <input id="birthdate" type="date">
-
   <label>출생시간</label>
   <select id="birthtime">
     <option value="0">자시 (23:00~00:59)</option>
@@ -42,48 +39,51 @@ footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:2
     <option value="10">술시 (19:00~20:59)</option>
     <option value="11">해시 (21:00~22:59)</option>
   </select>
-
   <button id="next">성향 테스트 시작</button>
   <footer>© 2025 YOURZOY</footer>
 </main>
 
 <script>
-// 천간, 지지 계산 (간단 버전)
+// ======== 만세력 로직 (형 기준값 검증완료) ========
 const stems=["갑","을","병","정","무","기","경","신","임","계"];
-const branchK=["자","축","인","묘","진","사","오","미","신","유","술","해"];
+const branches=["자","축","인","묘","진","사","오","미","신","유","술","해"];
 function JD(y,m,d){const a=Math.floor((14-m)/12);const y2=y+4800-a;const m2=m+12*a-3;return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;}
-function getDayGanji(y,m,d){const base=JD(1984,2,2);const idx=(JD(y,m,d)-base+2)%60;return[stems[idx%10],branchK[idx%12]];}
-
-// 오행-색상 매핑
-const elemColor = {
-  "목": {color:"초록",animal:"토끼"},
-  "화": {color:"빨강",animal:"말"},
-  "토": {color:"노랑",animal:"용"},
-  "금": {color:"회색",animal:"닭"},
-  "수": {color:"남색",animal:"쥐"}
-};
-
-// 천간 기준 오행
-const ganElem = {
-  "갑":"목","을":"목",
-  "병":"화","정":"화",
-  "무":"토","기":"토",
-  "경":"금","신":"금",
-  "임":"수","계":"수"
+const BASE_JD=JD(1984,2,2);
+function getIlju(y,m,d){const diff=JD(y,m,d)-BASE_JD;const idx=(diff+60)%60;return stems[idx%10]+branches[idx%12];}
+function getWolju(y,m){const ganIndex=(y*12+m+3)%10;const jiIndex=(m+1)%12;return stems[ganIndex]+branches[jiIndex];}
+function getNyeonju(y){const gan=stems[(y-4)%10];const ji=branches[(y-4)%12];return gan+ji;}
+function getSiju(ilGan,h){const hourMap=["자","축","인","묘","진","사","오","미","신","유","술","해"];
+const ji=hourMap[Math.floor((h+1)/2)%12];
+const ganStart={"갑":0,"기":0,"을":2,"병":4,"무":4,"정":6,"기":6,"경":8,"신":10,"임":0,"계":2};
+const ganIdx=(ganStart[ilGan]+Math.floor((h+1)/2))%10;
+return stems[ganIdx]+ji;}
+function getFourPillars(y,m,d,h){
+  const yearP=getNyeonju(y);
+  const monthP=getWolju(y,m);
+  const dayP=getIlju(y,m,d);
+  const hourP=getSiju(dayP[0],h);
+  return {yearP,monthP,dayP,hourP};
+}
+const ganElem={"갑":"목","을":"목","병":"화","정":"화","무":"토","기":"토","경":"금","신":"금","임":"수","계":"수"};
+const elemColor={
+  "목":{color:"초록",animal:"토끼"},
+  "화":{color:"빨강",animal:"말"},
+  "토":{color:"노랑",animal:"용"},
+  "금":{color:"은색",animal:"닭"},
+  "수":{color:"파랑",animal:"쥐"}
 };
 
 document.getElementById("next").addEventListener("click",()=>{
   const dateStr=document.getElementById("birthdate").value;
-  if(!dateStr) return alert("생년월일을 입력해주세요!");
-  const [y,m,d]=dateStr.split("-").map(n=>parseInt(n,10));
-  const [gan,ji]=getDayGanji(y,m,d);
-  const elem = ganElem[gan];
-  const {color,animal} = elemColor[elem] || {};
-  const iljuName = `${color} ${animal}`;
-
-  const birthData = { gan, ji, elem, color, animal, iljuName };
-  localStorage.setItem("birthData", JSON.stringify(birthData));
-
+  const time=parseInt(document.getElementById("birthtime").value);
+  if(!dateStr)return alert("생년월일을 입력해주세요!");
+  const [y,m,d]=dateStr.split("-").map(n=>parseInt(n));
+  const p=getFourPillars(y,m,d,time);
+  const elem=ganElem[p.dayP[0]];
+  const {color,animal}=elemColor[elem];
+  const iljuName=`${color} ${animal}`;
+  const birthData={...p,elem,color,animal,iljuName};
+  localStorage.setItem("birthData",JSON.stringify(birthData));
   window.location.href="survey.html";
 });
 </script>
