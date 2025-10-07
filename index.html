@@ -56,7 +56,7 @@ function JD(y,m,d){
   const m2=m+12*a-3;
   return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;
 }
-const BASE_JD=JD(1984,2,3);
+const BASE_JD=JD(1984,2,4);
 
 // 일주 계산
 function getIlju(y,m,d){
@@ -131,3 +131,4 @@ document.getElementById("next").addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
