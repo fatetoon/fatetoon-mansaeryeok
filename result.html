@@ -7,17 +7,26 @@
 <style>
 :root{--navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFF;}
 body{margin:0;background:var(--navy);color:var(--text);font-family:"Noto Sans KR",sans-serif;}
-.wrap{max-width:640px;margin:6vh auto;padding:32px;border-radius:24px;background:var(--navy2);box-shadow:0 20px 60px rgba(0,0,0,.4);}
+.wrap{max-width:640px;margin:6vh auto;padding:32px;border-radius:24px;background:var(--navy2);
+box-shadow:0 20px 60px rgba(0,0,0,.4);}
 h1{text-align:center;color:var(--gold);}
 h2{text-align:center;margin:10px 0 25px;}
-.card{padding:20px;background:#0f1733;border:1px solid rgba(255,215,0,.25);border-radius:14px;margin-bottom:18px;}
+.card{padding:20px;background:#0f1733;border:1px solid rgba(255,215,0,.25);
+border-radius:14px;margin-bottom:18px;}
 b{color:var(--gold);}
 table{width:100%;border-collapse:collapse;margin-top:10px;}
 th,td{border:1px solid rgba(255,215,0,.15);padding:8px;text-align:center;}
 th{background:rgba(255,215,0,.1);color:var(--gold);}
-button{width:100%;padding:13px;border:none;border-radius:14px;background:var(--gold);color:#111;font-weight:800;margin-top:20px;cursor:pointer;}
+button{width:100%;padding:13px;border:none;border-radius:14px;background:var(--gold);
+color:#111;font-weight:800;margin-top:20px;cursor:pointer;}
 button:hover{filter:brightness(1.05);}
 footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:20px;}
+.report-options{display:grid;gap:12px;margin-top:24px;}
+.report-card{background:#0f1733;border:1px solid rgba(255,215,0,.25);
+border-radius:14px;padding:16px;text-align:center;}
+.report-card h3{color:var(--gold);margin-bottom:8px;}
+.report-card p{font-size:14px;color:rgba(255,255,255,.8);}
+.report-card span{display:block;margin-top:8px;font-weight:700;color:var(--gold);}
 </style>
 </head>
 <body>
@@ -28,7 +37,7 @@ footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:2
 </main>
 
 <script>
-// ============= 기본 매핑 테이블 ==================
+// ================= 기본 테이블 =================
 const elementMap = {
   "갑": {elem:"목", color:"초록"},
   "을": {elem:"목", color:"초록"},
@@ -45,6 +54,22 @@ const animalMap = {
   "자":"쥐","축":"소","인":"호랑이","묘":"토끼","진":"용","사":"뱀",
   "오":"말","미":"양","신":"원숭이","유":"닭","술":"개","해":"돼지"
 };
+
+// ================= 동물별 JOY ZONE 매핑 =================
+const joyZoneMap = {
+  "쥐": {zone:"C-Zone", name:"Focus Zone", desc:"전략·생존·정보 감각 — 생존 전략가형"},
+  "소": {zone:"A-Zone", name:"Ground Zone", desc:"안정·책임·신중함 — 현실형 관리자"},
+  "호랑이": {zone:"D-Zone", name:"Drive Zone", desc:"추진력·도전·카리스마 — 모험가 리더"},
+  "토끼": {zone:"B-Zone", name:"Harmony Zone", desc:"조화·감성·소통 — 감성 커뮤니케이터"},
+  "용": {zone:"C-Zone", name:"Vision Zone", desc:"확장·리더십·창조력 — 창조적 전략가"},
+  "뱀": {zone:"C-Zone", name:"Insight Zone", desc:"직관·분석·지혜 — 지적 분석가"},
+  "말": {zone:"D-Zone", name:"Energy Zone", desc:"표현·활동·자유 — 자유표현형"},
+  "양": {zone:"B-Zone", name:"Care Zone", desc:"배려·이해·감정풍부 — 정서형 힐러"},
+  "원숭이": {zone:"C-Zone", name:"Logic Zone", desc:"계산·지능·전략적 사고 — 전략형 두뇌파"},
+  "닭": {zone:"A-Zone", name:"Clarity Zone", desc:"질서·완벽·정리력 — 완벽주의 관리자"},
+  "개": {zone:"B-Zone", name:"Trust Zone", desc:"의리·보호·도덕성 — 신뢰형 조력자"},
+  "돼지": {zone:"B-Zone", name:"Flow Zone", desc:"포용·감수성·상상력 — 감성 포용가"}
+};
 const zoneDesc = {
   "A-Zone":"현실·조직 중심, 계획과 안정의 영역",
   "B-Zone":"공감·감성 중심, 관계와 가치의 영역",
@@ -52,10 +77,8 @@ const zoneDesc = {
   "D-Zone":"모험·자유 중심, 즉흥과 감각의 영역"
 };
 
-// ============= URL + 로컬데이터 병합 ==================
-const p = new URLSearchParams(window.location.search);
-const mbti = p.get("mbti") || "ENFP";
-const zone = p.get("zone") || "B-Zone";
+// ================= 데이터 불러오기 =================
+const survey = JSON.parse(localStorage.getItem("surveyType") || "{}");
 const local = JSON.parse(localStorage.getItem("birthData") || "{}");
 
 if(!local.dayP){
@@ -66,15 +89,21 @@ if(!local.dayP){
   </div>
   <button onclick="location.href='index.html'">다시하기</button>`;
 }else{
-  // ✅ 일간·일지 기준 색상/동물 도출
+  // 기본 계산
   const ilGan = local.dayP[0];
   const ilJi = local.dayP[1];
   const elem = elementMap[ilGan].elem;
   const color = elementMap[ilGan].color;
   const animal = animalMap[ilJi];
+  const joy = joyZoneMap[animal];
   const iljuName = `${color} ${animal} JOY`;
 
-  // ============= HTML 출력 ==================
+  // 이상존 = 사주존, 현실존 = MBTI존
+  const idealZone = joy.zone;
+  const realZone = survey.zone || "B-Zone";
+  const mbti = survey.mbti || "ENFP";
+
+  // HTML 출력
   document.getElementById("out").innerHTML = `
   <h2>${iljuName} 🐾</h2>
 
@@ -93,22 +122,42 @@ if(!local.dayP){
     <b>오행:</b> ${elem}<br>
     <b>색상:</b> ${color}<br>
     <b>동물:</b> ${animal}<br>
-    <small>자신의 내면적 에너지, 핵심 성향의 상징</small>
+    <b>사주존(이상존):</b> ${idealZone} (${joy.name})<br>
+    설명: ${joy.desc}
   </div>
 
   <div class="card">
     <b>MBTI:</b> ${mbti}<br>
-    <b>ZONE:</b> ${zone}<br>
-    설명: ${zoneDesc[zone]}
+    <b>현실존:</b> ${realZone}<br>
+    설명: ${zoneDesc[realZone]}
   </div>
 
   <div class="card">
-    <b>조합 인사이트</b><br>
-    당신은 <b>${color} ${animal}</b>의 기운을 타고난 사람입니다.<br>
-    ${elem}의 에너지를 중심으로 움직이며,<br>
-    <b>${zone}</b>(${zoneDesc[zone]}) 영역의 사고 패턴을 가지고 있습니다.<br><br>
-    감성과 분석이 결합되어, 내면의 에너지를 외부 세계로 전달하는 리더형.<br>
-    <b>"${iljuName}"</b>는 자신만의 색깔로 세상을 조율하는 JOY 타입입니다.
+    <b>JOY 통합 인사이트</b><br>
+    당신은 <b>${color} ${animal}</b>의 에너지를 지닌 사람으로,<br>
+    <b>${elem}</b>의 기운을 바탕으로 세상과 상호작용합니다.<br><br>
+    사주존은 <b>${idealZone}</b>(${joy.name})이고,<br>
+    현실존은 <b>${realZone}</b>(${zoneDesc[realZone]})입니다.<br><br>
+    내면적 직관(이상존)과 외부 행동(현실존)이 만나<br>
+    “<b>${iljuName}</b>”라는 고유한 JOY 타입을 형성합니다.
+  </div>
+
+  <div class="report-options">
+    <div class="report-card">
+      <h3>무료 리포트</h3>
+      <p>기본 4주 & 성향 결과 제공</p>
+      <span>₩0</span>
+    </div>
+    <div class="report-card">
+      <h3>미니 리포트</h3>
+      <p>이번 달 운 + 금기 행동 3</p>
+      <span>₩3,800</span>
+    </div>
+    <div class="report-card">
+      <h3>프로 리포트</h3>
+      <p>관계·재물·타이밍 종합 리스크 리포트</p>
+      <span>₩15,800</span>
+    </div>
   </div>
 
   <button onclick="location.href='index.html'">다시하기</button>
