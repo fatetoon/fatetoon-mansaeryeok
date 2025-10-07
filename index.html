@@ -45,43 +45,52 @@ footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:2
 </main>
 
 <script>
-// ======================== 만세력 계산 =========================
+// ======================== 천문 기준 만세력 계산 =========================
 const stems=["갑","을","병","정","무","기","경","신","임","계"];
 const branches=["자","축","인","묘","진","사","오","미","신","유","술","해"];
 
-// 보정된 JD 기준일 (1984-02-03)
+// Julian Day 계산
 function JD(y,m,d){
   const a=Math.floor((14-m)/12);
   const y2=y+4800-a;
   const m2=m+12*a-3;
   return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;
 }
-const BASE_JD=JD(1984,2,4);
+
+// ✅ 1984-02-04 00:00 기준 (갑자일 시작 기준)
+const BASE_JD = JD(1984,2,4);
 
 // 일주 계산
 function getIlju(y,m,d){
-  const diff=JD(y,m,d)-BASE_JD;
-  const idx=(diff%60+60)%60;
-  return stems[idx%10]+branches[idx%12];
+  const diff = JD(y,m,d) - BASE_JD;
+  const idx = (diff % 60 + 60) % 60;
+  return stems[idx % 10] + branches[idx % 12];
 }
-// 년주/월주 계산
+
+// 년주 계산 (입춘 기준 보정 없음, 단순 연단위)
 function getNyeonju(y){return stems[(y-4)%10]+branches[(y-4)%12];}
-function getWolju(y,m){return stems[(y*12+m+3)%10]+branches[(m+1)%12];}
+
+// 월주 계산 (정확한 절기기준 대신 간단 모델)
+function getWolju(y,m){
+  const monthStemIdx = ( ( (y - 4) * 12 + (m + 1) ) % 10 + 10 ) % 10;
+  const monthBranchIdx = (m + 1) % 12;
+  return stems[monthStemIdx] + branches[monthBranchIdx];
+}
 
 // 시주 계산
-function getSiju(ilGan,h){
-  const hourMap=["자","축","인","묘","진","사","오","미","신","유","술","해"];
-  const ji=hourMap[Math.floor((h+3)/2)%12];
-  const ganStart={"갑":0,"기":0,"을":2,"병":4,"무":4,"정":6,"기":6,"경":8,"신":10,"임":0,"계":2};
-  const ganIdx=(ganStart[ilGan]+Math.floor((h+3)/2))%10;
-  return stems[ganIdx]+ji;
+function getSiju(ilGan, h){
+  const hourBranches = ["자","축","인","묘","진","사","오","미","신","유","술","해"];
+  const ji = hourBranches[Math.floor((h + 3) / 2) % 12];
+  const ganStart = {"갑":0,"기":0,"을":2,"병":4,"무":4,"정":6,"기":6,"경":8,"신":10,"임":0,"계":2};
+  const ganIdx = (ganStart[ilGan] + Math.floor((h + 3) / 2)) % 10;
+  return stems[ganIdx] + ji;
 }
 
 function getFourPillars(y,m,d,h){
-  const yearP=getNyeonju(y);
-  const monthP=getWolju(y,m);
-  const dayP=getIlju(y,m,d);
-  const hourP=getSiju(dayP[0],h);
+  const yearP = getNyeonju(y);
+  const monthP = getWolju(y,m);
+  const dayP = getIlju(y,m,d);
+  const hourP = getSiju(dayP[0],h);
   return {yearP,monthP,dayP,hourP};
 }
 
@@ -98,6 +107,7 @@ const elementMap = {
   "임": {elem:"수", color:"파랑"},
   "계": {elem:"수", color:"파랑"}
 };
+
 const animalMap = {
   "자":"쥐","축":"소","인":"호랑이","묘":"토끼","진":"용","사":"뱀",
   "오":"말","미":"양","신":"원숭이","유":"닭","술":"개","해":"돼지"
@@ -105,30 +115,29 @@ const animalMap = {
 
 // ======================== 실행 로직 =========================
 document.getElementById("next").addEventListener("click",()=>{
-  const dateStr=document.getElementById("birthdate").value;
-  if(!dateStr)return alert("생년월일을 선택해주세요!");
-  const [y,m,d]=dateStr.split("-").map(n=>parseInt(n,10));
-  const h=parseInt(document.getElementById("birthtime").value);
-  const pillars=getFourPillars(y,m,d,h);
+  const dateStr = document.getElementById("birthdate").value;
+  if(!dateStr) return alert("생년월일을 선택해주세요!");
 
-  const ilGan=pillars.dayP[0];
-  const ilJi=pillars.dayP[1];
-  const elem=elementMap[ilGan].elem;
-  const color=elementMap[ilGan].color;
-  const animal=animalMap[ilJi];
-  const iljuName=`${color} ${animal}`; // 🔴🐀 빨간쥐
+  const [y,m,d] = dateStr.split("-").map(n=>parseInt(n,10));
+  const h = parseInt(document.getElementById("birthtime").value);
+  const pillars = getFourPillars(y,m,d,h);
 
-  const birthData={...pillars, elem, color, animal, iljuName};
+  const ilGan = pillars.dayP[0];
+  const ilJi = pillars.dayP[1];
+  const elem = elementMap[ilGan].elem;
+  const color = elementMap[ilGan].color;
+  const animal = animalMap[ilJi];
+  const iljuName = `${color} ${animal}`; // ex) 빨간쥐
+
+  const birthData = {...pillars, elem, color, animal, iljuName};
   localStorage.setItem("birthData", JSON.stringify(birthData));
 
-  // 디버그용 콘솔 확인
-  console.log(birthData);
+  // 디버그용 콘솔 출력
+  console.log("✅ 계산 결과:", birthData);
 
   // 다음 페이지로 이동
-  window.location.href="survey.html";
+  window.location.href = "survey.html";
 });
 </script>
 </body>
 </html>
-
-
