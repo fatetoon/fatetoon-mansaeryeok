@@ -3,166 +3,158 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>YourZoy 결과</title>
+<title>YOURZOY 결과</title>
 <style>
+:root{
+  --navy:#0B132B;
+  --navy2:#1C2541;
+  --gold:#FFD700;
+  --text:#FFF;
+}
 body{
-  background:#0B132B;
-  color:#FFD700;
-  font-family:'Noto Sans KR',sans-serif;
   margin:0;
-  padding:0;
+  background:var(--navy);
+  color:var(--text);
+  font-family:"Noto Sans KR",sans-serif;
 }
-.container{
-  max-width:720px;
-  margin:8vh auto;
-  background:#1C2541;
-  border-radius:20px;
-  padding:40px 30px;
-  border:1px solid rgba(255,215,0,0.25);
-  box-shadow:0 0 12px rgba(255,215,0,0.1);
-  text-align:center;
+.wrap{
+  max-width:640px;
+  margin:6vh auto;
+  padding:32px;
+  border-radius:24px;
+  background:var(--navy2);
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
 }
-h1{
-  font-size:28px;
-  color:#FFD700;
-  margin-bottom:20px;
-}
-.result-box{
-  background:#0F1733;
-  padding:24px;
+h1{text-align:center;color:var(--gold);}
+h2{text-align:center;margin:6px 0 20px;}
+.card{
+  padding:20px;
+  background:#0f1733;
+  border:1px solid rgba(255,215,0,.25);
   border-radius:14px;
-  border:1px solid rgba(255,215,0,0.3);
-  margin-top:20px;
+  margin-bottom:18px;
 }
-h2{color:#fff;margin:0 0 10px;font-size:22px;}
-.zone-tag{font-size:16px;font-weight:700;color:#FFD700;}
-.desc{color:#ddd;line-height:1.7;font-size:15px;}
+b{color:var(--gold);}
+footer{
+  text-align:center;
+  color:rgba(255,255,255,.45);
+  font-size:12px;
+  margin-top:24px;
+}
 button{
-  margin-top:28px;
-  background:#FFD700;
-  color:#111;
+  width:100%;
+  padding:13px;
   border:none;
-  border-radius:12px;
-  padding:12px 22px;
-  font-size:15px;
-  font-weight:700;
+  border-radius:14px;
+  background:var(--gold);
+  color:#111;
+  font-weight:800;
+  margin-top:16px;
   cursor:pointer;
 }
 button:hover{filter:brightness(1.05);}
+.animal-icon{
+  font-size:40px;
+  text-align:center;
+  margin:10px 0;
+}
 </style>
 </head>
+
 <body>
-  <main class="container">
-    <h1>🐉 YourZoy 결과</h1>
-    <div id="report" class="result-box"></div>
-    <button onclick="location.href='survey.html'">다시 테스트하기 →</button>
-  </main>
+<main class="wrap">
+  <h1>YOURZOY 결과</h1>
+  <div id="out"></div>
+  <button onclick="location.href='index.html'">다시하기</button>
+  <footer>© 2025 YOURZOY</footer>
+</main>
 
 <script>
-// URL 파라미터 읽기
-const params = new URLSearchParams(window.location.search);
-const ilju = decodeURIComponent(params.get('ilju') || "알 수 없음");
-const zone = params.get('zone') || "A";
+// ===============================
+// 1️⃣ 저장된 데이터 불러오기
+// ===============================
+const birthData = JSON.parse(localStorage.getItem("birthData") || "{}");
+const surveyType = JSON.parse(localStorage.getItem("surveyType") || "{}");
 
-// 동물+색상 매핑
-const iljuData = {
-  "갑자": {color:"초록", animal:"쥐"},
-  "을축": {color:"초록", animal:"소"},
-  "병인": {color:"빨강", animal:"호랑이"},
-  "정묘": {color:"빨강", animal:"토끼"},
-  "무진": {color:"노랑", animal:"용"},
-  "기사": {color:"노랑", animal:"뱀"},
-  "경오": {color:"회색", animal:"말"},
-  "신미": {color:"회색", animal:"양"},
-  "임신": {color:"남색", animal:"원숭이"},
-  "계유": {color:"남색", animal:"닭"},
-  "갑술": {color:"초록", animal:"개"},
-  "을해": {color:"초록", animal:"돼지"},
-  "병자": {color:"빨강", animal:"쥐"},
-  "정축": {color:"빨강", animal:"소"},
-  "무인": {color:"노랑", animal:"호랑이"},
-  "기묘": {color:"노랑", animal:"토끼"},
-  "경진": {color:"회색", animal:"용"},
-  "신사": {color:"회색", animal:"뱀"},
-  "임오": {color:"남색", animal:"말"},
-  "계미": {color:"남색", animal:"양"},
-  "갑신": {color:"초록", animal:"원숭이"},
-  "을유": {color:"초록", animal:"닭"},
-  "병술": {color:"빨강", animal:"개"},
-  "정해": {color:"빨강", animal:"돼지"},
-  "무자": {color:"노랑", animal:"쥐"},
-  "기축": {color:"노랑", animal:"소"},
-  "경인": {color:"회색", animal:"호랑이"},
-  "신묘": {color:"회색", animal:"토끼"},
-  "임진": {color:"남색", animal:"용"},
-  "계사": {color:"남색", animal:"뱀"},
-  "갑오": {color:"초록", animal:"말"},
-  "을미": {color:"초록", animal:"양"},
-  "병신": {color:"빨강", animal:"원숭이"},
-  "정유": {color:"빨강", animal:"닭"},
-  "무술": {color:"노랑", animal:"개"},
-  "기해": {color:"노랑", animal:"돼지"},
-  "경자": {color:"회색", animal:"쥐"},
-  "신축": {color:"회색", animal:"소"},
-  "임인": {color:"남색", animal:"호랑이"},
-  "계묘": {color:"남색", animal:"토끼"},
-  "갑진": {color:"초록", animal:"용"},
-  "을사": {color:"초록", animal:"뱀"},
-  "병오": {color:"빨강", animal:"말"},
-  "정미": {color:"빨강", animal:"양"},
-  "무신": {color:"노랑", animal:"원숭이"},
-  "기유": {color:"노랑", animal:"닭"},
-  "경술": {color:"회색", animal:"개"},
-  "신해": {color:"회색", animal:"돼지"},
-  "임자": {color:"남색", animal:"쥐"},
-  "계축": {color:"남색", animal:"소"},
-  "갑인": {color:"초록", animal:"호랑이"},
-  "을묘": {color:"초록", animal:"토끼"},
-  "병진": {color:"빨강", animal:"용"},
-  "정사": {color:"빨강", animal:"뱀"},
-  "무오": {color:"노랑", animal:"말"},
-  "기미": {color:"노랑", animal:"양"},
-  "경신": {color:"회색", animal:"원숭이"},
-  "신유": {color:"회색", animal:"닭"},
-  "임술": {color:"남색", animal:"개"},
-  "계해": {color:"남색", animal:"돼지"}
+if(!birthData.iljuName || !surveyType.zone){
+  document.getElementById("out").innerHTML="<p>⚠️ 데이터가 누락되었습니다. 처음부터 다시 진행해주세요.</p>";
+}else{
+  renderResult(birthData, surveyType);
+}
+
+// ===============================
+// 2️⃣ 동물 아이콘 + 설명 매핑
+// ===============================
+const animalIcons = {
+  "쥐":"🐭","소":"🐮","호랑이":"🐯","토끼":"🐰","용":"🐉",
+  "뱀":"🐍","말":"🐴","양":"🐑","원숭이":"🐒","닭":"🐔",
+  "개":"🐶","돼지":"🐷"
 };
 
-// Zone 설명
-const zoneData = {
-  A: {name:"A-Zone", desc:"정리·관리 중심, 체계적이고 신중한 안정형"},
-  B: {name:"B-Zone", desc:"공감·균형 중심, 관계와 조화를 중시하는 감성형"},
-  C: {name:"C-Zone", desc:"전략·정복 중심, 목표 달성과 추진력이 강한 리더형"},
-  D: {name:"D-Zone", desc:"자유·탐험 중심, 새로운 시도를 즐기는 창조형"}
+const elementTraits = {
+  "목":"성장·창조의 에너지, 확장성과 도전",
+  "화":"열정·표현의 에너지, 추진력과 카리스마",
+  "토":"안정·조화의 에너지, 중심성과 신뢰",
+  "금":"결단·질서의 에너지, 구조적 사고와 통제",
+  "수":"유연·감성의 에너지, 흐름과 지혜"
 };
 
-// 결과 생성
-const d = iljuData[ilju];
-const z = zoneData[zone];
-const resultBox = document.getElementById("report");
+const zoneDesc = {
+  "A-Zone":"현실·조직 중심, 계획과 안정의 영역",
+  "B-Zone":"공감·감성 중심, 관계와 가치의 영역",
+  "C-Zone":"전략·창의 중심, 분석과 비전의 영역",
+  "D-Zone":"모험·자유 중심, 즉흥과 감각의 영역"
+};
 
-if(d && z){
-  const title = `${d.color} ${d.animal}`;
-  resultBox.innerHTML = `
-    <h2>${title}</h2>
-    <div class="zone-tag">${z.name}</div>
-    <p class="desc">
-      당신은 <b>${title}</b>의 기운을 지닌 <b>${z.name}</b> 타입입니다.<br><br>
-      이 조합은 <b>${z.desc}</b>이며,<br>
-      현실감각과 본능이 어우러져 자신만의 세계관을 만들어갑니다.<br><br>
-      🔹 색상: ${d.color}<br>
-      🔹 동물: ${d.animal}<br><br>
-      이 에너지는 상황에 따라 강력한 리더십, 유연한 사고,<br>
-      혹은 예민한 감각으로 발현됩니다.<br>
-      지금의 당신은 <b>${title} (${z.name})</b>로서<br>
-      자신의 내면 리듬에 따라 세상을 해석하는 사람입니다.
-    </p>
+// ===============================
+// 3️⃣ 결과 렌더링 함수
+// ===============================
+function renderResult(b, s){
+  const icon = animalIcons[b.animal] || "✨";
+  const desc = zoneDesc[s.zone] || "정보 없음";
+
+  // 간단 리포트 문장 생성
+  const report = makeReport(b, s);
+
+  document.getElementById("out").innerHTML = `
+    <h2>${b.color} ${b.animal}</h2>
+    <div class="animal-icon">${icon}</div>
+
+    <div class="card">
+      <b>🌈 오행</b>: ${b.elem}<br>
+      <b>🎨 색상</b>: ${b.color}<br>
+      <b>🐾 동물</b>: ${b.animal}<br>
+      <b>🧩 일주명</b>: ${b.iljuName}
+    </div>
+
+    <div class="card">
+      <b>💫 MBTI</b>: ${s.mbti}<br>
+      <b>🌌 ZONE</b>: ${s.zone}<br>
+      설명: ${desc}
+    </div>
+
+    <div class="card">
+      <b>🔮 AI 리포트 요약</b><br>
+      ${report}
+    </div>
   `;
-} else {
-  resultBox.innerHTML = `
-    ⚠️ 데이터가 아직 연결되지 않았습니다.<br>
-    테스트를 처음부터 다시 진행해주세요.
-  `;
+}
+
+// ===============================
+// 4️⃣ 리포트 생성기 (간이형)
+// ===============================
+function makeReport(b, s){
+  const trait = elementTraits[b.elem] || "";
+  const base = `${b.color} ${b.animal} (${b.elem}의 기운)`; 
+  const zoneT = s.zone.replace("-Zone","");
+  const lines = {
+    "A":"당신은 ${base}과 ${zoneT}의 성향이 결합된 안정적 리더형으로, 신뢰를 중시하고 실질적 성과를 추구합니다.",
+    "B":"${base}의 따뜻함과 ${zoneT}의 감성이 조화를 이루는 공감형으로, 주변 사람들에게 긍정적 에너지를 전합니다.",
+    "C":"${base}의 추진력과 ${zoneT}의 전략성이 만나, 아이디어를 현실로 바꾸는 창조적 혁신가입니다.",
+    "D":"${base}의 자유로운 에너지와 ${zoneT}의 모험심이 결합된 탐험가형으로, 틀에 얽매이지 않고 세상을 탐구합니다."
+  };
+  const z = s.zone.charAt(0);
+  return (lines[z] || "당신의 성향은 독특한 조합으로, 아직 분석 중입니다.") + "<br><br>요약: "+trait;
 }
 </script>
 </body>
