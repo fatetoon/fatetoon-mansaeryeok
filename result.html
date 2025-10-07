@@ -23,7 +23,8 @@ button:hover{filter:brightness(1.05);}
 footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:20px;}
 .report-options{display:grid;gap:12px;margin-top:24px;}
 .report-card{background:#0f1733;border:1px solid rgba(255,215,0,.25);
-border-radius:14px;padding:16px;text-align:center;}
+border-radius:14px;padding:16px;text-align:center;cursor:pointer;transition:.2s;}
+.report-card:hover{box-shadow:0 0 10px rgba(255,215,0,.2);}
 .report-card h3{color:var(--gold);margin-bottom:8px;}
 .report-card p{font-size:14px;color:rgba(255,255,255,.8);}
 .report-card span{display:block;margin-top:8px;font-weight:700;color:var(--gold);}
@@ -87,7 +88,7 @@ if(!local.dayP){
     ⚠️ 데이터가 연결되지 않았습니다.<br>
     <small>index.html에서 생년월일을 다시 입력해주세요.</small>
   </div>
-  <button onclick="location.href='index.html'">다시하기</button>`;
+  <button onclick="location.href='index.html'">처음으로</button>`;
 }else{
   // 기본 계산
   const ilGan = local.dayP[0];
@@ -143,25 +144,41 @@ if(!local.dayP){
   </div>
 
   <div class="report-options">
-    <div class="report-card">
+    <div class="report-card" onclick="goDetail()">
       <h3>무료 리포트</h3>
       <p>기본 4주 & 성향 결과 제공</p>
       <span>₩0</span>
     </div>
-    <div class="report-card">
+    <div class="report-card" onclick="goDetail()">
       <h3>미니 리포트</h3>
       <p>이번 달 운 + 금기 행동 3</p>
       <span>₩3,800</span>
     </div>
-    <div class="report-card">
+    <div class="report-card" onclick="goDetail()">
       <h3>프로 리포트</h3>
       <p>관계·재물·타이밍 종합 리스크 리포트</p>
       <span>₩15,800</span>
     </div>
   </div>
 
-  <button onclick="location.href='index.html'">다시하기</button>
+  <button onclick="goDetail()">상세보기</button>
   `;
+}
+
+// ✅ 상세보기 함수 (데이터 전달)
+function goDetail(){
+  const birthData = localStorage.getItem("birthData");
+  const surveyType = localStorage.getItem("surveyType");
+  if(!birthData || !surveyType){
+    alert("⚠️ 데이터가 누락되었습니다. 처음부터 다시 진행해주세요.");
+    location.href = "index.html";
+    return;
+  }
+  const encoded = encodeURIComponent(JSON.stringify({
+    birth: JSON.parse(birthData),
+    survey: JSON.parse(surveyType)
+  }));
+  location.href = "design.html?data=" + encoded;
 }
 </script>
 </body>
