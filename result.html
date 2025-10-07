@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>YOURZOY 결과</title>
 <style>
 :root{--navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFF;}
 body{margin:0;background:var(--navy);color:var(--text);font-family:"Noto Sans KR",sans-serif;}
-.wrap{max-width:640px;margin:6vh auto;padding:32px;border-radius:24px;background:var(--navy2);box-shadow:0 20px 60px rgba(0,0,0,.4);}
+.wrap{max-width:700px;margin:6vh auto;padding:32px;border-radius:24px;background:var(--navy2);box-shadow:0 20px 60px rgba(0,0,0,.4);}
 h1{text-align:center;color:var(--gold);}
 h2{text-align:center;margin:6px 0 18px;color:var(--gold);}
 .card{padding:22px;background:#0f1733;border:1px solid rgba(255,215,0,.25);border-radius:14px;margin-bottom:18px;}
 b{color:var(--gold);}
 footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:24px;}
 button{width:100%;padding:13px;border:none;border-radius:14px;background:var(--gold);color:#111;font-weight:800;margin-top:16px;cursor:pointer;}
+.warn{text-align:center;color:#fff;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.4);border-radius:14px;padding:25px;}
+table{width:100%;border-collapse:collapse;margin-top:12px;}
+td,th{border:1px solid rgba(255,215,0,.25);padding:8px;text-align:center;}
+th{background:rgba(255,215,0,.15);}
 .desc{color:rgba(255,255,255,.8);line-height:1.6;font-size:15px;}
 </style>
 </head>
@@ -22,11 +27,19 @@ button{width:100%;padding:13px;border:none;border-radius:14px;background:var(--g
   <div id="out"></div>
   <footer>© 2025 YOURZOY</footer>
 </main>
+
 <script>
-const birthData=JSON.parse(localStorage.getItem("birthData")||"{}");
-const surveyType=JSON.parse(localStorage.getItem("surveyType")||"{}");
+// ========== 데이터 불러오기 ==========
+const birthData = JSON.parse(localStorage.getItem("birthData")||"{}");
+const surveyType = JSON.parse(localStorage.getItem("surveyType")||"{}");
+
+// ========== 데이터 없을 때 ==========
 if(!birthData.dayP){
-  document.getElementById("out").innerHTML=`<div class='card'>⚠️ 데이터가 연결되지 않았습니다.<br><button onclick="location.href='index.html'">다시하기</button></div>`;
+  document.getElementById("out").innerHTML=`
+  <div class='warn'>
+  ⚠️ 데이터가 아직 연결되지 않았습니다.<br><br>
+  <button onclick="location.href='index.html'">다시하기</button>
+  </div>`;
 }else{
   const elemDesc={
     "목":"성장과 창조의 에너지, 자유로운 확장력",
@@ -43,25 +56,44 @@ if(!birthData.dayP){
   };
   const {yearP,monthP,dayP,hourP,elem,color,animal,iljuName}=birthData;
   const {mbti,zone}=surveyType;
+
   document.getElementById("out").innerHTML=`
   <h2>${color} ${animal} JOY 🐾</h2>
+
   <div class="card">
     <b>사주 4주</b><br>
-    년주: ${yearP}<br>
-    월주: ${monthP}<br>
-    일주: ${dayP}<br>
-    시주: ${hourP}
+    <table>
+      <tr><th>구분</th><th>간지</th></tr>
+      <tr><td>년주</td><td>${yearP}</td></tr>
+      <tr><td>월주</td><td>${monthP}</td></tr>
+      <tr><td>일주</td><td>${dayP}</td></tr>
+      <tr><td>시주</td><td>${hourP}</td></tr>
+    </table>
   </div>
-  <div class="card"><b>오행</b>: ${elem}<br><b>색상</b>: ${color}<br><b>동물</b>: ${animal}<br><b>설명</b>: ${elemDesc[elem]}</div>
-  <div class="card"><b>MBTI</b>: ${mbti}<br><b>ZONE</b>: ${zone}<br><b>성향</b>: ${zoneDesc[zone]}</div>
+
+  <div class="card">
+    <b>오행</b>: ${elem}<br>
+    <b>색상</b>: ${color}<br>
+    <b>동물</b>: ${animal}<br><br>
+    ${elemDesc[elem]}
+  </div>
+
+  <div class="card">
+    <b>MBTI</b>: ${mbti}<br>
+    <b>ZONE</b>: ${zone}<br><br>
+    ${zoneDesc[zone]}
+  </div>
+
   <div class="card desc">
-  당신은 <b>${color} ${animal}</b>의 기운을 타고난 사람입니다.<br>
-  ${elemDesc[elem]}<br><br>
-  ${zoneDesc[zone]}<br>
-  현실의 행동 패턴과 내면의 에너지가 어우러져<br>
-  “${iljuName} JOY”로 표현되는 독특한 성향을 만듭니다.
+    당신은 <b>${color} ${animal}</b>의 기운을 타고난 사람입니다.<br>
+    ${elemDesc[elem]}<br><br>
+    ${zoneDesc[zone]}<br>
+    현실의 행동 패턴과 내면의 에너지가 어우러져,<br>
+    <b>“${iljuName} JOY”</b>로 표현되는 독특한 성향을 만듭니다.
   </div>
-  <button onclick="location.href='index.html'">다시하기</button>`;
+
+  <button onclick="location.href='index.html'">다시하기</button>
+  `;
 }
 </script>
 </body>
