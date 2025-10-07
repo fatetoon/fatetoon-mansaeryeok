@@ -23,8 +23,10 @@ footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:2
 <main class="wrap">
   <h1>YOURZOY</h1>
   <p>생년월일과 시간을 입력하면 당신의 <b>일주</b>를 찾아드릴게요.</p>
+  
   <label>생년월일</label>
   <input id="birthdate" type="date">
+  
   <label>출생시간</label>
   <select id="birthtime">
     <option value="0">자시 (23:00~00:59)</option>
@@ -40,39 +42,41 @@ footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:2
     <option value="10">술시 (19:00~20:59)</option>
     <option value="11">해시 (21:00~22:59)</option>
   </select>
+
   <button id="next">성향 테스트 시작</button>
   <footer>© 2025 YOURZOY</footer>
 </main>
 
 <script>
 // ======================== 천문 기준 만세력 계산 =========================
-const stems=["갑","을","병","정","무","기","경","신","임","계"];
-const branches=["자","축","인","묘","진","사","오","미","신","유","술","해"];
+const stems = ["갑","을","병","정","무","기","경","신","임","계"];
+const branches = ["자","축","인","묘","진","사","오","미","신","유","술","해"];
 
 // Julian Day 계산
-function JD(y,m,d){
-  const a=Math.floor((14-m)/12);
-  const y2=y+4800-a;
-  const m2=m+12*a-3;
-  return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;
+function JD(y, m, d){
+  const a = Math.floor((14 - m) / 12);
+  const y2 = y + 4800 - a;
+  const m2 = m + 12 * a - 3;
+  return d + Math.floor((153 * m2 + 2) / 5) + 365 * y2 + Math.floor(y2 / 4)
+       - Math.floor(y2 / 100) + Math.floor(y2 / 400) - 32045;
 }
 
-// ✅ 1984-02-04 00:00 기준 (갑자일 시작 기준)
-const BASE_JD = JD(1984,2,4);
+// ✅ 정확한 갑자일 기준: 1984-02-05 00:00
+const BASE_JD = JD(1984, 2, 5);
 
 // 일주 계산
-function getIlju(y,m,d){
-  const diff = JD(y,m,d) - BASE_JD;
+function getIlju(y, m, d){
+  const diff = JD(y, m, d) - BASE_JD;
   const idx = (diff % 60 + 60) % 60;
   return stems[idx % 10] + branches[idx % 12];
 }
 
-// 년주 계산 (입춘 기준 보정 없음, 단순 연단위)
-function getNyeonju(y){return stems[(y-4)%10]+branches[(y-4)%12];}
+// 년주 계산 (간단 모델)
+function getNyeonju(y){ return stems[(y - 4) % 10] + branches[(y - 4) % 12]; }
 
-// 월주 계산 (정확한 절기기준 대신 간단 모델)
-function getWolju(y,m){
-  const monthStemIdx = ( ( (y - 4) * 12 + (m + 1) ) % 10 + 10 ) % 10;
+// 월주 계산 (절기 단순화)
+function getWolju(y, m){
+  const monthStemIdx = (((y - 4) * 12 + (m + 1)) % 10 + 10) % 10;
   const monthBranchIdx = (m + 1) % 12;
   return stems[monthStemIdx] + branches[monthBranchIdx];
 }
@@ -86,15 +90,16 @@ function getSiju(ilGan, h){
   return stems[ganIdx] + ji;
 }
 
-function getFourPillars(y,m,d,h){
+// 전체 4주 계산
+function getFourPillars(y, m, d, h){
   const yearP = getNyeonju(y);
-  const monthP = getWolju(y,m);
-  const dayP = getIlju(y,m,d);
-  const hourP = getSiju(dayP[0],h);
-  return {yearP,monthP,dayP,hourP};
+  const monthP = getWolju(y, m);
+  const dayP = getIlju(y, m, d);
+  const hourP = getSiju(dayP[0], h);
+  return { yearP, monthP, dayP, hourP };
 }
 
-// ======================== 오행/동물 매핑 =========================
+// ======================== 오행 / 색상 / 동물 매핑 =========================
 const elementMap = {
   "갑": {elem:"목", color:"초록"},
   "을": {elem:"목", color:"초록"},
@@ -114,20 +119,20 @@ const animalMap = {
 };
 
 // ======================== 실행 로직 =========================
-document.getElementById("next").addEventListener("click",()=>{
+document.getElementById("next").addEventListener("click", () => {
   const dateStr = document.getElementById("birthdate").value;
   if(!dateStr) return alert("생년월일을 선택해주세요!");
 
-  const [y,m,d] = dateStr.split("-").map(n=>parseInt(n,10));
+  const [y, m, d] = dateStr.split("-").map(n => parseInt(n, 10));
   const h = parseInt(document.getElementById("birthtime").value);
-  const pillars = getFourPillars(y,m,d,h);
 
+  const pillars = getFourPillars(y, m, d, h);
   const ilGan = pillars.dayP[0];
   const ilJi = pillars.dayP[1];
   const elem = elementMap[ilGan].elem;
   const color = elementMap[ilGan].color;
   const animal = animalMap[ilJi];
-  const iljuName = `${color} ${animal}`; // ex) 빨간쥐
+  const iljuName = `${color} ${animal}`; // ex) 붉은 쥐
 
   const birthData = {...pillars, elem, color, animal, iljuName};
   localStorage.setItem("birthData", JSON.stringify(birthData));
