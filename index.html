@@ -64,7 +64,6 @@ function getIlju(y,m,d){
   const idx=(diff%60+60)%60;
   return stems[idx%10]+branches[idx%12];
 }
-
 // 년주/월주 계산
 function getNyeonju(y){return stems[(y-4)%10]+branches[(y-4)%12];}
 function getWolju(y,m){return stems[(y*12+m+3)%10]+branches[(m+1)%12];}
@@ -131,4 +130,5 @@ document.getElementById("next").addEventListener("click",()=>{
 </script>
 </body>
 </html>
+
 
