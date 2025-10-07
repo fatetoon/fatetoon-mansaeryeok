@@ -21,6 +21,12 @@ button{width:100%;padding:13px;border:none;border-radius:14px;background:var(--g
 color:#111;font-weight:800;margin-top:20px;cursor:pointer;}
 button:hover{filter:brightness(1.05);}
 footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:20px;}
+.report-options{display:grid;gap:12px;margin-top:24px;}
+.report-card{background:#0f1733;border:1px solid rgba(255,215,0,.25);
+border-radius:14px;padding:16px;text-align:center;}
+.report-card h3{color:var(--gold);margin-bottom:8px;}
+.report-card p{font-size:14px;color:rgba(255,255,255,.8);}
+.report-card span{display:block;margin-top:8px;font-weight:700;color:var(--gold);}
 </style>
 </head>
 <body>
@@ -49,8 +55,8 @@ const animalMap = {
   "오":"말","미":"양","신":"원숭이","유":"닭","술":"개","해":"돼지"
 };
 
-// ================= 동물별 JOY ZONE 매핑 =================
-const joyZoneMap = {
+// ================= 동물별 ZOY ZONE 매핑 =================
+const zoyZoneMap = {
   "쥐": {zone:"C-Zone", name:"Focus Zone", desc:"전략·생존·정보 감각 — 생존 전략가형"},
   "소": {zone:"A-Zone", name:"Ground Zone", desc:"안정·책임·신중함 — 현실형 관리자"},
   "호랑이": {zone:"D-Zone", name:"Drive Zone", desc:"추진력·도전·카리스마 — 모험가 리더"},
@@ -81,7 +87,7 @@ if(!local.dayP){
     ⚠️ 데이터가 연결되지 않았습니다.<br>
     <small>index.html에서 생년월일을 다시 입력해주세요.</small>
   </div>
-  <button onclick="location.href='index.html'">처음으로</button>`;
+  <button onclick="location.href='index.html'">다시하기</button>`;
 }else{
   // 기본 계산
   const ilGan = local.dayP[0];
@@ -89,20 +95,19 @@ if(!local.dayP){
   const elem = elementMap[ilGan].elem;
   const color = elementMap[ilGan].color;
   const animal = animalMap[ilJi];
-  const joy = joyZoneMap[animal];
-  const iljuName = `${color} ${animal} JOY`;
+  const zoy = zoyZoneMap[animal];
+  const iljuName = `${color} ${animal} ZOY`;
 
-  // 이상존 = 사주존, 현실존 = MBTI존
-  const idealZone = joy.zone;
+  // 이상존 = 사주 기반, 현실존 = 성향 기반
+  const idealZone = zoy.zone;
   const realZone = survey.zone || "B-Zone";
-  const mbti = survey.mbti || "ENFP";
 
   // HTML 출력
   document.getElementById("out").innerHTML = `
   <h2>${iljuName} 🐾</h2>
 
   <div class="card">
-    <b>사주 4주</b>
+    <b>사주팔자</b>
     <table>
       <tr><th>구분</th><th>간지</th></tr>
       <tr><td>년주</td><td>${local.yearP}</td></tr>
@@ -116,44 +121,27 @@ if(!local.dayP){
     <b>오행:</b> ${elem}<br>
     <b>색상:</b> ${color}<br>
     <b>동물:</b> ${animal}<br>
-    <b>사주존(이상존):</b> ${idealZone} (${joy.name})<br>
-    설명: ${joy.desc}
+    <b>이상존:</b> ${idealZone} (${zoy.name})<br>
+    설명: ${zoy.desc}
   </div>
 
   <div class="card">
-    <b>MBTI:</b> ${mbti}<br>
     <b>현실존:</b> ${realZone}<br>
     설명: ${zoneDesc[realZone]}
   </div>
 
   <div class="card">
-    <b>JOY 통합 인사이트</b><br>
+    <b>ZOY 통합 인사이트</b><br>
     당신은 <b>${color} ${animal}</b>의 에너지를 지닌 사람으로,<br>
     <b>${elem}</b>의 기운을 바탕으로 세상과 상호작용합니다.<br><br>
-    사주존은 <b>${idealZone}</b>(${joy.name})이고,<br>
+    이상존은 <b>${idealZone}</b>(${zoy.name})이고,<br>
     현실존은 <b>${realZone}</b>(${zoneDesc[realZone]})입니다.<br><br>
     내면적 직관(이상존)과 외부 행동(현실존)이 만나<br>
-    “<b>${iljuName}</b>”라는 고유한 JOY 타입을 형성합니다.
+    “<b>${iljuName}</b>”라는 고유한 ZOY 타입을 형성합니다.
   </div>
 
-  <button onclick="goDetail()">상세보기</button>
+  <button onclick="location.href='design.html'">상세보기</button>
   `;
-}
-
-// ✅ 상세보기 함수 (데이터 전달)
-function goDetail(){
-  const birthData = localStorage.getItem("birthData");
-  const surveyType = localStorage.getItem("surveyType");
-  if(!birthData || !surveyType){
-    alert("⚠️ 데이터가 누락되었습니다. 처음부터 다시 진행해주세요.");
-    location.href = "index.html";
-    return;
-  }
-  const encoded = encodeURIComponent(JSON.stringify({
-    birth: JSON.parse(birthData),
-    survey: JSON.parse(surveyType)
-  }));
-  location.href = "design.html?data=" + encoded;
 }
 </script>
 </body>
