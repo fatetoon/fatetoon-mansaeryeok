@@ -21,13 +21,6 @@ button{width:100%;padding:13px;border:none;border-radius:14px;background:var(--g
 color:#111;font-weight:800;margin-top:20px;cursor:pointer;}
 button:hover{filter:brightness(1.05);}
 footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:20px;}
-.report-options{display:grid;gap:12px;margin-top:24px;}
-.report-card{background:#0f1733;border:1px solid rgba(255,215,0,.25);
-border-radius:14px;padding:16px;text-align:center;cursor:pointer;transition:.2s;}
-.report-card:hover{box-shadow:0 0 10px rgba(255,215,0,.2);}
-.report-card h3{color:var(--gold);margin-bottom:8px;}
-.report-card p{font-size:14px;color:rgba(255,255,255,.8);}
-.report-card span{display:block;margin-top:8px;font-weight:700;color:var(--gold);}
 </style>
 </head>
 <body>
@@ -141,24 +134,6 @@ if(!local.dayP){
     현실존은 <b>${realZone}</b>(${zoneDesc[realZone]})입니다.<br><br>
     내면적 직관(이상존)과 외부 행동(현실존)이 만나<br>
     “<b>${iljuName}</b>”라는 고유한 JOY 타입을 형성합니다.
-  </div>
-
-  <div class="report-options">
-    <div class="report-card" onclick="goDetail()">
-      <h3>무료 리포트</h3>
-      <p>기본 4주 & 성향 결과 제공</p>
-      <span>₩0</span>
-    </div>
-    <div class="report-card" onclick="goDetail()">
-      <h3>미니 리포트</h3>
-      <p>이번 달 운 + 금기 행동 3</p>
-      <span>₩3,800</span>
-    </div>
-    <div class="report-card" onclick="goDetail()">
-      <h3>프로 리포트</h3>
-      <p>관계·재물·타이밍 종합 리스크 리포트</p>
-      <span>₩15,800</span>
-    </div>
   </div>
 
   <button onclick="goDetail()">상세보기</button>
