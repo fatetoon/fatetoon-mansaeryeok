@@ -6,155 +6,116 @@
 <title>YOURZOY 결과</title>
 <style>
 :root{
-  --navy:#0B132B;
-  --navy2:#1C2541;
-  --gold:#FFD700;
-  --text:#FFF;
+  --navy:#0B132B;--navy2:#1C2541;--gold:#FFD700;--text:#FFF;
 }
 body{
-  margin:0;
-  background:var(--navy);
-  color:var(--text);
+  margin:0;background:var(--navy);color:var(--text);
   font-family:"Noto Sans KR",sans-serif;
 }
 .wrap{
-  max-width:640px;
-  margin:6vh auto;
-  padding:32px;
-  border-radius:24px;
-  background:var(--navy2);
+  max-width:640px;margin:6vh auto;padding:32px;
+  border-radius:24px;background:var(--navy2);
   box-shadow:0 20px 60px rgba(0,0,0,.4);
 }
 h1{text-align:center;color:var(--gold);}
-h2{text-align:center;margin:6px 0 20px;}
+h2{text-align:center;margin:6px 0 18px;color:var(--gold);}
 .card{
-  padding:20px;
-  background:#0f1733;
+  padding:22px;background:#0f1733;
   border:1px solid rgba(255,215,0,.25);
-  border-radius:14px;
-  margin-bottom:18px;
+  border-radius:14px;margin-bottom:18px;
 }
 b{color:var(--gold);}
-footer{
-  text-align:center;
-  color:rgba(255,255,255,.45);
-  font-size:12px;
-  margin-top:24px;
-}
+footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:24px;}
 button{
-  width:100%;
-  padding:13px;
-  border:none;
-  border-radius:14px;
-  background:var(--gold);
-  color:#111;
-  font-weight:800;
-  margin-top:16px;
-  cursor:pointer;
+  width:100%;padding:13px;border:none;border-radius:14px;
+  background:var(--gold);color:#111;font-weight:800;margin-top:16px;cursor:pointer;
 }
 button:hover{filter:brightness(1.05);}
-.animal-icon{
-  font-size:40px;
-  text-align:center;
-  margin:10px 0;
-}
+.desc{color:rgba(255,255,255,.8);line-height:1.6;font-size:15px;}
 </style>
 </head>
-
 <body>
 <main class="wrap">
   <h1>YOURZOY 결과</h1>
   <div id="out"></div>
-  <button onclick="location.href='index.html'">다시하기</button>
   <footer>© 2025 YOURZOY</footer>
 </main>
 
 <script>
-// ===============================
+// =========================
 // 1️⃣ 저장된 데이터 불러오기
-// ===============================
+// =========================
 const birthData = JSON.parse(localStorage.getItem("birthData") || "{}");
 const surveyType = JSON.parse(localStorage.getItem("surveyType") || "{}");
 
-if(!birthData.iljuName || !surveyType.zone){
-  document.getElementById("out").innerHTML="<p>⚠️ 데이터가 누락되었습니다. 처음부터 다시 진행해주세요.</p>";
-}else{
-  renderResult(birthData, surveyType);
-}
-
-// ===============================
-// 2️⃣ 동물 아이콘 + 설명 매핑
-// ===============================
-const animalIcons = {
-  "쥐":"🐭","소":"🐮","호랑이":"🐯","토끼":"🐰","용":"🐉",
-  "뱀":"🐍","말":"🐴","양":"🐑","원숭이":"🐒","닭":"🐔",
-  "개":"🐶","돼지":"🐷"
-};
-
-const elementTraits = {
-  "목":"성장·창조의 에너지, 확장성과 도전",
-  "화":"열정·표현의 에너지, 추진력과 카리스마",
-  "토":"안정·조화의 에너지, 중심성과 신뢰",
-  "금":"결단·질서의 에너지, 구조적 사고와 통제",
-  "수":"유연·감성의 에너지, 흐름과 지혜"
-};
-
-const zoneDesc = {
-  "A-Zone":"현실·조직 중심, 계획과 안정의 영역",
-  "B-Zone":"공감·감성 중심, 관계와 가치의 영역",
-  "C-Zone":"전략·창의 중심, 분석과 비전의 영역",
-  "D-Zone":"모험·자유 중심, 즉흥과 감각의 영역"
-};
-
-// ===============================
-// 3️⃣ 결과 렌더링 함수
-// ===============================
-function renderResult(b, s){
-  const icon = animalIcons[b.animal] || "✨";
-  const desc = zoneDesc[s.zone] || "정보 없음";
-
-  // 간단 리포트 문장 생성
-  const report = makeReport(b, s);
-
+// =========================
+// 2️⃣ 데이터 유효성 체크
+// =========================
+if(!birthData.iljuName){
   document.getElementById("out").innerHTML = `
-    <h2>${b.color} ${b.animal}</h2>
-    <div class="animal-icon">${icon}</div>
-
     <div class="card">
-      <b>🌈 오행</b>: ${b.elem}<br>
-      <b>🎨 색상</b>: ${b.color}<br>
-      <b>🐾 동물</b>: ${b.animal}<br>
-      <b>🧩 일주명</b>: ${b.iljuName}
-    </div>
-
-    <div class="card">
-      <b>💫 MBTI</b>: ${s.mbti}<br>
-      <b>🌌 ZONE</b>: ${s.zone}<br>
-      설명: ${desc}
-    </div>
-
-    <div class="card">
-      <b>🔮 AI 리포트 요약</b><br>
-      ${report}
+      ⚠️ 데이터가 연결되지 않았습니다.<br>
+      <br>
+      <button onclick="location.href='index.html'">처음부터 다시하기</button>
     </div>
   `;
+} else {
+  showResult();
 }
 
-// ===============================
-// 4️⃣ 리포트 생성기 (간이형)
-// ===============================
-function makeReport(b, s){
-  const trait = elementTraits[b.elem] || "";
-  const base = `${b.color} ${b.animal} (${b.elem}의 기운)`; 
-  const zoneT = s.zone.replace("-Zone","");
-  const lines = {
-    "A":"당신은 ${base}과 ${zoneT}의 성향이 결합된 안정적 리더형으로, 신뢰를 중시하고 실질적 성과를 추구합니다.",
-    "B":"${base}의 따뜻함과 ${zoneT}의 감성이 조화를 이루는 공감형으로, 주변 사람들에게 긍정적 에너지를 전합니다.",
-    "C":"${base}의 추진력과 ${zoneT}의 전략성이 만나, 아이디어를 현실로 바꾸는 창조적 혁신가입니다.",
-    "D":"${base}의 자유로운 에너지와 ${zoneT}의 모험심이 결합된 탐험가형으로, 틀에 얽매이지 않고 세상을 탐구합니다."
+// =========================
+// 3️⃣ 결과 출력 함수
+// =========================
+function showResult(){
+  const ilju = birthData.iljuName || "미등록";
+  const elem = birthData.elem || "";
+  const color = birthData.color || "";
+  const animal = birthData.animal || "";
+  const mbti = surveyType.mbti || "테스트 미진행";
+  const zone = surveyType.zone || "무존";
+
+  // 오행 설명
+  const elemDesc = {
+    "목":"성장, 창조, 유연함의 기운",
+    "화":"열정, 추진력, 직관의 기운",
+    "토":"균형, 신뢰, 안정의 기운",
+    "금":"통찰, 결단, 정리의 기운",
+    "수":"지혜, 흐름, 직감의 기운"
   };
-  const z = s.zone.charAt(0);
-  return (lines[z] || "당신의 성향은 독특한 조합으로, 아직 분석 중입니다.") + "<br><br>요약: "+trait;
+
+  // Zone 설명
+  const zoneDesc = {
+    "A-Zone":"현실 중심형 — 계획, 규율, 안정, 책임감이 강함.",
+    "B-Zone":"감성 중심형 — 공감, 관계, 감정적 통찰력이 뛰어남.",
+    "C-Zone":"전략 중심형 — 분석적 사고, 창의성과 통찰이 강함.",
+    "D-Zone":"자유 중심형 — 모험, 즉흥, 경험 중심의 에너지형."
+  };
+
+  document.getElementById("out").innerHTML = `
+    <h2>${color} ${animal} JOY 🐾</h2>
+
+    <div class="card">
+      <b>🌞 오행</b>: ${elem}<br>
+      <b>🎨 색상</b>: ${color}<br>
+      <b>🐾 동물</b>: ${animal}<br>
+      <b>설명</b>: ${elemDesc[elem] || "에너지 정보 없음"}
+    </div>
+
+    <div class="card">
+      <b>🧩 MBTI</b>: ${mbti}<br>
+      <b>🌍 ZONE</b>: ${zone}<br>
+      <b>설명</b>: ${zoneDesc[zone] || "분석 결과 없음"}
+    </div>
+
+    <div class="card desc">
+      당신은 <b>${color} ${animal}</b>의 기운을 타고난 사람입니다.<br>
+      ${elemDesc[elem] || ""}<br><br>
+      ${zoneDesc[zone] || ""}
+    </div>
+
+    <button onclick="location.href='design.html'">리포트 선택하러 가기 →</button>
+    <button onclick="location.href='index.html'">다시하기</button>
+  `;
 }
 </script>
 </body>
