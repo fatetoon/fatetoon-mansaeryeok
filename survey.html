@@ -71,15 +71,15 @@ const Q=[
 ];
 
 // ======================== 진행 상태 =========================
-let i=0;
-let s={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
-const quiz=document.getElementById("quiz");
-const bar=document.getElementById("bar");
+let i = 0;
+let s = {E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
+const quiz = document.getElementById("quiz");
+const bar = document.getElementById("bar");
 
 // ======================== 문항 표시 =========================
 function drawQ(){
-  const q=Q[i];
-  quiz.innerHTML=`
+  const q = Q[i];
+  quiz.innerHTML = `
   <div class="question">
     <h3>Q${i+1}. ${q.q}</h3>
     <div class="options">
@@ -90,44 +90,51 @@ function drawQ(){
       <label><input type="radio" name="a" value="5">매우 그렇다</label>
     </div>
   </div>`;
-  bar.style.width=`${(i/Q.length)*100}%`;
+  bar.style.width = `${(i / (Q.length - 1)) * 100}%`;
 }
 drawQ();
 
 // ======================== 응답 처리 =========================
-document.getElementById("next").onclick=()=>{
-  const a=document.querySelector("input[name=a]:checked");
+document.getElementById("next").onclick = () => {
+  const a = document.querySelector("input[name=a]:checked");
   if(!a) return alert("응답을 선택해주세요!");
-  const val=parseInt(a.value);
-  const t=Q[i].t;
+  const val = parseInt(a.value);
+  const t = Q[i].t;
 
-  // 점수 누적
-  if(["E","S","T","J"].includes(t)) s[t]+=val;
-  else s[t]+=6-val;
+  // 정확한 MBTI 쌍별 계산
+  switch(t){
+    case "E": s.E += val; s.I += (6 - val); break;
+    case "I": s.I += val; s.E += (6 - val); break;
+    case "S": s.S += val; s.N += (6 - val); break;
+    case "N": s.N += val; s.S += (6 - val); break;
+    case "T": s.T += val; s.F += (6 - val); break;
+    case "F": s.F += val; s.T += (6 - val); break;
+    case "J": s.J += val; s.P += (6 - val); break;
+    case "P": s.P += val; s.J += (6 - val); break;
+  }
 
   i++;
-  if(i<Q.length){drawQ();}
-  else{
-    // MBTI 계산
+  if(i < Q.length){ drawQ(); }
+  else {
+    // ======================== MBTI 계산 =========================
     const mbti =
-      (s.E>=s.I?"E":"I")+
-      (s.S>=s.N?"S":"N")+
-      (s.T>=s.F?"T":"F")+
-      (s.J>=s.P?"J":"P");
+      (s.E >= s.I ? "E" : "I") +
+      (s.S >= s.N ? "S" : "N") +
+      (s.T >= s.F ? "T" : "F") +
+      (s.J >= s.P ? "J" : "P");
 
-    // ZONE 구분
-    let zone="D-Zone";
-    if(["INTJ","INTP","ENTJ","ENTP"].includes(mbti)) zone="C-Zone";
-    else if(["INFJ","INFP","ENFJ","ENFP"].includes(mbti)) zone="B-Zone";
-    else if(["ISTJ","ISFJ","ESTJ","ESFJ"].includes(mbti)) zone="A-Zone";
+    // ======================== 현실 ZONE 분류 =========================
+    let zone = "D-Zone";
+    if(["INTJ","INTP","ENTJ","ENTP"].includes(mbti)) zone = "C-Zone";
+    else if(["INFJ","INFP","ENFJ","ENFP"].includes(mbti)) zone = "B-Zone";
+    else if(["ISTJ","ISFJ","ESTJ","ESFJ"].includes(mbti)) zone = "A-Zone";
 
-    // 저장 및 결과 이동
-    const surveyData={mbti,zone};
+    // ======================== 저장 및 이동 =========================
+    const surveyData = {mbti, zone};
     localStorage.setItem("surveyType", JSON.stringify(surveyData));
     console.log("✅ 설문 결과:", surveyData);
 
-    // result.html로 이동
-    window.location.href="result.html";
+    window.location.href = "result.html";
   }
 };
 </script>
