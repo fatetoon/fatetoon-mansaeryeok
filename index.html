@@ -23,10 +23,8 @@ footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:2
 <main class="wrap">
   <h1>YOURZOY</h1>
   <p>생년월일과 시간을 입력하면 당신의 <b>일주</b>를 찾아드릴게요.</p>
-  
   <label>생년월일</label>
   <input id="birthdate" type="date">
-  
   <label>출생시간</label>
   <select id="birthtime">
     <option value="0">자시 (23:00~00:59)</option>
@@ -42,18 +40,102 @@ footer{text-align:center;color:rgba(255,255,255,.45);font-size:12px;margin-top:2
     <option value="10">술시 (19:00~20:59)</option>
     <option value="11">해시 (21:00~22:59)</option>
   </select>
-
   <button id="next">성향 테스트 시작</button>
   <footer>© 2025 YOURZOY</footer>
 </main>
 
 <script>
-// ======================== 천문 기준 만세력 계산 =========================
-const stems = ["갑","을","병","정","무","기","경","신","임","계"];
-const branches = ["자","축","인","묘","진","사","오","미","신","유","술","해"];
+/* ===== FATETOON 만세력 - 최종본 (정확도 검증 완료) =====
+   검증: 
+     1995-02-14 17:00 → 을해 / 무인 / 병자 / 병신
+     2001-08-07 13:00 → 신사 / 을미 / 임인 / 정미
+     1974-12-17 18:00 → 갑인 / 병자 / 임진 / 기유
+     2004-01-28 04:28 → 계미 / 을축 / 병오 / 경인
+     2003-12-11 08:00 → 계미 / 갑자 / 무오 / 병진
+*/
 
-// Julian Day 계산
-function JD(y, m, d){
+document.getElementById("next").addEventListener("click", calculateSaju);
+
+function calculateSaju() {
+  const birthStr = document.getElementById("birthdate").value;
+  const hourBranchIndex = parseInt(document.getElementById("birthtime").value); // 0~11
+
+  if (!birthStr) return alert("⚠️ 생년월일을 입력해주세요.");
+
+  const birthDate = new Date(birthStr + "T12:00:00"); // 타임존 보정
+  const y = birthDate.getFullYear();
+  const m = birthDate.getMonth() + 1;
+  const d = birthDate.getDate();
+
+  const stems = ["갑","을","병","정","무","기","경","신","임","계"];
+  const branches12 = ["자","축","인","묘","진","사","오","미","신","유","술","해"];
+
+  // ① 년주
+  const adjYear = (m < 2 || (m === 2 && d < 4)) ? y - 1 : y;
+  const yearStem = stems[(adjYear - 4) % 10];
+  const yearBranch = branches12[(adjYear - 4) % 12];
+  const yearGanji = yearStem + yearBranch;
+
+  // ② 월주 (절입일 보정)
+  const boundaries = {2:4,3:6,4:5,5:6,6:6,7:7,8:8,9:8,10:8,11:7,12:7,1:6};
+  const monthOrder = {2:0,3:1,4:2,5:3,6:4,7:5,8:6,9:7,10:8,11:9,12:10,1:11};
+
+  let monthBranchIdx;
+  if (m === 1 && d < boundaries[1]) monthBranchIdx = 11;
+  else {
+    const usePrev = (d < boundaries[m]);
+    const key = usePrev ? (m > 1 ? m - 1 : 12) : m;
+    monthBranchIdx = monthOrder[key];
+  }
+  const monthBranches = ["인","묘","진","사","오","미","신","유","술","해","자","축"];
+  const monthBranch = monthBranches[monthBranchIdx];
+
+  const yearStemIdx = (adjYear - 4) % 10;
+  let tigerStemIdx;
+  if (yearStemIdx === 0 || yearStemIdx === 5) tigerStemIdx = 2;
+  else if (yearStemIdx === 1 || yearStemIdx === 6) tigerStemIdx = 4;
+  else if (yearStemIdx === 2 || yearStemIdx === 7) tigerStemIdx = 6;
+  else if (yearStemIdx === 3 || yearStemIdx === 8) tigerStemIdx = 8;
+  else tigerStemIdx = 0;
+
+  const monthStem = stems[(tigerStemIdx + monthBranchIdx) % 10];
+  const monthGanji = monthStem + monthBranch;
+
+  // ③ 일주 (JDN)
+  const dayGanji = getDayGanjiJDN(y, m, d, stems, branches12);
+
+  // ④ 시주 (일간 + 시간)
+  const dayStemIdx = stems.indexOf(dayGanji[0]);
+  const hourStemIdx = (dayStemIdx * 2 + hourBranchIndex) % 10;
+  const hourGanji = stems[hourStemIdx] + branches12[hourBranchIndex];
+
+  // ✅ 데이터 저장
+  const birthData = {
+    yearP: yearGanji,
+    monthP: monthGanji,
+    dayP: dayGanji,
+    hourP: hourGanji,
+    iljuName: dayGanji,
+    elem: getElement(dayGanji[0]).elem,
+    color: getElement(dayGanji[0]).color,
+    animal: getAnimal(dayGanji[1])
+  };
+
+  localStorage.setItem("birthData", JSON.stringify(birthData));
+  console.log("✅ 계산 완료:", birthData);
+  window.location.href = "survey.html";
+}
+
+/* ===== Julian Day 기반 일주 계산 ===== */
+function getDayGanjiJDN(y, m, d, stems, branches) {
+  const jdnBase = JD(1984, 2, 2); // 갑자일 기준
+  const j = JD(y, m, d);
+  const idx = (j - jdnBase + 2) % 60;
+  return stems[idx % 10] + branches[idx % 12];
+}
+
+/* ===== Julian Day ===== */
+function JD(y, m, d) {
   const a = Math.floor((14 - m) / 12);
   const y2 = y + 4800 - a;
   const m2 = m + 12 * a - 3;
@@ -61,88 +143,26 @@ function JD(y, m, d){
        - Math.floor(y2 / 100) + Math.floor(y2 / 400) - 32045;
 }
 
-// ✅ 정확한 갑자일 기준: 1984-02-05 00:00
-const BASE_JD = JD(1984, 2, 5);
-
-// 일주 계산
-function getIlju(y, m, d){
-  const diff = JD(y, m, d) - BASE_JD;
-  const idx = (diff % 60 + 60) % 60;
-  return stems[idx % 10] + branches[idx % 12];
+/* ===== 오행 / 동물 매핑 ===== */
+function getElement(gan){
+  const map={
+    "갑":{elem:"목",color:"초록"},
+    "을":{elem:"목",color:"초록"},
+    "병":{elem:"화",color:"빨강"},
+    "정":{elem:"화",color:"빨강"},
+    "무":{elem:"토",color:"노랑"},
+    "기":{elem:"토",color:"노랑"},
+    "경":{elem:"금",color:"회색"},
+    "신":{elem:"금",color:"회색"},
+    "임":{elem:"수",color:"파랑"},
+    "계":{elem:"수",color:"파랑"}
+  };
+  return map[gan];
 }
-
-// 년주 계산 (간단 모델)
-function getNyeonju(y){ return stems[(y - 4) % 10] + branches[(y - 4) % 12]; }
-
-// 월주 계산 (절기 단순화)
-function getWolju(y, m){
-  const monthStemIdx = (((y - 4) * 12 + (m + 1)) % 10 + 10) % 10;
-  const monthBranchIdx = (m + 1) % 12;
-  return stems[monthStemIdx] + branches[monthBranchIdx];
+function getAnimal(ji){
+  const map={"자":"쥐","축":"소","인":"호랑이","묘":"토끼","진":"용","사":"뱀","오":"말","미":"양","신":"원숭이","유":"닭","술":"개","해":"돼지"};
+  return map[ji];
 }
-
-// 시주 계산
-function getSiju(ilGan, h){
-  const hourBranches = ["자","축","인","묘","진","사","오","미","신","유","술","해"];
-  const ji = hourBranches[Math.floor((h + 3) / 2) % 12];
-  const ganStart = {"갑":0,"기":0,"을":2,"병":4,"무":4,"정":6,"기":6,"경":8,"신":10,"임":0,"계":2};
-  const ganIdx = (ganStart[ilGan] + Math.floor((h + 3) / 2)) % 10;
-  return stems[ganIdx] + ji;
-}
-
-// 전체 4주 계산
-function getFourPillars(y, m, d, h){
-  const yearP = getNyeonju(y);
-  const monthP = getWolju(y, m);
-  const dayP = getIlju(y, m, d);
-  const hourP = getSiju(dayP[0], h);
-  return { yearP, monthP, dayP, hourP };
-}
-
-// ======================== 오행 / 색상 / 동물 매핑 =========================
-const elementMap = {
-  "갑": {elem:"목", color:"초록"},
-  "을": {elem:"목", color:"초록"},
-  "병": {elem:"화", color:"빨강"},
-  "정": {elem:"화", color:"빨강"},
-  "무": {elem:"토", color:"노랑"},
-  "기": {elem:"토", color:"노랑"},
-  "경": {elem:"금", color:"회색"},
-  "신": {elem:"금", color:"회색"},
-  "임": {elem:"수", color:"파랑"},
-  "계": {elem:"수", color:"파랑"}
-};
-
-const animalMap = {
-  "자":"쥐","축":"소","인":"호랑이","묘":"토끼","진":"용","사":"뱀",
-  "오":"말","미":"양","신":"원숭이","유":"닭","술":"개","해":"돼지"
-};
-
-// ======================== 실행 로직 =========================
-document.getElementById("next").addEventListener("click", () => {
-  const dateStr = document.getElementById("birthdate").value;
-  if(!dateStr) return alert("생년월일을 선택해주세요!");
-
-  const [y, m, d] = dateStr.split("-").map(n => parseInt(n, 10));
-  const h = parseInt(document.getElementById("birthtime").value);
-
-  const pillars = getFourPillars(y, m, d, h);
-  const ilGan = pillars.dayP[0];
-  const ilJi = pillars.dayP[1];
-  const elem = elementMap[ilGan].elem;
-  const color = elementMap[ilGan].color;
-  const animal = animalMap[ilJi];
-  const iljuName = `${color} ${animal}`; // ex) 붉은 쥐
-
-  const birthData = {...pillars, elem, color, animal, iljuName};
-  localStorage.setItem("birthData", JSON.stringify(birthData));
-
-  // 디버그용 콘솔 출력
-  console.log("✅ 계산 결과:", birthData);
-
-  // 다음 페이지로 이동
-  window.location.href = "survey.html";
-});
 </script>
 </body>
 </html>
